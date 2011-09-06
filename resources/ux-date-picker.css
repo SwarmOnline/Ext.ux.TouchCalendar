@@ -1,0 +1,55 @@
+/* Originally written by Bruno Alexandre, 26.03.2010, twitter.com/balexandre, balexandre.com,  abruno.in.dk [at] gmail.com  Rewritten into CSS3/SASS by Ondrej Jirman <megous@megous.com>, 2011 (for CodeBerry s.r.o.) */
+.ux-date-picker { color: #3f4e5e; background-color: #eeeeee; width: 100%; }
+.ux-date-picker table { width: 100%; position: relative; border-collapse: separate; table-layout: fixed; font-size: 20px; }
+.ux-date-picker tbody td { border-bottom: 1px solid #a3a7af; border-right: 1px solid #a3a7af; border-top: 1px solid white; }
+.ux-date-picker tbody td:last-child { border-right: 0px; }
+.ux-date-picker td { font-weight: bold; height: 63px; position: relative; text-align: right; vertical-align: top; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d8d7db), color-stop(100%, #d3d2d7)); background-image: -webkit-linear-gradient(#d8d7db, #d3d2d7); background-image: -moz-linear-gradient(#d8d7db, #d3d2d7); background-image: -o-linear-gradient(#d8d7db, #d3d2d7); background-image: -ms-linear-gradient(#d8d7db, #d3d2d7); background-image: linear-gradient(#d8d7db, #d3d2d7); text-shadow: white 1px 1px 1px; }
+.ux-date-picker td.weekend { background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #c8c7cd), color-stop(100%, #c3c2c9)); background-image: -webkit-linear-gradient(#c8c7cd, #c3c2c9); background-image: -moz-linear-gradient(#c8c7cd, #c3c2c9); background-image: -o-linear-gradient(#c8c7cd, #c3c2c9); background-image: -ms-linear-gradient(#c8c7cd, #c3c2c9); background-image: linear-gradient(#c8c7cd, #c3c2c9); }
+.ux-date-picker td.today { color: white; text-shadow: #333333 1px 1px 2px; border: 1px solid black; background: #7188a8; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #44566f), color-stop(10%, #7188a8), color-stop(90%, #7188a8), color-stop(100%, #b0bdcf)); background-image: -webkit-linear-gradient(#44566f, #7188a8 10%, #7188a8 90%, #b0bdcf); background-image: -moz-linear-gradient(#44566f, #7188a8 10%, #7188a8 90%, #b0bdcf); background-image: -o-linear-gradient(#44566f, #7188a8 10%, #7188a8 90%, #b0bdcf); background-image: -ms-linear-gradient(#44566f, #7188a8 10%, #7188a8 90%, #b0bdcf); background-image: linear-gradient(#44566f, #7188a8 10%, #7188a8 90%, #b0bdcf); }
+.ux-date-picker td.unselectable { color: #89909a; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #cda3a8), color-stop(100%, #c89fa5)); background-image: -webkit-linear-gradient(#cda3a8, #c89fa5); background-image: -moz-linear-gradient(#cda3a8, #c89fa5); background-image: -o-linear-gradient(#cda3a8, #c89fa5); background-image: -ms-linear-gradient(#cda3a8, #c89fa5); background-image: linear-gradient(#cda3a8, #c89fa5); }
+.ux-date-picker td.selected { color: white; text-shadow: #333333 1px 1px 2px; border: 1px solid black; background: #1980e5; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(50%, #4699eb), color-stop(51%, #1980e5), color-stop(100%, #1466b7)); background-image: -webkit-linear-gradient(#4699eb 50%, #1980e5 51%, #1466b7); background-image: -moz-linear-gradient(#4699eb 50%, #1980e5 51%, #1466b7); background-image: -o-linear-gradient(#4699eb 50%, #1980e5 51%, #1466b7); background-image: -ms-linear-gradient(#4699eb 50%, #1980e5 51%, #1466b7); background-image: linear-gradient(#4699eb 50%, #1980e5 51%, #1466b7); }
+.ux-date-picker td.today.selected { color: white; text-shadow: #333333 1px 1px 2px; border: 1px solid black; background: #1980e5; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #0f4d89), color-stop(10%, #1980e5), color-stop(90%, #1980e5), color-stop(100%, #74b3f0)); background-image: -webkit-linear-gradient(#0f4d89, #1980e5 10%, #1980e5 90%, #74b3f0); background-image: -moz-linear-gradient(#0f4d89, #1980e5 10%, #1980e5 90%, #74b3f0); background-image: -o-linear-gradient(#0f4d89, #1980e5 10%, #1980e5 90%, #74b3f0); background-image: -ms-linear-gradient(#0f4d89, #1980e5 10%, #1980e5 90%, #74b3f0); background-image: linear-gradient(#0f4d89, #1980e5 10%, #1980e5 90%, #74b3f0); }
+.ux-date-picker td.prev-month, .ux-date-picker td.next-month { color: #89909a; }
+.ux-date-picker thead { background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(100%, #cfcfd3)); background-image: -webkit-linear-gradient(#f5f5f5, #cfcfd3); background-image: -moz-linear-gradient(#f5f5f5, #cfcfd3); background-image: -o-linear-gradient(#f5f5f5, #cfcfd3); background-image: -ms-linear-gradient(#f5f5f5, #cfcfd3); background-image: linear-gradient(#f5f5f5, #cfcfd3); }
+.ux-date-picker thead th { font-size: 9px; vertical-align: bottom; padding-bottom: 3px; color: #3f4e5e; text-align: center; height: 46px; text-shadow: white 1px 1px 1px; }
+.ux-date-picker thead th:first-child { background: url(larr.png) center center no-repeat; cursor: pointer; }
+.ux-date-picker thead th:last-child { background: url(rarr.png) center center no-repeat; cursor: pointer; }
+.ux-date-picker thead th span { font-size: 20px; font-weight: bold; height: 30px; left: 14.5%; position: absolute; text-align: center; top: 6px; width: 71%; z-index: 999; text-shadow: white 1px 1px 1px; }
+
+.ux-date-picker td div.event-wrapper
+{
+	display: block;
+	height: 4px;
+}
+
+.ux-date-picker td span.event
+{
+	float: left;
+	height: 4px;
+	width: 4px;
+	-webkit-border-radius: 4px;
+	background-color: black;
+	margin: 0 auto 0 2px;
+}
+
+.event-bar
+{
+	height: 13px;
+	width: 50px;
+	background-color: red;
+	position: absolute;
+	top: 0;
+	left: 0;
+	-webkit-border-radius: 5px;
+	font-size: 10px;
+	padding: 0px 4px;
+	overflow: hidden;
+	z-index: 100;
+}
+
+
+.day div.inner-day {
+	display: block;
+	height: 100%;
+	width: 100%;
+}
