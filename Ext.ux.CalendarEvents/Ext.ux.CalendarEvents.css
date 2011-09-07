@@ -1,0 +1,11 @@
+.ux-calendar div.event-bar
+{
+	height: 13px;
+	background-color: red;
+	position: absolute;
+	-webkit-border-radius: 5px;
+	font-size: 10px;
+	padding: 0px 4px;
+	overflow: hidden;
+	z-index: 100;
+}

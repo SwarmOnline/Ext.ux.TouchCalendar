@@ -15,33 +15,3 @@
 .ux-calendar thead th:first-child { background: url(larr.png) center center no-repeat; cursor: pointer; }
 .ux-calendar thead th:last-child { background: url(rarr.png) center center no-repeat; cursor: pointer; }
 .ux-calendar thead th span { font-size: 20px; font-weight: bold; height: 30px; left: 14.5%; position: absolute; text-align: center; top: 6px; width: 71%; z-index: 999; text-shadow: white 1px 1px 1px; }
-
-.ux-calendar td div.event-wrapper
-{
-	display: block;
-	height: 4px;
-}
-
-
-
-.event-bar
-{
-	height: 13px;
-	width: 50px;
-	background-color: red;
-	position: absolute;
-	top: 0;
-	left: 0;
-	-webkit-border-radius: 5px;
-	font-size: 10px;
-	padding: 0px 4px;
-	overflow: hidden;
-	z-index: 100;
-}
-
-
-.day div.inner-day {
-	display: block;
-	height: 100%;
-	width: 100%;
-}

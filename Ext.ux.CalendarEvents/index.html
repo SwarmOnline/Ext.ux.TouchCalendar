@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="http://dev.sencha.com/deploy/touch/resources/css/sencha-touch.css" media="all"/>
+        <script src="../sencha-touch-debug.js" type="text/javascript" language="JavaScript">
+        </script>
+        <link rel="stylesheet" type="text/css" href="../resources/Ext.ux.Calendar.css" media="all"/>
+        <script src="../Ext.ux.Calendar.js" type="text/javascript" language="JavaScript"></script>
+		
+		<script src="Ext.ux.CalendarEvents.js" type="text/javascript" language="JavaScript"></script>
+		<link rel="stylesheet" type="text/css" href="Ext.ux.CalendarEvents.css" media="all"/>
+        <script>
+            
+            Ext.setup({
+                onReady: function(){
+					
+					Ext.regModel('Event', {
+                        fields: [{
+                            name: 'start',
+                            type: 'date',
+                            dateFormat: 'c'
+                        }, {
+                            name: 'end',
+                            type: 'date',
+                            dateFormat: 'c'
+                        }, {
+                            name: 'title'
+                        }]
+                    });
+                    
+                    var date = new Date();
+                    var d = date.getDate();
+                    var m = date.getMonth();
+                    var y = date.getFullYear();
+                    
+                    var store = new Ext.data.Store({
+                        model: 'Event',
+                        data: [{
+                            title: 'Long',
+                            start: new Date(y, m, 1),
+							end: new Date(y, m, 13)
+                        }, {
+                            title: 'Long Event',
+                            start: new Date(y, m, 1),
+                            end: new Date(y, m, 1)
+                        }, {
+                            title: 'Meeting',
+                            start: new Date(y, m, d, 10, 30),
+							end: new Date(y, m, d, 10, 30)
+                        }, {
+                            title: 'Lunch',
+                            start: new Date(y, m, d, 12, 0),
+                            end: new Date(y, m, d, 14, 0)
+                        }, {
+                            title: 'Birthday Party',
+                            start: new Date(y, m, d + 1, 19, 0),
+                            end: new Date(y, m, d + 1, 22, 30)
+                        }, {
+                            title: 'Click for Google',
+                            start: new Date(y, m, 28),
+                            end: new Date(y, m, 29)
+                        }, {
+                            title: 'Click for Google',
+                            start: new Date(y, m, 17),
+                            end: new Date(y, m, 19)
+                        }]
+                    });
+                    
+                    calendar = new Ext.ux.Calendar({
+                        fullscreen: true,
+						dockedItems: [{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [{
+								xtype: 'button',
+								text: 'Month View',
+								handler: function(){
+									calendar.setMode('month');
+								}
+							}, {
+								xtype: 'button',
+								text: 'Week View',
+								handler: function(){
+									calendar.setMode('week');
+								}
+							}]
+						}],
+                        minDate: (new Date()).add(Date.DAY, -40),
+                        maxDate: (new Date()).add(Date.DAY, 55),
+						mode: 'month',
+						weekStart: 1,
+						value: new Date(2011, 8, 1),
+						store: store,
+						
+						plugins: [new Ext.ux.CalendarEvents()]
+                    });
+					
+                }
+                
+                
+            });
+        </script>
+        <title></title>
+    </head>
+    <body>
+    </body>
+</html>
