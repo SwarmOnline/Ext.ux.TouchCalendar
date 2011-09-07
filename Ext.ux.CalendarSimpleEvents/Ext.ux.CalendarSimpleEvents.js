@@ -29,6 +29,11 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	init: function(calendar){
 		
 		this.calendar = calendar; // cache the parent calendar
+		this.calendar.simpleEventsPlugin = this; // cache the plugin instance on the calendar itself
+		
+		this.calendar.showEvents = this.showEvents;
+		this.calendar.hideEvents = this.hideEvents;
+		this.calendar.removeEvents = this.removeEvents;
 		
 		// listen to the Calendar's 'refresh' event and render events when it fires
 		this.calendar.on('refresh', this.renderEvents, this);
@@ -40,29 +45,55 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * for the current date and inserts the appropriate markup
 	 */
 	renderEvents: function(){
-		
-		var dc = this.calendar.dateCollection;
-		
-		if (dc) {
-			// loop through Calendar's current dateCollection
-			dc.each(function(dateObj){
-				var date = dateObj.date;
-				
-				var cell = this.calendar.getDateCell(date); // get the table cell for the current date
-				var store = this.calendar.store;
-				
-				if (cell) {
-					store.clearFilter();
-					store.filterBy(Ext.createDelegate(this.filterFn, this, [date], true)); // filter store for current date
+		if (!this.disabled) {
+			var dc = this.calendar.dateCollection;
+			
+			if (dc) {
+				// loop through Calendar's current dateCollection
+				dc.each(function(dateObj){
+					var date = dateObj.date;
 					
-					if (store.getRange().length > 0) {
-						// append the event markup
-						var t = this.eventTpl.append(cell, store.getRange(), true);
+					var cell = this.calendar.getDateCell(date); // get the table cell for the current date
+					var store = this.calendar.store;
+					
+					if (cell) {
+						store.clearFilter();
+						store.filterBy(Ext.createDelegate(this.filterFn, this, [date], true)); // filter store for current date
+						if (store.getRange().length > 0) {
+							// append the event markup
+							var t = this.eventTpl.append(cell, store.getRange(), true);
+						}
 					}
-				}
-			}, this);
+				}, this);
+			}
 		}
-	}
+	},
 	
+	/**
+	 * Hides all the event markers
+	 * This is added to the parent Calendar's class so must be executed via the parent
+	 */
+	hideEvents: function(){
+		this.simpleEventsPlugin.disabled = true;
+		
+		this.body.select('span.simple-event-wrapper').hide();
+	},
 	
+	/**
+	 * Shows all the event markers
+	 * This is added to the parent Calendar's class so must be executed via the parent
+	 */
+	showEvents: function(){
+		this.simpleEventsPlugin.disabled = false;
+		
+		this.body.select('span.simple-event-wrapper').show();
+	},
+	
+	/**
+	 * Removes all the event markers and their markup
+	 * This is added to the parent Calendar's class so must be executed via the parent
+	 */
+	removeEvents: function(){
+		this.body.select('span.simple-event-wrapper').remove();
+	}	
 });
