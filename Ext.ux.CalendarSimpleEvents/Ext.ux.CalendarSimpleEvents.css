@@ -1,0 +1,18 @@
+.ux-calendar td span.simple-event-wrapper
+{
+	position: absolute;
+	left: 2%;
+	bottom: 4%;
+	width: 98%;
+	overflow: hidden;
+}
+
+.ux-calendar td span.simple-event
+{
+	float: left;
+	height: 4px;
+	width: 4px;
+	-webkit-border-radius: 4px;
+	background-color: black;
+	margin: 0 auto 0 2px;
+}

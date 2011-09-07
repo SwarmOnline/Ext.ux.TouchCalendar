@@ -12,8 +12,7 @@ Ext.ns('Ext.ux');
  */
 Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 
-	cls: 'ux-date-picker',
-	
+	cls: 'ux-calendar',
 	autoHeight: true,
 	
 	/**
@@ -95,14 +94,6 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		},
 		
 		/**
-		 * Gets a formatted date to be used in the 'datetime' attribute added to the day cell
-		 * @param {Object} date
-		 */
-		getDateAttribute: function(date){
-			return date.format('Y-m-d');
-		},
-		
-		/**
 		 * Gets an array containing the first 7 dates to be used in headings
 		 * @param {Object} values
 		 */
@@ -116,6 +107,10 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 			return daysArray;
 		},
 		
+		/**
+		 * Gets the class to be added to the header cells
+		 * @param {Object} currentIndex
+		 */
 		getHeaderClass: function(currentIndex){
 			return currentIndex === 1 ? this.me.prevPeriodCls : currentIndex === 7 ? this.me.nextPeriodCls : '';
 		}
@@ -147,7 +142,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 				'<tr>',
 				'<tpl for="dates">',
 				
-					'<td class="day {[this.getClasses(values)]}" datetime="{[this.getDateAttribute(values.date)]}">',
+					'<td class="day {[this.getClasses(values)]}" datetime="{[this.me.getDateAttribute(values.date)]}">',
 						'{date:date("j")}',
 					'</td>',
 					
@@ -203,13 +198,11 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.previousValue = this.value;
 		
-		this.on('afterrender', this.syncHeight, this);
+		this.on('afterrender', this.refresh, this);
 	},
 
 	onRender: function(ct, position) {
 		Ext.ux.Calendar.superclass.onRender.apply(this, arguments);
-
-		this.refresh();
 
 		this.body.on({
 			click: this.onDayTap,
@@ -248,11 +241,11 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.currentDate = d;
 		
-		var dateCollection = this.getDateCollection(this.currentDate.getDate(), this.currentDate.getMonth(), this.currentDate.getFullYear());
+		this.dateCollection = this.getDateCollection(this.currentDate.getDate(), this.currentDate.getMonth(), this.currentDate.getFullYear());
 		
 		this.update({
 			currentDate: this.currentDate,
-			dates: dateCollection.items
+			dates: this.dateCollection.items
 		});
 		// will force repaint() on iPod Touch 4G
 		this.body.getHeight();
@@ -270,7 +263,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	onDayTap: function(e, el){
 		el = Ext.fly(el);
 	
-		if (!el.hasCls('unselectable')) {
+		if (!el.hasCls(this.unselectableCls)) {
 			this.setValue(this.getCellDate(el));
 		}
 	},
@@ -283,11 +276,11 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	onTableHeaderTap: function(e, el){
 		el = Ext.fly(el);
 
-		if (el.hasCls("goto-prev")) {
+		if (el.hasCls(this.prevPeriodCls)) {
 			this.refreshDelta(-1);
 		}
 
-		if (el.hasCls("goto-next")) {
+		if (el.hasCls(this.nextPeriodCls)) {
 			this.refreshDelta(1);
 		}
 	},
@@ -432,10 +425,20 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()-0-dayOffset);
 	},
 	
+	/**
+	 * Returns a new date based on the date passed and the delta value for MONTH view.
+	 * @param {Object} date
+	 * @param {Object} delta
+	 */
 	getMonthDeltaDate: function(date, delta){
 		return new Date(date.getFullYear(), date.getMonth() + delta, date.getDate());
 	},
 	
+	/**
+	 * Returns a new date based on the date passed and the delta value for WEEK view.
+	 * @param {Object} date
+	 * @param {Object} delta
+	 */
 	getWeekDeltaDate: function(date, delta){
 		return new Date(date.getFullYear(), date.getMonth(), date.getDate() + (delta * 7));
 	},
@@ -464,6 +467,23 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		var date = dateCell.dom.getAttribute('datetime');
 		return this.stringToDate(date);
 	},
+	
+	/**
+	 * Returns the cell representing the specified date
+	 * @param {Object} date
+	 */
+	getDateCell: function(date){
+		return this.body.select('td[datetime="' + this.getDateAttribute(date) + '"]').first();
+	},
+	
+	/**
+	 * Returns a string format of the specified date
+	 * Used when assigning the datetime attribute to a table cell
+	 * @param {Object} date
+	 */
+	getDateAttribute: function(date){
+		return date.format('Y-m-d');
+	},
 
 	/**
 	 * Converts a string date (used to add to table cells) to a Date object
@@ -472,13 +492,5 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	stringToDate: function(dateString) {
 		var a = dateString.split('-');
 		return new Date(Number(a[0]), (a[1]-1), Number(a[2]));
-	},
-
-	/**
-	 * Converts a Date to its string format to be added to table cell's attribute
-	 * @param {Object} date
-	 */
-	dateToString: function(date) {
-		return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
 	}
 });
