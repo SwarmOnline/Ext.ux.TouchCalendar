@@ -1,11 +1,26 @@
 .ux-calendar div.event-bar
 {
-	height: 13px;
+	height: 15px;
 	background-color: red;
 	position: absolute;
-	-webkit-border-radius: 5px;
+	-webkit-border-radius: 4px;
 	font-size: 10px;
 	padding: 0px 4px;
 	overflow: hidden;
 	z-index: 100;
+	
+	background-color: #bccbe2;
+	border: 1px solid #78889f;
+}
+
+.ux-calendar div.event-bar.wrap-end
+{
+	-webkit-border-top-right-radius: 0;
+	-webkit-border-bottom-right-radius: 0;
+}
+
+.ux-calendar div.event-bar.wrap-start
+{
+	-webkit-border-top-left-radius: 0;
+	-webkit-border-bottom-left-radius: 0;
 }

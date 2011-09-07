@@ -250,9 +250,9 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		// will force repaint() on iPod Touch 4G
 		this.body.getHeight();
 
-		this.fireEvent('refresh');
-		
 		this.syncHeight();
+		
+		this.fireEvent('refresh');
 	},
 	
 	/**

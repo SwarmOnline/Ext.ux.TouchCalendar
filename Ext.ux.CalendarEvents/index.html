@@ -96,6 +96,10 @@
 						plugins: [new Ext.ux.CalendarEvents()]
                     });
 					
+					calendar.on('eventtap', function(event){
+						console.log(event);
+					});
+					
                 }
                 
                 
