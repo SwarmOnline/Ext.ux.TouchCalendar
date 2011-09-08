@@ -1,12 +1,21 @@
-Ext.regModel('Ext.ux.CalendarEventBar', {
-    fields: ['eventID', {
-        name: 'date',
+Ext.regModel('Ext.ux.CalendarEventBarModel', {
+    fields: [{
+		name: 'EventID',
+		type: 'string'
+	}, {
+        name: 'Date',
         type: 'date'
-    }, 'barLength', 'barPosition', 'colour', 'record'],
+    }, {
+		name: 'BarLength',
+		type: 'int'
+	}, {
+		name: 'BarPosition',
+		type: 'int'
+	}, 'Record'],
     
     hasMany: [{
-        model: 'Ext.ux.CalendarEventBar',
-        name: 'children'
+        model: 'Ext.ux.CalendarEventBarModel',
+        name: 'linked'
     }]
 });
 
@@ -16,7 +25,7 @@ Ext.regModel('Ext.ux.CalendarEventBar', {
 Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 
     /**
-     * Name of the field which contains the Event's date
+     * Name of the field which contains the Event's dates
      */
     startEventField: 'start',
     
@@ -30,17 +39,26 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		this.calendar.addEvents('eventtap');      
 		
 		this.calendar.on({
-            refresh: this.processEvents,
+            refresh: this.refreshEvents,
             scope: this
         });
     },
-    
-    
-    processEvents: function(){
+	
+	refreshEvents: function(){
 		this.removeEvents();
 		
+		this.generateEventBars();
+				
+		this.createWrapper();
+		
+		this.renderEventBars();
+	},
+    
+    
+    generateEventBars: function(){
+		// create a new store to store the Event Bars as they are defined
 		this.eventBarStore = new Ext.data.Store({
-            model: 'Ext.ux.CalendarEventBar',
+            model: 'Ext.ux.CalendarEventBarModel',
 			data: []
         });
 		
@@ -48,95 +66,111 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
         var store = this.calendar.store;
         var eventBarRecord;
 		
+		// Loop through Calendar's date collection of visible dates
         dates.each(function(dateObj){
-            var date = dateObj.date;
-            var datePositions = [];
+            var currentDate = dateObj.date.clearTime(true).getTime();
+            var takenDatePositions = []; // stores 'row positions' that are taken on current date
 			
+			// Filter the Events Store for events that are happening on the currentDate
             store.filterBy(function(record){
-                return (record.get('start').clearTime(true).getTime() <= date.clearTime(true).getTime()) && (record.get('end').clearTime(true).getTime() >= date.clearTime(true).getTime());
-            });
+				var startDate = record.get(this.startEventField).clearTime(true).getTime(),
+					endDate = record.get(this.endEventField).clearTime(true).getTime();
+					
+                return (startDate <= currentDate) && (endDate >= currentDate);
+            }, this);
             
+			// sort the Events Store so we have a consistent ordering over dates
             store.sort(this.storeDateField, 'ASC');
             
+			// Loop through currentDate's Events
             store.each(function(event){
+				// Find any Event Bar record in the EventBarStore for the current Event's record (using internalID)
                 var eventBarIndex = this.eventBarStore.findBy(function(record, id){
-                    return record.get('eventID') === event.internalId;
+                    return record.get('EventID') === event.internalId;
                 }, this);
                 
+				// if an EventBarRecord was found then it is a multiple day Event so we must link them
                 if (eventBarIndex > -1) {
-					eventBarRecord = this.eventBarStore.getAt(eventBarIndex);
+					eventBarRecord = this.eventBarStore.getAt(eventBarIndex); // get the actual EventBarRecord
 					
-					while(eventBarRecord.children().getCount() > 0){
-						eventBarRecord = eventBarRecord.children().getAt(eventBarRecord.children().getCount() - 1);
+					// recurse down the linked EventBarRecords to get the last record in the chain for
+					// wrapping Events
+					while(eventBarRecord.linked().getCount() > 0){
+						eventBarRecord = eventBarRecord.linked().getAt(eventBarRecord.linked().getCount() - 1);
 					}				
 					
-					if (date.getDay() === 1) {
-						datePositions.push(eventBarRecord.get('barPosition'));
+					// if currentDate is at the start of the week then we must create a new EventBarRecord
+					// to represent the new bar on the next row.
+					if (currentDate.getDay() === 1) {
+						// push the inherited BarPosition of the parent 
+						// EventBarRecord onto the takenDatePositions array
+						takenDatePositions.push(eventBarRecord.get('BarPosition'));
 						
+						// create a new EventBar record 
 						var wrappedEventBarRecord = Ext.ModelMgr.create({
-							eventID: event.internalId,
-							date: date,
-							barLength: 1,
-							barPosition: eventBarRecord.get('barPosition'),
-							colour: eventBarRecord.get('colour'),
-							record: event
-						}, 'Ext.ux.CalendarEventBar');
+							EventID: event.internalId,
+							Date: date,
+							BarLength: 1,
+							BarPosition: eventBarRecord.get('BarPosition'),
+							Record: event
+						}, 'Ext.ux.CalendarEventBarModel');
 						
-						eventBarRecord.children().add(wrappedEventBarRecord);
+						// add it as a linked EventBar of the parent
+						eventBarRecord.linked().add(wrappedEventBarRecord);
 					}
 					else {
-						datePositions.push(eventBarRecord.get('barPosition'));
-						eventBarRecord.set('barLength', eventBarRecord.get('barLength') + 1);
+						// add the inherited BarPosition to the takenDatePositions array
+						takenDatePositions.push(eventBarRecord.get('BarPosition'));
+						
+						// increment the BarLength value for this day
+						eventBarRecord.set('BarLength', eventBarRecord.get('BarLength') + 1);
 					}
 				}
 				else {
-					var pos = this.getNextFreePosition(datePositions);
-					datePositions.push(pos);
+					// get the next free bar position
+					var pos = this.getNextFreePosition(takenDatePositions);
 					
+					// push it onto array so it isn't reused
+					takenDatePositions.push(pos);
+					
+					// create new EventBar record
 					eventBarRecord = Ext.ModelMgr.create({
-						eventID: event.internalId,
-						date: date,
-						barLength: 1,
-						barPosition: pos,
-						colour: "#"+("000"+(Math.random()*(1<<24)|0).toString(16)).substr(-6),
-						record: event
-					}, 'Ext.ux.CalendarEventBar');
+						EventID: event.internalId,
+						Date: date,
+						BarLength: 1,
+						BarPosition: pos,
+						Record: event
+					}, 'Ext.ux.CalendarEventBarModel');
 					
+					// add EventBar record to main store
 					this.eventBarStore.add(eventBarRecord);
 				}
                 
             }, this);
 			
+			// remove the filter
 			store.clearFilter();
         }, this);
-		
-		this.createWrapper();
-		
-		this.createBars(this.eventBarStore);
-        
-        if(!this.refreshListenerAdded){
-			
-			this.refreshListenerAdded = true;
-		}
     },
 	
-	createBars: function(store){
+	renderEventBars: function(){
+		var store = this.eventBarStore;
+		
 		store.each(function(record){
-			var eventRecord = this.getEventRecord(record.get('eventID')),			
-				dayEl = this.calendar.getDateCell(record.get('date')),
-				doesWrap = record.children().getCount() > 0,
-				hasWrapped = record.get('date').clearTime(true).getTime() !== record.get('record').get('start').clearTime(true).getTime();
+			var eventRecord = this.getEventRecord(record.get('EventID')),			
+				dayEl = this.calendar.getDateCell(record.get('Date')),
+				doesWrap = record.linked().getCount() > 0,
+				hasWrapped = record.get('Date').clearTime(true).getTime() !== record.get('Record').get('start').clearTime(true).getTime();
 			
 			var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
 				tag: 'div',
 				html: eventRecord.get('title'),
-				eventID: record.get('eventID'),
-				cls: 'event-bar ' + record.get('eventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')//,
-				//style: 'background-color: ' + record.get('colour')
+				eventID: record.get('EventID'),
+				cls: 'event-bar ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
 			}, true);
 			
-			var barPosition = record.get('barPosition');
-				barLength = record.get('barLength');
+			var barPosition = record.get('BarPosition'),
+				barLength = record.get('BarLength'),
 				dayCellX = dayEl.getX(),
 				dayCellY = dayEl.getY(),
 				dayCellHeight = dayEl.getHeight(),
@@ -149,8 +183,8 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			eventBar.setTop((((dayCellY - this.calendar.body.getY()) + dayCellHeight) - eventBarHeight) - ((barPosition * eventBarHeight + (barPosition * spacing) + spacing)));
 			eventBar.setWidth((dayCellWidth * barLength) - (spacing * (doesWrap ? (doesWrap && hasWrapped ? 0 : 1) : 2)));
 			
-			if(record.children().getCount() > 0){
-				this.createBars(record.children());
+			if(record.linked().getCount() > 0){
+				this.createBars(record.linked());
 			}
 		}, this);
 	},
@@ -164,6 +198,10 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			
 			this.eventWrapperEl.on('click', function(e, node){
 					var eventRecord = this.getEventRecord(node.attributes['eventID'].value);
+					
+					this.deselectEvents();
+					
+					Ext.fly(node).addCls('event-bar-selected');
 					
 					this.calendar.fireEvent('eventtap', eventRecord);
 				}, this, {
@@ -185,7 +223,11 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		var eventRecordIndex = this.calendar.store.findBy(function(rec){
 				return rec.internalId === eventID;
 			}, this);
-		return eventRecord = this.calendar.store.getAt(eventRecordIndex);
+		return this.calendar.store.getAt(eventRecordIndex);
+	},
+	
+	deselectEvents: function(){
+		this.calendar.body.select('.event-bar-selected').removeCls('event-bar-selected');
 	},
 	
 	/**
