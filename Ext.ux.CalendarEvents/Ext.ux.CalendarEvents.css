@@ -29,3 +29,7 @@
 	-webkit-border-top-left-radius: 0;
 	-webkit-border-bottom-left-radius: 0;
 }
+
+.ux-calendar td.day {
+	dispaly: block;
+}

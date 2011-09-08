@@ -19,7 +19,18 @@ Ext.regModel('Ext.ux.CalendarEventBarModel', {
     }]
 });
 
-
+Ext.override(Ext.util.Region, {
+	partial: function(region) {
+        var me = this, // cell
+        dragWidth = region.right - region.left,
+		dragHeight = region.bottom - region.top,
+		
+		horizontalValid = me.right > (region.left + (dragWidth/2)),
+		verticalValid = me.bottom > (region.top + (dragHeight/2));
+		
+		return horizontalValid && verticalValid;
+    }
+});
 
 
 Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
@@ -82,6 +93,35 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		this.createEventWrapper();
 		
 		this.renderEventBars(this.eventBarStore);
+
+		new Ext.util.Droppable(this.calendar.body.select('td.day').first(), {
+			validDropMode: 'partial',
+			listeners: {
+				drop: function(droppable, draggable, e, opts){
+					var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID')),
+						droppedDate = this.calendar.getCellDate(droppable.el),
+						daysDifference = this.getDaysDifference(eventRecord.get(this.startEventField), droppedDate);
+					
+					eventRecord.set(this.startEventField, droppedDate);
+					eventRecord.set(this.endEventField, eventRecord.get(this.endEventField).add(Date.DAY, daysDifference));
+					
+					this.refreshEvents();
+				},
+				dropactivate: function(droppable, draggable, e, opts){
+					var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID'));
+					
+					this.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+						if (eventBar.dom !== draggable.el.dom) {
+							eventBar.hide();
+						}
+					}, this);
+				},
+				dropdeactivate: function(){
+					console.log('deactivate');
+				},
+				scope: this
+			}
+		});
 	},
     
     /**
@@ -112,8 +152,8 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
                 return (startDate <= currentDateTime) && (endDate >= currentDateTime);
             }, this);
             
-			// sort the Events Store so we have a consistent ordering over dates
-            store.sort(this.storeDateField, 'ASC');
+			// sort the Events Store so we have a consistent ordering to ensure no overlaps
+            store.sort(this.startEventField, 'ASC');
             
 			// Loop through currentDate's Events
             store.each(function(event){
@@ -205,6 +245,10 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 				eventID: record.get('EventID'),
 				cls: this.eventBarCls + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
 			}, true);
+			
+			new Ext.util.Draggable(eventBar, {
+				revert: true
+			});
 			
 			var barPosition = record.get('BarPosition'),
 				barLength = record.get('BarLength'),
@@ -310,6 +354,15 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	 */
 	deselectEvents: function(){
 		this.calendar.body.select('.' + this.eventBarSelectedCls).removeCls(this.eventBarSelectedCls);
+	},
+	
+	getDaysDifference: function(date1, date2){
+		date1 = date1.clearTime(true).getTime(),
+		date2 = date2.clearTime(true).getTime();
+		
+		var diff = date2 - date1;
+		
+		return diff/1000/60/60/24;
 	},
 	
 	/**
