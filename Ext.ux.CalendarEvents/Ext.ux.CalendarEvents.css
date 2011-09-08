@@ -13,6 +13,11 @@
 	border: 1px solid #78889f;
 }
 
+.ux-calendar div.event-bar.event-bar-selected
+{
+	background-color: #78889f;
+}
+
 .ux-calendar div.event-bar.wrap-end
 {
 	-webkit-border-top-right-radius: 0;
