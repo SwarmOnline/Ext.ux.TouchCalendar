@@ -24,9 +24,12 @@ Ext.override(Ext.util.Region, {
         var me = this, // cell
         dragWidth = region.right - region.left,
 		dragHeight = region.bottom - region.top,
+		dropWidth = me.right - me.left,
 		
 		horizontalValid = me.right > (region.left + (dragWidth/2)),
 		verticalValid = me.bottom > (region.top + (dragHeight/2));
+		
+		horizontalValid = region.left > me.left && region.left < (me.right - (dropWidth/2));
 		
 		return horizontalValid && verticalValid;
     }
@@ -85,7 +88,6 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	 * Regenerates the EventBars
 	 */
 	refreshEvents: function(){
-		console.log('Event Bars generated');
 		this.removeEvents();
 		
 		this.generateEventBars();
@@ -94,30 +96,44 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		
 		this.renderEventBars(this.eventBarStore);
 
-		new Ext.util.Droppable(this.calendar.body.select('td.day').first(), {
-			validDropMode: 'partial',
+		this.draggable = new Ext.util.Droppable(this.calendar.body, {
 			listeners: {
 				drop: function(droppable, draggable, e, opts){
-					var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID')),
-						droppedDate = this.calendar.getCellDate(droppable.el),
-						daysDifference = this.getDaysDifference(eventRecord.get(this.startEventField), droppedDate);
+					var validDrop = false;
 					
-					eventRecord.set(this.startEventField, droppedDate);
-					eventRecord.set(this.endEventField, eventRecord.get(this.endEventField).add(Date.DAY, daysDifference));
+					this.calendar.body.select('td.day').each(function(cell){
+						
+						var cellRegion = cell.getPageBox(true);
+						var eventBarRegion = draggable.el.getPageBox(true);
+						
+						if(cellRegion.partial(eventBarRegion)){
+							
+							var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID')),
+								droppedDate = this.calendar.getCellDate(cell),
+								daysDifference = this.getDaysDifference(eventRecord.get(this.startEventField), droppedDate);
+							
+							eventRecord.set(this.startEventField, droppedDate);
+							eventRecord.set(this.endEventField, eventRecord.get(this.endEventField).add(Date.DAY, daysDifference));
+							
+							validDrop = true;
+							
+							this.refreshEvents();
+							
+							return false;
+						}
+						
+					}, this);
 					
-					this.refreshEvents();
+					if(!validDrop){
+						draggable.reset();
+					}
 				},
-				dropactivate: function(droppable, draggable, e, opts){
+				dropdeactivate: function(droppable, draggable, e, opts){
 					var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID'));
 					
 					this.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
-						if (eventBar.dom !== draggable.el.dom) {
-							eventBar.hide();
-						}
+						eventBar.show();
 					}, this);
-				},
-				dropdeactivate: function(){
-					console.log('deactivate');
 				},
 				scope: this
 			}
@@ -174,7 +190,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 					
 					// if currentDate is at the start of the week then we must create a new EventBarRecord
 					// to represent the new bar on the next row.
-					if (currentDate.getDay() === 1) {
+					if (currentDate.getDay() === this.calendar.weekStart) {
 						// push the inherited BarPosition of the parent 
 						// EventBarRecord onto the takenDatePositions array
 						takenDatePositions.push(eventBarRecord.get('BarPosition'));
@@ -247,7 +263,28 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			}, true);
 			
 			new Ext.util.Draggable(eventBar, {
-				revert: true
+				revert: true,
+				listeners: {
+					dragstart: function(draggable, e){
+						var eventID = draggable.el.getAttribute('eventID'),
+							eventRecord = this.getEventRecord(eventID),
+							eventBarRecord = this.getEventBarRecord(eventID);
+						
+						draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
+						draggable.el.setLeft(e.pageX - (draggable.el.getWidth()/2));
+						
+						console.log(draggable);
+						console.log(e);
+						
+						this.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+							if (eventBar.dom !== draggable.el.dom) {
+								eventBar.hide();
+							}
+						}, this);
+						console.log('activate');
+					},
+					scope: this
+				}
 			});
 			
 			var barPosition = record.get('BarPosition'),
@@ -350,19 +387,33 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	},
 	
 	/**
+	 * Get the EventBar record with the specified eventID
+	 * @param {Object} eventID
+	 */
+	getEventBarRecord: function(eventID){
+		var eventRecordIndex = this.eventBarStore.findBy(function(rec){
+				return rec.get('EventID') === eventID;
+			}, this);
+		return this.eventBarStore.getAt(eventRecordIndex);
+	},
+	
+	/**
 	 * Remove the selected CSS class from all selected Event Bars
 	 */
 	deselectEvents: function(){
 		this.calendar.body.select('.' + this.eventBarSelectedCls).removeCls(this.eventBarSelectedCls);
 	},
 	
+	/**
+	 * Returns the number of days between the two dates passed in
+	 * @param {Date} date1
+	 * @param {Date} date2
+	 */
 	getDaysDifference: function(date1, date2){
-		date1 = date1.clearTime(true).getTime(),
+		date1 = date1.clearTime(true).getTime();
 		date2 = date2.clearTime(true).getTime();
 		
-		var diff = date2 - date1;
-		
-		return diff/1000/60/60/24;
+		return (date2 - date1)/1000/60/60/24;
 	},
 	
 	/**

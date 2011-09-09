@@ -431,7 +431,13 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * @param {Object} delta
 	 */
 	getMonthDeltaDate: function(date, delta){
-		return new Date(date.getFullYear(), date.getMonth() + delta, date.getDate());
+		var newMonth = date.getMonth() + delta,
+			newYear = date.getFullYear() + (newMonth > 11 ?  1 : 0),
+			newDate = new Date(newYear, newMonth, 1);
+		
+		newDate.setDate(newDate.getDaysInMonth() < date.getDate() ? newDate.getDaysInMonth() : date.getDate());
+		
+		return newDate;
 	},
 	
 	/**
