@@ -252,6 +252,8 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 
 		this.syncHeight();
 		
+		this.dateCellEls = this.body.select('td.day');
+		
 		this.fireEvent('refresh');
 	},
 	

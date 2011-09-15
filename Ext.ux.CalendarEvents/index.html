@@ -2,8 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" type="text/css" href="http://dev.sencha.com/deploy/touch/resources/css/sencha-touch.css" media="all"/>
-        <script src="http://dev.sencha.com/deploy/touch/sencha-touch.js" type="text/javascript" language="JavaScript">
+        <link rel="stylesheet" type="text/css" href="../resources/css/sencha-touch.css" media="all"/>
+        <script src="../sencha-touch-debug.js" type="text/javascript" language="JavaScript">
         </script>
         <link rel="stylesheet" type="text/css" href="../resources/Ext.ux.Calendar.css" media="all"/>
         <script src="../Ext.ux.Calendar.js" type="text/javascript" language="JavaScript"></script>
@@ -97,7 +97,25 @@
                     });
 					
 					calendar.on('eventtap', function(event){
-						console.log(event);
+						console.log('eventtap');
+						//console.log(event);
+					});
+					calendar.on('eventdragstart', function(draggable, eventRecord, e){
+						console.log('eventdragstart');
+						//console.log(arguments);
+					});
+					calendar.on('beforeeventdrop', function(draggable, eventRecord, e){
+						console.log('beforeeventdrop');
+						//console.log(arguments);
+						return true;
+					});
+					calendar.on('eventdrop', function(draggable, eventRecord, e){
+						console.log('eventdrop');
+						//console.log(arguments);
+					});
+					calendar.on('eventdrag', function(draggable, eventRecord, e){
+						console.log('eventdrag');
+						//console.log(arguments);
 					});
 					
                 }

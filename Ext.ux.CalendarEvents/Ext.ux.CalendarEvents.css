@@ -33,3 +33,9 @@
 .ux-calendar td.day {
 	dispaly: block;
 }
+
+.ux-calendar td.day.date-cell-hover
+{
+	background-color: red;
+	background-image: none;
+}
