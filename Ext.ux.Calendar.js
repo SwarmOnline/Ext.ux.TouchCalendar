@@ -1,14 +1,7 @@
 Ext.ns('Ext.ux');
 
 /**
- * 
- *
- * @cfg {Date} value Initially selected date (default is today)
- * @cfg {String[]} days Day names.
- * @cfg {String[]} months Month names.
- * @cfg {Number} weekstart Starting day of the week. (1 for monday, 7 for sunday)
- * @cfg {Date} minDate The lowest selectable date.
- * @cfg {Date} maxDate The highest selectable date.
+ * @class Ext.ux.Calendar
  */
 Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 
@@ -16,42 +9,82 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	autoHeight: true,
 	
 	/**
-	 * Starting day of the week. (0 = Sunday, 1 = Monday ... etc)
+	 * @cfg {Date} value Initially selected date.
+	 */
+	value: new Date(),
+	
+	/**
+	 * @cfg {Number} weekStart Starting day of the week. (0 = Sunday, 1 = Monday ... etc)
 	 */
 	weekStart: 1,
 	
 	/**
-	 * Minimum date allowed to be shown/selected
+	 * @cfg {Date} minDate Minimum date allowed to be shown/selected
 	 */
 	minDate: null,
 	
 	/**
-	 * Maximum date allowed to be shown/selected
+	 * @cfg {Date} maxDate Maximum date allowed to be shown/selected
 	 */
 	maxDate: null,
 	
 	/**
-	 * True to have the calendar fill the height of the Panel
+	 * @cfg {Boolean} fullHeight True to have the calendar fill the height of the Panel
 	 */
 	fullHeight: true,
 	
 	/**
-	 * CSS Classes used for styling and selecting
+	 * @cfg {String} todayCls CSS class added to the today's date cell 
 	 */
 	todayCls: 'today',
+	
+	/**
+	 * @cfg {String} selectedCls CSS class added to the date cell that is currently selected 
+	 */
 	selectedCls: 'selected',
+	
+	/**
+	 * @cfg {String} unselectableCls CSS class added to any date cells that are unselectable
+	 */
 	unselectableCls: 'unselectable',
+	
+	/**
+	 * @cfg {String} prevMonthCls CSS class added to any date cells that are part of the previous month
+	 */
 	prevMonthCls: 'prev-month',
+	
+	/**
+	 * @cfg {String} nextMonthCls CSS class added to any date cells that are part of the next month
+	 */
 	nextMonthCls: 'next-month',
+	
+	/**
+	 * @cfg {String} weekendCls CSS class added to any date cells that are on the weekend
+	 */
 	weekendCls: 'weekend',
+	
+	/**
+	 * @cfg {String} prevPeriodCls CSS class added to the previous period navigation cell in the calendar's header
+	 */
 	prevPeriodCls: 'goto-prev',
+	
+	/**
+	 * @cfg {String} nextPeriodCls CSS class added to the next period navigation cells in the calendar's header
+	 */
 	nextPeriodCls: 'goto-next',
 	
+	/**
+	 * @property {Object} commonTemplateFunctions
+	 * @private
+	 */
 	commonTemplateFunctions: {
 		
 		/**
 		 * Gets the classes that should be applied to the current day's cell
-		 * @param {string} space separated list of CSS classes
+		 * @method
+		 * @private
+		 * @param {Object} values 
+		 * @return {String}
 		 */
 		getClasses: function(values){
 			var classes = [];
@@ -78,7 +111,10 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		/**
 		 * Returns true if the specific index is at the end of the row
 		 * Used to determine if a row terminating tag is needed
-		 * @param {boolean} currentIndex
+		 * @method
+		 * @private
+		 * @param {Number} currentIndex
+		 * @return {Number}
 		 */
 		isEndOfRow: function(currentIndex){
 			return (currentIndex % 7) === 0 && (currentIndex > 0)
@@ -87,7 +123,10 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		/**
 		 * Returns true if the specific index is at the current mode's period
 		 * Used to determine if another row opening tag is needed
-		 * @param {boolean} currentIndex
+		 * @param {Number} currentIndex
+		 * @method
+		 * @private
+		 * @return {Number}
 		 */
 		isEndOfPeriod: function(currentIndex){
 			return currentIndex === this.me.totalDays[this.me.mode](this.me.value);
@@ -95,7 +134,10 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		/**
 		 * Gets an array containing the first 7 dates to be used in headings
+		 * @method
+		 * @private
 		 * @param {Object} values
+		 * @return {Date[]}
 		 */
 		getDaysArray: function(values){
 			var daysArray = [];
@@ -109,7 +151,10 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		/**
 		 * Gets the class to be added to the header cells
-		 * @param {Object} currentIndex
+		 * @method
+		 * @private
+		 * @param {Number} currentIndex
+		 * @return {Boolean}
 		 */
 		getHeaderClass: function(currentIndex){
 			return currentIndex === 1 ? this.me.prevPeriodCls : currentIndex === 7 ? this.me.nextPeriodCls : '';
@@ -118,7 +163,8 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 
 	/**
-	 * Create new calendar
+	 * Instantiate a new calendar
+	 * @method
 	 */
 	constructor: function(config) {
 	
@@ -160,7 +206,14 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 
 		Ext.apply(this, config || {});
 
-		this.addEvents('refresh');
+		this.addEvents(
+		
+			/**
+			 * @event refresh Fires when the Calendar's view is regenerated
+			 */
+			'refresh'
+		
+		);
 
 		Ext.ux.Calendar.superclass.constructor.call(this, config);
 
@@ -217,6 +270,12 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		});
 	},
 	
+	/**
+	 * Changes the Calendar's mode
+	 * @method
+	 * @param {String} mode Valid values are 'month' and 'week'
+	 * @return {void}
+	 */
 	setMode: function(mode){
 		this.mode = mode;
 		
@@ -224,7 +283,11 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	},
 	
 	/**
-	 * Updates the Calendar's table's height to match the wrapping Panel
+	 * Updates the Calendar's table's height to match the wrapping Panel if
+	 * fullHeight is set to true
+	 * @method
+	 * @private
+	 * @return {void}
 	 */
 	syncHeight: function(){
 		if(this.fullHeight){
@@ -234,7 +297,9 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 
 	/**
 	 * Refreshes the Calendar focussed around the date in "this.value".
-	 * Fires the 'refresh' event 
+	 * Fires the 'refresh' event
+	 * @method
+	 * @return {void}
 	 */
 	refresh: function() {
 		var d = this.value || new Date();
@@ -259,8 +324,11 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Handler for a tap on a day's cell
+	 * @method
+	 * @private
 	 * @param {Object} e
 	 * @param {Object} el
+	 * @return {void}
 	 */
 	onDayTap: function(e, el){
 		el = Ext.fly(el);
@@ -272,8 +340,11 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Handler for a tap on the table header
+	 * @method
+	 * @private
 	 * @param {Object} e
 	 * @param {Object} el
+	 * @return {void}
 	 */
 	onTableHeaderTap: function(e, el){
 		el = Ext.fly(el);
@@ -289,7 +360,9 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Set selected date.
-	 * @cfg {Date} v Date to select.
+	 * @method
+	 * @param {Date} v Date to select.
+	 * @return {void}
 	 */
 	setValue: function(v) {
 		if (!this.isSameDay(this.value, v)) {
@@ -311,7 +384,9 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	/**
 	 * Adds the selected class to the specified date's cell. If it isn't in the current view
 	 * then the calendar will be refreshed to move the date into view.
+	 * @method
 	 * @param {Object} date
+	 * @return {void}
 	 */
 	selectDate: function(date) {
 		var selectionChanged = false; // flag to store whether a date was selected on the current page
@@ -340,7 +415,9 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Refreshes the calendar moving it forward (delta = 1) or backward (delta = -1)
+	 * @method
 	 * @param {integer} delta - integer representing direction (1 = forward, =1 = backward)
+	 * @return {void}
 	 */
 	refreshDelta: function(delta) {
 		var v = this.value || new Date();
@@ -360,6 +437,8 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Removes the selectedCls from any cells that have it
+	 * @method
+	 * @return {void}
 	 */
 	removeSelectedCell: function() {
 		this.body.select('.' + this.selectedCls).removeCls(this.selectedCls);
@@ -367,9 +446,12 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Builds a collection of dates that need to be rendered in the current configuration
+	 * @method
+	 * @private
 	 * @param {Object} day
 	 * @param {Object} month
 	 * @param {Object} year
+	 * @return {Ext.util.MixedCollection} Mixed Collection of Objects with configuration for each date cell
 	 */
 	getDateCollection: function(day, month, year){
 		var dateCollection = new Ext.util.MixedCollection(), // collection to store all the dates to be rendered
@@ -405,9 +487,12 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	/**
 	 * Returns the first day that should be visible for a month view (may not be in the same month)
 	 * Gets the first day of the week that the 1st of the month falls on.
-	 * @param {Object} day
-	 * @param {Object} month - 0 based month representation (0 = Jan, 11 = Dec)
-	 * @param {Object} year
+	 * @method
+	 * @private
+	 * @param {Number} day
+	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
+	 * @param {Number} year
+	 * @return {Date}
 	 */
 	getMonthStartDate: function(day, month, year){
 		return this.getWeekStartDate(1, month, year);
@@ -415,9 +500,12 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Returns the first day of the week based on the specified date.
-	 * @param {Object} day
-	 * @param {Object} month - 0 based month representation (0 = Jan, 11 = Dec)
-	 * @param {Object} year
+	 * @method
+	 * @private
+	 * @param {Number} day
+	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
+	 * @param {Number} year
+	 * @return {Date}
 	 */
 	getWeekStartDate: function(day, month, year){
 		var currentDate = new Date(year, month, day);
@@ -429,8 +517,11 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Returns a new date based on the date passed and the delta value for MONTH view.
-	 * @param {Object} date
-	 * @param {Object} delta
+	 * @method
+	 * @private
+	 * @param {Date} date
+	 * @param {Number} delta
+	 * @return {Date}
 	 */
 	getMonthDeltaDate: function(date, delta){
 		var newMonth = date.getMonth() + delta,
@@ -444,8 +535,11 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Returns a new date based on the date passed and the delta value for WEEK view.
-	 * @param {Object} date
-	 * @param {Object} delta
+	 * @method
+	 * @private
+	 * @param {Date} date
+	 * @param {Number} delta
+	 * @return {Date}
 	 */
 	getWeekDeltaDate: function(date, delta){
 		return new Date(date.getFullYear(), date.getMonth(), date.getDate() + (delta * 7));
@@ -453,15 +547,21 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Returns true if the two dates are the same date (ignores time)
+	 * @method
+	 * @private
 	 * @param {Object} date1
 	 * @param {Object} date2
+	 * @return {Boolean}
 	 */
 	isSameDay: function(date1, date2){
 		return date1.clearTime(true).getTime() === date2.clearTime(true).getTime();
 	},
 	/**
 	 * Returns true if the specified date is a Saturday/Sunday
+	 * @method
+	 * @private
 	 * @param {Object} date
+	 * @return {Boolean}
 	 */
 	isWeekend: function(date){
 		return date.getDay() === 0 || date.getDay() === 6;
@@ -469,7 +569,9 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 
 	/**
 	 * Returns the Date associated with the specified cell
-	 * @param {Object} dateCell
+	 * @method
+	 * @param {Ext.Element} dateCell
+	 * @return {Date}
 	 */
 	getCellDate: function(dateCell) {
 		var date = dateCell.dom.getAttribute('datetime');
@@ -478,7 +580,9 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Returns the cell representing the specified date
-	 * @param {Object} date
+	 * @method
+	 * @param {Ext.Element} date
+	 * @return {Ext.Element}
 	 */
 	getDateCell: function(date){
 		return this.body.select('td[datetime="' + this.getDateAttribute(date) + '"]').first();
@@ -487,7 +591,10 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	/**
 	 * Returns a string format of the specified date
 	 * Used when assigning the datetime attribute to a table cell
-	 * @param {Object} date
+	 * @method
+	 * @private
+	 * @param {Date} date
+	 * @return {String}
 	 */
 	getDateAttribute: function(date){
 		return date.format('Y-m-d');
@@ -495,7 +602,10 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 
 	/**
 	 * Converts a string date (used to add to table cells) to a Date object
-	 * @param {Object} dateString
+	 * @method
+	 * @private
+	 * @param {String} dateString
+	 * @return {Date}
 	 */
 	stringToDate: function(dateString) {
 		var a = dateString.split('-');

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-ux-CalendarSimpleEvents'>/**
+</span> * @class Ext.ux.CalendarSimpleEvents 
+ */
+Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
+	
+<span id='Ext-ux-CalendarSimpleEvents-cfg-dateField'>	/**
+</span>	 * @cfg {Date} dateField Name of the field which contains the Event's date
+	 */
+	dateField: 'start',
+	
+<span id='Ext-ux-CalendarSimpleEvents-method-filterFn'>	/**
+</span>	 * Function used to filter the store for each of the displayed dates
+	 * @param {Object} record - current record
+	 * @param {Object} id - ID of passed in record
+	 * @param {Object} currentDate - date we are currently dealing while looping Calendar's dateCollection property
+	 */
+	filterFn: function(record, id, currentDate){
+		return record.get(this.dateField).clearTime(true).getTime() === currentDate.clearTime(true).getTime();
+	},
+	
+<span id='Ext-ux-CalendarSimpleEvents-property-eventTpl'>	/**
+</span>	 * Template used to create Event markup. Template is merged with the records left
+	 * following the filter
+	 */
+	eventTpl: new Ext.XTemplate(
+	'&lt;span class=&quot;simple-event-wrapper&quot;&gt;',
+		'&lt;tpl for=&quot;.&quot;&gt;',
+			'&lt;span class=&quot;simple-event&quot;&gt;&lt;/span&gt;',
+		'&lt;/tpl&gt;',
+	'&lt;/span&gt;'),
+	
+	init: function(calendar){
+		
+		this.calendar = calendar; // cache the parent calendar
+		this.calendar.simpleEventsPlugin = this; // cache the plugin instance on the calendar itself
+		
+		this.calendar.showEvents = this.showEvents;
+		this.calendar.hideEvents = this.hideEvents;
+		this.calendar.removeEvents = this.removeEvents;
+		
+		// listen to the Calendar's 'refresh' event and render events when it fires
+		this.calendar.on('refresh', this.renderEvents, this);
+	},
+	
+<span id='Ext-ux-CalendarSimpleEvents-method-renderEvents'>	/**
+</span>	 * Function to execute when the Calendar is refreshed.
+	 * It loops through the Calendar's current dateCollection and gets all Events
+	 * for the current date and inserts the appropriate markup
+	 */
+	renderEvents: function(){
+		if (!this.disabled) {
+			var dc = this.calendar.dateCollection;
+			
+			if (dc) {
+				// loop through Calendar's current dateCollection
+				dc.each(function(dateObj){
+					var date = dateObj.date;
+					
+					var cell = this.calendar.getDateCell(date); // get the table cell for the current date
+					var store = this.calendar.store;
+					
+					if (cell) {
+						store.clearFilter();
+						store.filterBy(Ext.createDelegate(this.filterFn, this, [date], true)); // filter store for current date
+						if (store.getRange().length &gt; 0) {
+							// append the event markup
+							var t = this.eventTpl.append(cell, store.getRange(), true);
+						}
+					}
+				}, this);
+			}
+		}
+	},
+	
+<span id='Ext-ux-CalendarSimpleEvents-method-hideEvents'>	/**
+</span>	 * Hides all the event markers
+	 * This is added to the parent Calendar's class so must be executed via the parent
+	 */
+	hideEvents: function(){
+		this.simpleEventsPlugin.disabled = true;
+		
+		this.body.select('span.simple-event-wrapper').hide();
+	},
+	
+<span id='Ext-ux-CalendarSimpleEvents-method-showEvents'>	/**
+</span>	 * Shows all the event markers
+	 * This is added to the parent Calendar's class so must be executed via the parent
+	 */
+	showEvents: function(){
+		this.simpleEventsPlugin.disabled = false;
+		
+		this.body.select('span.simple-event-wrapper').show();
+	},
+	
+<span id='Ext-ux-CalendarSimpleEvents-method-removeEvents'>	/**
+</span>	 * Removes all the event markers and their markup
+	 * This is added to the parent Calendar's class so must be executed via the parent
+	 */
+	removeEvents: function(){
+		this.body.select('span.simple-event-wrapper').remove();
+	}	
+});
+</pre>
+</body>
+</html>

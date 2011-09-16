@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.ns('Ext.ux');
+
+<span id='Ext-ux-Calendar'>/**
+</span> * @class Ext.ux.Calendar
+ */
+Ext.ux.Calendar = Ext.extend(Ext.Panel, {
+
+	cls: 'ux-calendar',
+	autoHeight: true,
+	
+<span id='Ext-ux-Calendar-cfg-value'>	/**
+</span>	 * @cfg {Date} value Initially selected date.
+	 */
+	value: new Date(),
+	
+<span id='Ext-ux-Calendar-cfg-weekStart'>	/**
+</span>	 * @cfg {Number} weekStart Starting day of the week. (0 = Sunday, 1 = Monday ... etc)
+	 */
+	weekStart: 1,
+	
+<span id='Ext-ux-Calendar-cfg-minDate'>	/**
+</span>	 * @cfg {Date} minDate Minimum date allowed to be shown/selected
+	 */
+	minDate: null,
+	
+<span id='Ext-ux-Calendar-cfg-maxDate'>	/**
+</span>	 * @cfg {Date} maxDate Maximum date allowed to be shown/selected
+	 */
+	maxDate: null,
+	
+<span id='Ext-ux-Calendar-cfg-fullHeight'>	/**
+</span>	 * @cfg {Boolean} fullHeight True to have the calendar fill the height of the Panel
+	 */
+	fullHeight: true,
+	
+<span id='Ext-ux-Calendar-cfg-todayCls'>	/**
+</span>	 * @cfg {String} todayCls CSS class added to the today's date cell 
+	 */
+	todayCls: 'today',
+	
+<span id='Ext-ux-Calendar-cfg-selectedCls'>	/**
+</span>	 * @cfg {String} selectedCls CSS class added to the date cell that is currently selected 
+	 */
+	selectedCls: 'selected',
+	
+<span id='Ext-ux-Calendar-cfg-unselectableCls'>	/**
+</span>	 * @cfg {String} unselectableCls CSS class added to any date cells that are unselectable
+	 */
+	unselectableCls: 'unselectable',
+	
+<span id='Ext-ux-Calendar-cfg-prevMonthCls'>	/**
+</span>	 * @cfg {String} prevMonthCls CSS class added to any date cells that are part of the previous month
+	 */
+	prevMonthCls: 'prev-month',
+	
+<span id='Ext-ux-Calendar-cfg-nextMonthCls'>	/**
+</span>	 * @cfg {String} nextMonthCls CSS class added to any date cells that are part of the next month
+	 */
+	nextMonthCls: 'next-month',
+	
+<span id='Ext-ux-Calendar-cfg-weekendCls'>	/**
+</span>	 * @cfg {String} weekendCls CSS class added to any date cells that are on the weekend
+	 */
+	weekendCls: 'weekend',
+	
+<span id='Ext-ux-Calendar-cfg-prevPeriodCls'>	/**
+</span>	 * @cfg {String} prevPeriodCls CSS class added to the previous period navigation cell in the calendar's header
+	 */
+	prevPeriodCls: 'goto-prev',
+	
+<span id='Ext-ux-Calendar-cfg-nextPeriodCls'>	/**
+</span>	 * @cfg {String} nextPeriodCls CSS class added to the next period navigation cells in the calendar's header
+	 */
+	nextPeriodCls: 'goto-next',
+	
+<span id='Ext-ux-Calendar-property-commonTemplateFunctions'>	/**
+</span>	 * @property {Object} commonTemplateFunctions
+	 * @private
+	 */
+	commonTemplateFunctions: {
+		
+<span id='Ext-ux-Calendar-method-getClasses'>		/**
+</span>		 * Gets the classes that should be applied to the current day's cell
+		 * @method
+		 * @private
+		 * @param {Object} values 
+		 * @return {String}
+		 */
+		getClasses: function(values){
+			var classes = [];
+			
+			if(values.selected){
+				classes.push(this.me.selectedCls);
+			}
+			if(values.unselectable){
+				classes.push(this.me.unselectableCls);
+			}
+			if(values.prevMonth){
+				classes.push(this.me.prevMonthCls);
+			}
+			if(values.nextMonth){
+				classes.push(this.me.nextMonthCls);
+			}
+			if(values.weekend){
+				classes.push(this.me.weekendCls);
+			}
+			
+			return classes.join(' ');
+		},
+		
+<span id='Ext-ux-Calendar-method-isEndOfRow'>		/**
+</span>		 * Returns true if the specific index is at the end of the row
+		 * Used to determine if a row terminating tag is needed
+		 * @method
+		 * @private
+		 * @param {Number} currentIndex
+		 * @return {Number}
+		 */
+		isEndOfRow: function(currentIndex){
+			return (currentIndex % 7) === 0 &amp;&amp; (currentIndex &gt; 0)
+		},
+		
+<span id='Ext-ux-Calendar-method-isEndOfPeriod'>		/**
+</span>		 * Returns true if the specific index is at the current mode's period
+		 * Used to determine if another row opening tag is needed
+		 * @param {Number} currentIndex
+		 * @method
+		 * @private
+		 * @return {Number}
+		 */
+		isEndOfPeriod: function(currentIndex){
+			return currentIndex === this.me.totalDays[this.me.mode](this.me.value);
+		},
+		
+<span id='Ext-ux-Calendar-method-getDaysArray'>		/**
+</span>		 * Gets an array containing the first 7 dates to be used in headings
+		 * @method
+		 * @private
+		 * @param {Object} values
+		 * @return {Date[]}
+		 */
+		getDaysArray: function(values){
+			var daysArray = [];
+			
+			for(var i = 0; i &lt; 7; i++){
+				daysArray.push(values.dates[i])	
+			}
+			
+			return daysArray;
+		},
+		
+<span id='Ext-ux-Calendar-method-getHeaderClass'>		/**
+</span>		 * Gets the class to be added to the header cells
+		 * @method
+		 * @private
+		 * @param {Number} currentIndex
+		 * @return {Boolean}
+		 */
+		getHeaderClass: function(currentIndex){
+			return currentIndex === 1 ? this.me.prevPeriodCls : currentIndex === 7 ? this.me.nextPeriodCls : '';
+		}
+	},
+	
+
+<span id='Ext-ux-Calendar-method-constructor'>	/**
+</span>	 * Instantiate a new calendar
+	 * @method
+	 */
+	constructor: function(config) {
+	
+		this.tpl = new Ext.XTemplate(
+		'&lt;table class=&quot;{[this.me.mode]}&quot;&gt;',
+		
+			'&lt;thead&gt;',
+				'&lt;tr&gt;',
+					'&lt;tpl for=&quot;this.getDaysArray(values)&quot;&gt;',
+						'&lt;th class=&quot;{[this.getHeaderClass(xindex)]}&quot;&gt;',
+							'&lt;tpl if=&quot;xindex === 4&quot;&gt;',
+								'&lt;span&gt;{[parent.currentDate.format(&quot;F&quot;)]} {[parent.currentDate.format(&quot;Y&quot;)]}&lt;/span&gt;',
+							'&lt;/tpl&gt;',
+							'{date:date(&quot;D&quot;)}',
+						'&lt;/th&gt;',
+					'&lt;/tpl&gt;',
+				'&lt;/tr&gt;',
+			'&lt;/thead&gt;',
+		
+			'&lt;tbody&gt;',
+				'&lt;tr&gt;',
+				'&lt;tpl for=&quot;dates&quot;&gt;',
+				
+					'&lt;td class=&quot;day {[this.getClasses(values)]}&quot; datetime=&quot;{[this.me.getDateAttribute(values.date)]}&quot;&gt;',
+						'{date:date(&quot;j&quot;)}',
+					'&lt;/td&gt;',
+					
+					'&lt;tpl if=&quot;this.isEndOfRow(xindex)&quot;&gt;',
+						'&lt;/tr&gt;',
+						'&lt;tpl if=&quot;!this.isEndOfPeriod(xindex)&quot;&gt;',
+							'&lt;tr&gt;',
+						'&lt;/tpl&gt;',
+					'&lt;/tpl&gt;',
+				
+				'&lt;/tpl&gt;',
+				'&lt;/tr&gt;',
+			'&lt;/tbody&gt;',
+		'&lt;/table&gt;', Ext.apply(this.commonTemplateFunctions, {me: this}));
+
+		Ext.apply(this, config || {});
+
+		this.addEvents(
+		
+<span id='Ext-ux-Calendar-event-refresh'>			/**
+</span>			 * @event refresh Fires when the Calendar's view is regenerated
+			 */
+			'refresh'
+		
+		);
+
+		Ext.ux.Calendar.superclass.constructor.call(this, config);
+
+		this.minDate = this.minDate ? this.minDate.clearTime(true) : null;
+		this.maxDate = this.maxDate ? this.maxDate.clearTime(true) : null;
+	},
+	
+	initComponent: function(){
+		
+		Ext.apply(this, {
+						
+			totalDays: {
+				month: function(date){
+					var firstDate = date.getFirstDateOfMonth();
+					
+					return this.isWeekend(firstDate) ? 42 : 35;
+				},
+				week: function(date){
+					return 7;
+				}
+			},
+			
+			modeStartFns: {
+				month: this.getMonthStartDate,
+				week: this.getWeekStartDate
+			},
+			
+			modeDeltaFns: {
+				month: this.getMonthDeltaDate,
+				week: this.getWeekDeltaDate
+			}
+		});
+		
+		Ext.ux.Calendar.superclass.initComponent.call(this);
+		
+		this.previousValue = this.value;
+		
+		this.on('afterrender', this.refresh, this);
+	},
+
+	onRender: function(ct, position) {
+		Ext.ux.Calendar.superclass.onRender.apply(this, arguments);
+
+		this.body.on({
+			click: this.onDayTap,
+			scope: this,
+			delegate: 'td'
+		});
+		
+		this.body.on({
+			click: this.onTableHeaderTap,
+			scope: this,
+			delegate: 'th'
+		});
+	},
+	
+<span id='Ext-ux-Calendar-method-setMode'>	/**
+</span>	 * Changes the Calendar's mode
+	 * @method
+	 * @param {String} mode Valid values are 'month' and 'week'
+	 * @return {void}
+	 */
+	setMode: function(mode){
+		this.mode = mode;
+		
+		this.refresh();
+	},
+	
+<span id='Ext-ux-Calendar-method-syncHeight'>	/**
+</span>	 * Updates the Calendar's table's height to match the wrapping Panel if
+	 * fullHeight is set to true
+	 * @method
+	 * @private
+	 * @return {void}
+	 */
+	syncHeight: function(){
+		if(this.fullHeight){
+			this.body.down('table').setHeight(this.body.getHeight());
+		}
+	},
+
+<span id='Ext-ux-Calendar-method-refresh'>	/**
+</span>	 * Refreshes the Calendar focussed around the date in &quot;this.value&quot;.
+	 * Fires the 'refresh' event
+	 * @method
+	 * @return {void}
+	 */
+	refresh: function() {
+		var d = this.value || new Date();
+		
+		this.currentDate = d;
+		
+		this.dateCollection = this.getDateCollection(this.currentDate.getDate(), this.currentDate.getMonth(), this.currentDate.getFullYear());
+		
+		this.update({
+			currentDate: this.currentDate,
+			dates: this.dateCollection.items
+		});
+		// will force repaint() on iPod Touch 4G
+		this.body.getHeight();
+
+		this.syncHeight();
+		
+		this.dateCellEls = this.body.select('td.day');
+		
+		this.fireEvent('refresh');
+	},
+	
+<span id='Ext-ux-Calendar-method-onDayTap'>	/**
+</span>	 * Handler for a tap on a day's cell
+	 * @method
+	 * @private
+	 * @param {Object} e
+	 * @param {Object} el
+	 * @return {void}
+	 */
+	onDayTap: function(e, el){
+		el = Ext.fly(el);
+	
+		if (!el.hasCls(this.unselectableCls)) {
+			this.setValue(this.getCellDate(el));
+		}
+	},
+	
+<span id='Ext-ux-Calendar-method-onTableHeaderTap'>	/**
+</span>	 * Handler for a tap on the table header
+	 * @method
+	 * @private
+	 * @param {Object} e
+	 * @param {Object} el
+	 * @return {void}
+	 */
+	onTableHeaderTap: function(e, el){
+		el = Ext.fly(el);
+
+		if (el.hasCls(this.prevPeriodCls)) {
+			this.refreshDelta(-1);
+		}
+
+		if (el.hasCls(this.nextPeriodCls)) {
+			this.refreshDelta(1);
+		}
+	},
+	
+<span id='Ext-ux-Calendar-method-setValue'>	/**
+</span>	 * Set selected date.
+	 * @method
+	 * @param {Date} v Date to select.
+	 * @return {void}
+	 */
+	setValue: function(v) {
+		if (!this.isSameDay(this.value, v)) {
+			this.previousValue = this.value;
+			
+			if (Ext.isDate(v)) {
+				this.value = v;
+			}
+			else {
+				this.value = null;
+			}
+			
+			if (this.value) {
+				this.selectDate(this.value);
+			}
+		}
+	},
+	
+<span id='Ext-ux-Calendar-method-selectDate'>	/**
+</span>	 * Adds the selected class to the specified date's cell. If it isn't in the current view
+	 * then the calendar will be refreshed to move the date into view.
+	 * @method
+	 * @param {Object} date
+	 * @return {void}
+	 */
+	selectDate: function(date) {
+		var selectionChanged = false; // flag to store whether a date was selected on the current page
+		
+		this.removeSelectedCell();
+		
+		this.body.select('td').each(function(td) {
+			var clickedDate = this.getCellDate(td);
+			if (!td.hasCls(this.prevMonthCls) &amp;&amp; !td.hasCls(this.nextMonthCls) &amp;&amp; this.isSameDay(date, clickedDate)) {
+				td.addCls(this.selectedCls);
+					
+				if((this.value &amp;&amp; this.previousValue) &amp;&amp; !this.isSameDay(this.value, this.previousValue)){
+					this.fireEvent('selectionchange', this.value);	
+				}
+				
+				selectionChanged = true;
+			}
+		}, this);
+		
+		// if no date was selected then it 
+		// isn't in this month and so we must refresh the view completely
+		if(!selectionChanged){
+			this.refresh();
+		}
+	},
+	
+<span id='Ext-ux-Calendar-method-refreshDelta'>	/**
+</span>	 * Refreshes the calendar moving it forward (delta = 1) or backward (delta = -1)
+	 * @method
+	 * @param {integer} delta - integer representing direction (1 = forward, =1 = backward)
+	 * @return {void}
+	 */
+	refreshDelta: function(delta) {
+		var v = this.value || new Date();
+
+		var newDay = this.modeDeltaFns[this.mode](v, delta);
+
+		// don't move if we've reached the min/max dates
+		if (this.minDate &amp;&amp; newDay.getLastDateOfMonth() &lt; this.minDate) {
+			return;
+		}
+		if (this.maxDate &amp;&amp; newDay.getFirstDateOfMonth() &gt; this.maxDate) {
+			return;
+		}
+
+		this.setValue(newDay);
+	},
+	
+<span id='Ext-ux-Calendar-method-removeSelectedCell'>	/**
+</span>	 * Removes the selectedCls from any cells that have it
+	 * @method
+	 * @return {void}
+	 */
+	removeSelectedCell: function() {
+		this.body.select('.' + this.selectedCls).removeCls(this.selectedCls);
+	},
+	
+<span id='Ext-ux-Calendar-method-getDateCollection'>	/**
+</span>	 * Builds a collection of dates that need to be rendered in the current configuration
+	 * @method
+	 * @private
+	 * @param {Object} day
+	 * @param {Object} month
+	 * @param {Object} year
+	 * @return {Ext.util.MixedCollection} Mixed Collection of Objects with configuration for each date cell
+	 */
+	getDateCollection: function(day, month, year){
+		var dateCollection = new Ext.util.MixedCollection(), // collection to store all the dates to be rendered
+			unselectable = true, // variable used to indicate whether a day is allowed to be selected
+			baseDate = new Date(year, month, day), // date to use as base
+		
+			iterDate = Ext.createDelegate(this.modeStartFns[this.mode], this)(day, month, year), // date current mode will start at
+			totalDays = Ext.createDelegate(this.totalDays[this.mode], this)(baseDate); // total days to be rendered in current mode
+		
+		// create dates based on startDate and number of days to render
+		for(var i = 0; i &lt; totalDays; i++){
+			
+			// increment the date by one day (except on first run)
+			iterDate = new Date(iterDate.getFullYear(), iterDate.getMonth(), iterDate.getDate() + (i===0?0:1));
+			
+			unselectable = (this.minDate &amp;&amp; iterDate &lt; this.minDate) || (this.maxDate &amp;&amp; iterDate &gt; this.maxDate);
+			
+			// add to the collection
+			dateCollection.add({
+				today: this.isSameDay(iterDate, new Date()),
+				unselectable: unselectable,
+				selected: this.isSameDay(iterDate, this.value) &amp;&amp; !unselectable,
+				prevMonth: (iterDate.getMonth() &lt; baseDate.getMonth()),
+				nextMonth: (iterDate.getMonth() &gt; baseDate.getMonth()),
+				weekend: this.isWeekend(iterDate),
+				date: iterDate
+			});
+		}
+		
+		return dateCollection;
+	},
+	
+<span id='Ext-ux-Calendar-method-getMonthStartDate'>	/**
+</span>	 * Returns the first day that should be visible for a month view (may not be in the same month)
+	 * Gets the first day of the week that the 1st of the month falls on.
+	 * @method
+	 * @private
+	 * @param {Number} day
+	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
+	 * @param {Number} year
+	 * @return {Date}
+	 */
+	getMonthStartDate: function(day, month, year){
+		return this.getWeekStartDate(1, month, year);
+	},
+	
+<span id='Ext-ux-Calendar-method-getWeekStartDate'>	/**
+</span>	 * Returns the first day of the week based on the specified date.
+	 * @method
+	 * @private
+	 * @param {Number} day
+	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
+	 * @param {Number} year
+	 * @return {Date}
+	 */
+	getWeekStartDate: function(day, month, year){
+		var currentDate = new Date(year, month, day);
+		var dayOffset = currentDate.getDay() - this.weekStart;
+		dayOffset = dayOffset &lt; 0 ? 6 : dayOffset;
+		
+		return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()-0-dayOffset);
+	},
+	
+<span id='Ext-ux-Calendar-method-getMonthDeltaDate'>	/**
+</span>	 * Returns a new date based on the date passed and the delta value for MONTH view.
+	 * @method
+	 * @private
+	 * @param {Date} date
+	 * @param {Number} delta
+	 * @return {Date}
+	 */
+	getMonthDeltaDate: function(date, delta){
+		var newMonth = date.getMonth() + delta,
+			newYear = date.getFullYear() + (newMonth &gt; 11 ?  1 : 0),
+			newDate = new Date(newYear, newMonth, 1);
+		
+		newDate.setDate(newDate.getDaysInMonth() &lt; date.getDate() ? newDate.getDaysInMonth() : date.getDate());
+		
+		return newDate;
+	},
+	
+<span id='Ext-ux-Calendar-method-getWeekDeltaDate'>	/**
+</span>	 * Returns a new date based on the date passed and the delta value for WEEK view.
+	 * @method
+	 * @private
+	 * @param {Date} date
+	 * @param {Number} delta
+	 * @return {Date}
+	 */
+	getWeekDeltaDate: function(date, delta){
+		return new Date(date.getFullYear(), date.getMonth(), date.getDate() + (delta * 7));
+	},
+	
+<span id='Ext-ux-Calendar-method-isSameDay'>	/**
+</span>	 * Returns true if the two dates are the same date (ignores time)
+	 * @method
+	 * @private
+	 * @param {Object} date1
+	 * @param {Object} date2
+	 * @return {Boolean}
+	 */
+	isSameDay: function(date1, date2){
+		return date1.clearTime(true).getTime() === date2.clearTime(true).getTime();
+	},
+<span id='Ext-ux-Calendar-method-isWeekend'>	/**
+</span>	 * Returns true if the specified date is a Saturday/Sunday
+	 * @method
+	 * @private
+	 * @param {Object} date
+	 * @return {Boolean}
+	 */
+	isWeekend: function(date){
+		return date.getDay() === 0 || date.getDay() === 6;
+	},
+
+<span id='Ext-ux-Calendar-method-getCellDate'>	/**
+</span>	 * Returns the Date associated with the specified cell
+	 * @method
+	 * @param {Ext.Element} dateCell
+	 * @return {Date}
+	 */
+	getCellDate: function(dateCell) {
+		var date = dateCell.dom.getAttribute('datetime');
+		return this.stringToDate(date);
+	},
+	
+<span id='Ext-ux-Calendar-method-getDateCell'>	/**
+</span>	 * Returns the cell representing the specified date
+	 * @method
+	 * @param {Ext.Element} date
+	 * @return {Ext.Element}
+	 */
+	getDateCell: function(date){
+		return this.body.select('td[datetime=&quot;' + this.getDateAttribute(date) + '&quot;]').first();
+	},
+	
+<span id='Ext-ux-Calendar-method-getDateAttribute'>	/**
+</span>	 * Returns a string format of the specified date
+	 * Used when assigning the datetime attribute to a table cell
+	 * @method
+	 * @private
+	 * @param {Date} date
+	 * @return {String}
+	 */
+	getDateAttribute: function(date){
+		return date.format('Y-m-d');
+	},
+
+<span id='Ext-ux-Calendar-method-stringToDate'>	/**
+</span>	 * Converts a string date (used to add to table cells) to a Date object
+	 * @method
+	 * @private
+	 * @param {String} dateString
+	 * @return {Date}
+	 */
+	stringToDate: function(dateString) {
+		var a = dateString.split('-');
+		return new Date(Number(a[0]), (a[1]-1), Number(a[2]));
+	}
+});
+</pre>
+</body>
+</html>

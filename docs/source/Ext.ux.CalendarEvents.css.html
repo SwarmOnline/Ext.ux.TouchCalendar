@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">.ux-calendar div.event-bar
+{
+	height: 30px;
+	background-color: red;
+	position: absolute;
+	-webkit-border-radius: 4px;
+	font-size: 10px;
+	padding: 0px 4px;
+	overflow: hidden;
+	z-index: 100;
+	
+	background-color: #bccbe2;
+	border: 1px solid #78889f;
+}
+
+.ux-calendar div.event-bar.event-bar-selected
+{
+	background-color: #78889f;
+}
+
+.ux-calendar div.event-bar.wrap-end
+{
+	-webkit-border-top-right-radius: 0;
+	-webkit-border-bottom-right-radius: 0;
+}
+
+.ux-calendar div.event-bar.wrap-start
+{
+	-webkit-border-top-left-radius: 0;
+	-webkit-border-bottom-left-radius: 0;
+}
+
+.ux-calendar td.day {
+	dispaly: block;
+}
+
+.ux-calendar td.day.date-cell-hover
+{
+	background-color: red;
+	background-image: none;
+}
+</pre>
+</body>
+</html>

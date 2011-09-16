@@ -1,91 +1,46 @@
 /**
- * Ext.data.Model to store information about the EventBars to be generated from the 
- * bound data store
- * @private
+ * @class Ext.ux.CalendarEvents
  */
-Ext.regModel('Ext.ux.CalendarEventBarModel', {
-    fields: [{
-        name: 'EventID',
-        type: 'string'
-    }, {
-        name: 'Date',
-        type: 'date'
-    }, {
-        name: 'BarLength',
-        type: 'int'
-    }, {
-        name: 'BarPosition',
-        type: 'int'
-    }, 'Record'],
-    
-    hasMany: [{
-        model: 'Ext.ux.CalendarEventBarModel',
-        name: 'linked'
-    }]
-});
-
-Ext.override(Ext.util.Region, {
-	/**
-	 * Figures out if the Event Bar passed in is within the boundaries of the current Date Cell (this)
-	 * @method
-	 * @param {Object} region
-	 */
-    partial: function(region){
-        var me = this, // cell
-			dragWidth = region.right - region.left,
-			dragHeight = region.bottom - region.top,
-			dropWidth = me.right - me.left,
-			dropHeight = me.bottom - me.top,
-			 
-			verticalValid = region.top > me.top && region.top < me.bottom;
-			        
-        	horizontalValid = region.left > me.left && region.left < me.right;
-        
-        return horizontalValid && verticalValid;
-    }
-});
-
-
 Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 
     /**
-     * @cfg {String} Name of the Model field which contains the Event's Start date
+     * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
      */
     startEventField: 'start',
     
     /**
-     * @cfg {Stirng} Name of the Model field which contains the Event's End date
+     * @cfg {Stirng} endEventField Name of the Model field which contains the Event's End date
      */
     endEventField: 'end',
     
     /**
-     * @cfg {String} Base CSS class given to each EventBar
+     * @cfg {String} eventBarCls Base CSS class given to each EventBar
      */
     eventBarCls: 'event-bar',
     
     /**
-     * @cfg {String} CSS class given to the EventBars' wrapping element
+     * @cfg {String} eventWrapperCls CSS class given to the EventBars' wrapping element
      */
     eventWrapperCls: 'event-wrapper',
     
     /**
-     * @cfg {String} CSS class given to the EventBar after it has been selected
+     * @cfg {String} eventBarSelectedCls CSS class given to the EventBar after it has been selected
      */
     eventBarSelectedCls: 'event-bar-selected',
     
 	/**
-	 * @cfg {String} CSS class given to date cells when an event is dragged over
+	 * @cfg {String} cellHoverCls CSS class given to date cells when an event is dragged over
 	 */
     cellHoverCls: 'date-cell-hover',
     
 	/**
-	 * @cfg {Boolean} Decides whether the configured startEventField and endEventField 
+	 * @cfg {Boolean} autoUpdateEvent Decides whether the configured startEventField and endEventField 
 	 * dates are updated after an event is dragged and dropped
 	 */
 	autoUpdateEvent: true,
 	
     /**
-     * @cfg {Number} Space (in pixels) between EventBars
+     * @cfg {Number} eventBarSpacing Space (in pixels) between EventBars
      */
     eventBarSpacing: 4,
     
@@ -143,7 +98,9 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			 * @param {Ext.Element} currentDateCell The Ext.Element representing the table cell of the current date
 			 * @param {Event} e The event object for the drag operation
 			 */
-			'eventdrag');
+			'eventdrag'
+			
+		);
         
         this.calendar.on({
             refresh: this.refreshEvents,
@@ -154,6 +111,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
     /**
      * Regenerates the Event Bars
      * @method
+     * @return {void}
      */
     refreshEvents: function(){
         this.removeEvents();
@@ -175,9 +133,14 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	createDroppableRegion: function(){
 		var me = this;
 		
+		/**
+		 * @property {Ext.util.Droppable} droppable Contains the Ext.util.Droppable instance on the Calendar's body element
+		 */
 		this.droppable = new Ext.util.Droppable(this.calendar.body, {
 			/**
 			 * Override for Droppable's onDrag function to add hover class to active date cell
+			 * @method			 
+			 * @private
 			 * @param {Object} draggable
 			 * @param {Object} e
 			 */
@@ -216,6 +179,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	/**
 	 * Handler for when an Event's drag is invalid and must be reset
 	 * @method
+	 * @private
 	 * @param {Ext.util.Droppable} droppable
 	 * @param {Ext.util.Draggable} draggable
 	 * @param {Event} e
@@ -234,6 +198,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	 * Function to handle the dropping of an event onto the calendar.
 	 * Figures out what date is was dropped on and updates its store with the new details.
 	 * @method
+	 * @private
 	 * @param {Ext.util.Droppable} droppable
 	 * @param {Ext.util.Draggable} draggable
 	 * @param {Event} e
@@ -278,7 +243,11 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
      * @private
      */
     generateEventBars: function(){
-        // create a new store to store the Event Bars as they are defined
+		/**
+		 * @property {Ext.data.Store} eventBarStore Store to store the Event Bar definitions. It is defined 
+		 * with the Ext.ux.CalendarEventBarModel model.
+		 * @private
+		 */
         this.eventBarStore = new Ext.data.Store({
             model: 'Ext.ux.CalendarEventBarModel',
             data: []
@@ -559,6 +528,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
     /**
      * Remove the selected CSS class from all selected Event Bars
      * @method
+     * @return {void}
      */
     deselectEvents: function(){
         this.calendar.body.select('.' + this.eventBarSelectedCls).removeCls(this.eventBarSelectedCls);
@@ -598,5 +568,56 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		if(this.droppable){
 			this.droppable = null;
 		}
+    }
+});
+
+
+/**
+ * Ext.data.Model to store information about the EventBars to be generated from the 
+ * bound data store
+ * @private
+ */
+Ext.regModel('Ext.ux.CalendarEventBarModel', {
+    fields: [{
+        name: 'EventID',
+        type: 'string'
+    }, {
+        name: 'Date',
+        type: 'date'
+    }, {
+        name: 'BarLength',
+        type: 'int'
+    }, {
+        name: 'BarPosition',
+        type: 'int'
+    }, 'Record'],
+    
+    hasMany: [{
+        model: 'Ext.ux.CalendarEventBarModel',
+        name: 'linked'
+    }]
+});
+
+/**
+ * @class Ext.util.Region
+ */
+Ext.override(Ext.util.Region, {
+	/**
+	 * Figures out if the Event Bar passed in is within the boundaries of the current Date Cell (this)
+	 * @method
+	 * @param {Object} region
+	 */
+    partial: function(region){
+        var me = this, // cell
+			dragWidth = region.right - region.left,
+			dragHeight = region.bottom - region.top,
+			dropWidth = me.right - me.left,
+			dropHeight = me.bottom - me.top,
+			 
+			verticalValid = region.top > me.top && region.top < me.bottom;
+			        
+        	horizontalValid = region.left > me.left && region.left < me.right;
+        
+        return horizontalValid && verticalValid;
     }
 });

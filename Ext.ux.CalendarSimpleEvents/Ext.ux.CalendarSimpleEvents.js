@@ -1,7 +1,10 @@
+/**
+ * @class Ext.ux.CalendarSimpleEvents 
+ */
 Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	
 	/**
-	 * Name of the field which contains the Event's date
+	 * @cfg {Date} dateField Name of the field which contains the Event's date
 	 */
 	dateField: 'start',
 	
