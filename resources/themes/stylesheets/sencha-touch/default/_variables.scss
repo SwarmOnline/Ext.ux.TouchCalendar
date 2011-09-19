@@ -1,0 +1,77 @@
+$theme-name: 'default';
+
+/**
+ * @global {boolean} [$include-html-style=true] Optionally remove included HTML styles/typography (for components with styleHtmlContent: true). Styles are scoped to .x-html. Set to false to reduce CSS weight.
+ */
+$include-html-style: true !default;
+
+/**
+ * @global {boolean} [$include-default-icons=true] Optionally remove the default icon set which includes the following toolbar and tab bar icons: action, add, arrow_down, arrow_left, arrow_right, arrow_up, bookmarks, compose, delete, download, favorites, home, info, locate, maps, more, organize, refresh, reply, search, settings, star, team, time, trash, and user. Set to false to reduce CSS weight.
+ */
+$include-default-icons: true !default;
+
+/**
+ * @global {boolean} [$include-form-sliders=true] Decides if default HTML styles are included (for components with styleHtmlContent: true). Class is applied to .x-html.
+ */
+$include-form-sliders: true !default;
+
+/**
+ * @global {boolean} [$include-floating-panels=true] Decides whether or not to include floating panels (useful to disable for iPhone applications which do not typically have floating menus).
+ */
+$include-floating-panels: true !default;
+
+/**
+ * @global {boolean} [$include-default-uis=true] Decides whether or not to include floating panels (useful to disable for iPhone applications which do not typically have floating menus).
+ */
+$include-default-uis: true !default;
+
+/**
+ * @global {boolean} [$include-highlights=true] Optionally disable all gradients, text-shadows, and box-shadows. Useful for CSS debugging, non-performant browsers, or minimalist designs.
+ */
+$include-highlights: true !default; // Can disable all theme-generated gradients, text-shadows, and box-shadows.
+
+/**
+ * @global {boolean} [$include-border-radius=true] Optionally disable all border-radius. Useful for CSS debugging, non-performant browsers, or minimalist designs.
+ */
+$include-border-radius: true !default; // Can disable all rounded corners
+
+/**
+ * @global {boolean} [$basic-slider=false] Optionally remove CSS3 effects from the slider component for improved performance.
+ */
+$basic-slider: false !default;
+
+/**
+ * @global {color} [$base-color=#354F6E] The primary color variable from which most elements derive their color scheme.
+ */
+$base-color: #354F6E !default; // Graphite
+
+/**
+ * @global {string} [$base-gradient='matte'] The primary gradient variable from which most elements derive their color scheme.
+ * @see background-gradient
+ */
+$base-gradient: 'matte' !default;
+
+/**
+ * @global {color} [$alert-color=red] Color used for elements like badges, errors, and "decline" UIs (eg. on buttons).
+ */
+$alert-color: red !default;
+
+/**
+ * @global {color} [$confirm-color=#92cf00] Color used for elements like success messages, and "confirm" UIs (eg. on buttons).
+ */
+$confirm-color: #92cf00 !default; // Green
+
+/**
+ * @global {color} [$active-color=darken(saturate($base-color, 55%), 10%)] Color used for elements like selected rows, "action" UIs (eg. on buttons) and certain overlays like the picker mask.
+ */
+$active-color: darken(saturate($base-color, 55%), 10%) !default;
+
+/**
+ * @global {color} [$page-bg-color=#eee] Background color for fullscreen components.
+ */
+$page-bg-color: #eee !default;
+
+/**
+ * @global {measurement} [$global-row-height=2.6em] The minimum row height for items like toolbars and list items.
+ */
+$global-row-height: 2.6em !default;

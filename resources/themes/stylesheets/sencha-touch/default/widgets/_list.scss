@@ -1,0 +1,297 @@
+@import '../global';
+
+
+/**
+ * @global {color} [$list-color=#000]
+ * Text color for list rows.
+ *
+ * @class Ext.List
+ * @xtype list
+ */
+$list-color: #000 !default;
+
+/**
+ * @global {color} [$list-bg-color=#f7f7f7]
+ * Background-color for list rows.
+ *
+ * @class Ext.List
+ * @xtype list
+ */
+$list-bg-color: #f7f7f7 !default;
+
+/**
+ * @global {color} [$list-pressed-color=lighten($active-color, 50%)]
+ * Background-color for pressed list rows.
+ *
+ * @class Ext.List
+ * @xtype list
+ */
+$include-list-highlights: $include-highlights !default;
+
+/**
+ * @global {color} [$list-pressed-color=lighten($active-color, 50%)]
+ * Background-color for pressed list rows.
+ *
+ * @class Ext.List
+ * @xtype list
+ */
+$list-pressed-color: lighten($active-color, 50%) !default;
+
+/**
+ * @global {color} [$list-active-color=$active-color]
+ * Background-color for selected list rows.
+ *
+ * @class Ext.List
+ * @xtype list
+ */
+$list-active-color: $active-color !default;
+
+/**
+ * @global {string} [$list-active-gradient=$base-gradient]
+ * Gradient style for selected list rows.
+ *
+ * @class Ext.List
+ * @xtype list
+ */
+$list-active-gradient: $base-gradient !default;
+
+/**
+ * @global {color} [$list-header-bg-color=lighten(saturate($base-color, 10%), 20%)]
+ * Background-color for list header rows (in grouped lists).
+ *
+ * @class Ext.List
+ * @xtype list
+ */
+$list-header-bg-color: lighten(saturate($base-color, 10%), 20%) !default;
+
+/**
+ * @global {string} [$list-header-gradient=$base-gradient]
+ * Gradient style for list header rows (in grouped lists).
+ *
+ * @class Ext.List
+ * @xtype list
+ * @see background-gradient
+ */
+$list-header-gradient: $base-gradient !default;
+
+/**
+ * @global {measurement} [$list-disclosure-size=1.7em]
+ * Default size (width/height) for disclosure icons.
+ *
+ * @class Ext.List
+ * @xtype list
+ */
+$list-disclosure-size: 1.7em;
+
+/**
+ * Includes default list styles.
+ *
+ * @class Ext.List
+ * @xtype list
+ */
+@mixin sencha-list {
+  .x-list {
+    background-color: $list-bg-color;
+    position: relative;
+
+    .x-list-disclosure {
+      overflow: visible;
+      -webkit-mask: 0 0 theme_image($theme-name, "disclosure.png") no-repeat;
+      -webkit-mask-size: $list-disclosure-size;
+      @include background-gradient(saturate($active-color, 10%));
+      width: $list-disclosure-size;
+      height: $list-disclosure-size;
+    }
+
+    &.x-list-indexed .x-list-disclosure {
+      margin-right: 1.3em;
+    }
+
+    .x-item-selected .x-list-disclosure {
+      background: #fff none;
+    }
+
+    .x-list-item {
+      position: relative;
+      color: $list-color;
+      padding: 0.5em 0.8em;
+
+      min-height: $global-row-height;
+      @include display-box;
+
+      border-top: 1px solid darken($list-bg-color, 15%);
+
+      &:first-child {
+        border-top: none;
+      }
+
+      &:last-child {
+        border-bottom: 1px solid darken($list-bg-color, 15%);
+      }
+
+      .x-list-item-body {
+        @include box-flex(1);
+        /*@include display-box;*/
+        @include box-align(center);
+        @include box-orient(horizontal);
+
+        span {
+          font-size: .95em;
+        }
+      }
+
+      &.x-item-pressed {
+        @if $include-list-highlights {
+          border-top-color: $list-pressed-color;
+        }
+
+        background: $list-pressed-color none;
+      }
+
+      &.x-item-selected {
+        @include background-gradient($list-active-color, $list-active-gradient);
+        @include color-by-background($list-active-color);
+        @include bevel-by-background($list-active-color);
+
+        @if $include-list-highlights {
+          border-top-color: lighten($list-active-color, 10%);
+          border-bottom-color: darken($list-active-color, 15%);
+        }
+      }
+    }
+  }
+
+  .x-list-header {
+    @include background-gradient($list-header-bg-color, $list-header-gradient);
+    @include color-by-background($list-header-bg-color, 30%);
+    @include bevel-by-background($list-header-bg-color);
+    border-top: 1px solid $list-header-bg-color;
+    border-bottom: 1px solid darken($list-header-bg-color, 20%);
+    font-weight: bold;
+    font-size: 0.8em;
+    padding: 0.2em 1.02em;
+    @include bevel-by-background($list-header-bg-color);
+    @if $include-list-highlights {
+      -webkit-box-shadow: 0px .1em .3em rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  .x-list-header-swap {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .x-list-round {
+    background-color: darken($list-bg-color, 5%);
+    .x-list-group-items > *,
+    &.x-list-flat .x-list-parent > * {
+      border-right: 1px solid darken($list-bg-color, 15%);
+      border-left: 1px solid darken($list-bg-color, 15%);
+      background-color: $list-bg-color;
+      margin: 0 1.2em;
+      &:first-child {
+        margin: 1.2em 1.2em 0;
+        border-top: 1px solid darken($list-bg-color, 15%);
+        @if $include-border-radius { @include border-top-radius(.4em); }
+      }
+      &:last-child {
+        margin: 0 1.2em 1.2em;
+        border-bottom: 1px solid darken($list-bg-color, 15%);
+        @include border-bottom-radius(.4em)
+      }
+    }
+  }
+}
+
+@mixin sencha-list-paging {
+  .x-list-paging {
+    height: 50px;
+    .x-loading-spinner {
+      display: none;
+      margin: auto;
+    }
+
+    .x-list-paging-msg {
+      text-align: center;
+      color: $active-color;
+      padding-top: 10px;
+      @if $include-border-radius { @include border-radius(6px); }
+    }
+
+    &.x-loading {
+      .x-loading-spinner {
+        display: block;
+      }
+
+      .x-list-paging-msg {
+        display: none;
+      }
+    }
+  }
+}
+
+@mixin sencha-list-pullrefresh {
+  .x-list-pullrefresh {
+    @include display-box;
+    @include box-orient(horizontal);
+    @include box-align(center);
+    @include box-pack(center);
+    position: absolute;
+    top: -5em;
+    left: 0;
+    width: 100%;
+    height: 4.5em;
+
+    .x-loading-spinner {
+      display: none;
+    }
+  }
+
+  .x-list-pullrefresh-arrow {
+    width: 2.5em;
+    height: 4.5em;
+
+    -webkit-mask: center center theme_image($theme-name, "pullarrow.png") no-repeat;
+    -webkit-mask-size: 2em 3em;
+    /*-webkit-transition-property: -webkit-transform;*/
+    /*-webkit-transition-duration: 200ms;*/
+    -webkit-transform: rotate(0deg);
+    background-color: #111;
+  }
+
+  .x-list-pullrefresh-release .x-list-pullrefresh-arrow {
+    -webkit-transform: rotate(-180deg);
+  }
+
+  .x-list-pullrefresh-wrap {
+    width: 20em;
+    font-size: 0.7em;
+  }
+
+  .x-list-pullrefresh-message {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-bottom: 0.1em;
+    text-align: center;
+  }
+
+  .x-list-pullrefresh-updated {
+    text-align: center;
+  }
+
+  .x-list-pullrefresh-loading {
+    /*position: relative;*/
+    /*top: 0;*/
+
+    .x-loading-spinner {
+      display: block;
+    }
+
+    .x-list-pullrefresh-arrow {
+      display: none;
+    }
+  }
+}

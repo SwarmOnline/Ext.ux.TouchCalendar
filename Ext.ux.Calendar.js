@@ -2,6 +2,7 @@ Ext.ns('Ext.ux');
 
 /**
  * @class Ext.ux.Calendar
+ * @author Stuart Ashworth
  */
 Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 
@@ -74,6 +75,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	nextPeriodCls: 'goto-next',
 	
 	/**
+	 * Object containing common functions to be passed to XTemplate for internal use
 	 * @property {Object} commonTemplateFunctions
 	 * @private
 	 */
@@ -210,8 +212,17 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 			/**
 			 * @event refresh Fires when the Calendar's view is regenerated
+			 * @param {Ext.ux.Calendar} this 
 			 */
-			'refresh'
+			'refresh',
+			
+			/**
+			 * @event selectionchange Fires when the Calendar's selected date is changed
+			 * @param {Ext.ux.Calendar} this
+			 * @param {Date} previousValue Previously selected date
+			 * @param {Date} newvalue Newly selected date
+			 */
+			'selectionchange'
 		
 		);
 
@@ -319,7 +330,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.dateCellEls = this.body.select('td.day');
 		
-		this.fireEvent('refresh');
+		this.fireEvent('refresh', this);
 	},
 	
 	/**
@@ -399,7 +410,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 				td.addCls(this.selectedCls);
 					
 				if((this.value && this.previousValue) && !this.isSameDay(this.value, this.previousValue)){
-					this.fireEvent('selectionchange', this.value);	
+					this.fireEvent('selectionchange', this, this.previousValue, this.value);	
 				}
 				
 				selectionChanged = true;
@@ -416,7 +427,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	/**
 	 * Refreshes the calendar moving it forward (delta = 1) or backward (delta = -1)
 	 * @method
-	 * @param {integer} delta - integer representing direction (1 = forward, =1 = backward)
+	 * @param {Number} delta - integer representing direction (1 = forward, =1 = backward)
 	 * @return {void}
 	 */
 	refreshDelta: function(delta) {
@@ -448,9 +459,9 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * Builds a collection of dates that need to be rendered in the current configuration
 	 * @method
 	 * @private
-	 * @param {Object} day
-	 * @param {Object} month
-	 * @param {Object} year
+	 * @param {Number} day
+	 * @param {Number} month
+	 * @param {Number} year
 	 * @return {Ext.util.MixedCollection} Mixed Collection of Objects with configuration for each date cell
 	 */
 	getDateCollection: function(day, month, year){

@@ -1,0 +1,109 @@
+@import '../global';
+
+/**
+ * @global {measurement} [$toolbar-spacing=.2em]
+ * Space between items in a toolbar (like buttons and fields)
+ *
+ * @class Ext.Toolbar
+ * @xtype toolbar
+ */
+$toolbar-spacing: .2em !default;
+
+/**
+ * @global {string} [$toolbar-gradient=$base-gradient]
+ * Background gradient style for toolbars.
+ *
+ * @class Ext.Toolbar
+ * @xtype toolbar
+ * @see background-gradient
+ */
+$toolbar-gradient: $base-gradient !default;
+
+/**
+ * @global {boolean} [$include-toolbar-uis=$include-default-uis]
+ * Optionally disable separate toolbar UIs (light and dark).
+ *
+ * @class Ext.Toolbar
+ * @xtype toolbar
+ */
+$include-toolbar-uis: $include-default-uis !default;
+
+/**
+ * Includes default toolbar styles.
+ *
+ * @class Ext.Toolbar
+ * @xtype toolbar
+ */
+@mixin sencha-toolbar {
+  
+  .x-toolbar {
+    height: $global-row-height;
+    padding: 0 $toolbar-spacing;
+    overflow: hidden;
+    position: relative;
+    
+    & > * {
+      z-index: 1;
+    }
+    
+    &.x-docked-top {
+      border-bottom: .1em solid;
+    }
+
+    &.x-docked-bottom {
+      border-top: .1em solid;
+    }
+  }
+  
+  .x-toolbar-title {
+    @include stretch;
+    z-index: 0;
+    line-height: $global-row-height - .5em;
+    font-size: 1.2em;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  @if $include-toolbar-uis {
+    @include sencha-toolbar-ui('dark', darken($base-color, 10%));
+    @include sencha-toolbar-ui('light', $base-color);
+  }
+}
+
+/**
+ * Creates a theme UI for toolbars.
+ *
+ * @param {string} $ui-label The name of the UI being created.
+ *   Can not included spaces or special punctuation (used in class names)
+ * @param {color} $color Base color for the UI.
+ * @param {string} [$gradient: $toolbar-gradient] Background gradient style for the UI.
+ *
+ * @example
+ * // SCSS
+ * @include sencha-toolbar-ui('sub', #58710D, 'glossy');
+ * 
+ * // JS
+ * var myTb = new Ext.Toolbar({title: 'My Green Glossy Toolbar', ui: 'sub'})
+ * 
+ * @class Ext.Toolbar
+ * @xtype toolbar
+ */
+@mixin sencha-toolbar-ui($ui-label, $color, $gradient: $toolbar-gradient) {
+  
+  $toolbar-border-color: darken($color, 50%);
+  $toolbar-button-color: darken($color, 10%);
+  
+  .x-toolbar-#{$ui-label} {
+    @include background-gradient($color, $gradient);
+    border-color: $toolbar-border-color;
+    
+    .x-toolbar-title {
+      @include color-by-background($color);
+      @include bevel-by-background($color);
+    }
+    
+    .x-button, .x-field-select .x-input-text, .x-field-select:before {
+      @include toolbar-button($toolbar-button-color, $gradient);
+    }
+  }
+}

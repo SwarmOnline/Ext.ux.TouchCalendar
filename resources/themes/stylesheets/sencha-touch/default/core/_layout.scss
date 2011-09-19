@@ -1,0 +1,28 @@
+@mixin sencha-layout {
+  
+  .x-container {
+    position: relative;
+  }
+  
+  .x-layout-box-inner {
+    display: -webkit-box;
+    position: relative;
+  }
+
+  .x-fit-item {
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .x-panel > .x-docked, .x-docked {
+    position: absolute;
+    z-index: 5;
+  }
+
+  .x-layout-fit {
+    overflow: hidden;
+  }
+}

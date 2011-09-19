@@ -1,0 +1,68 @@
+@import '../global';
+
+/**
+ * @global {measurement} [$index-bar-width=2.1em]
+ * Width of the index bar.
+ *
+ * @class Ext.IndexBar
+ * @xtype indexbar
+ */
+$index-bar-width: 2.1em !default;
+
+/**
+ * @global {color} [$index-bar-bg-color=hsla(hue($base-color), 10%, 60%, .8)]
+ * Background-color of the index bar.
+ *
+ * @class Ext.IndexBar
+ * @xtype indexbar
+ */
+$index-bar-bg-color: hsla(hue($base-color), 10%, 60%, .8) !default;
+
+/**
+ * @global {color} [$index-bar-color=darken(desaturate($base-color, 5%), 15%)]
+ * Text color of the index bar.
+ *
+ * @class Ext.IndexBar
+ * @xtype indexbar
+ */
+$index-bar-color: darken(desaturate($base-color, 5%), 15%) !default;
+
+/**
+ * Includes default index bar styles.
+ *
+ * @class Ext.FormPanel
+ * @xtype indexbar
+ */
+@mixin sencha-indexbar {
+  .x-indexbar {
+    padding: 0 .3em;
+    width: $index-bar-width;
+    @include display-box;
+    @include box-orient(vertical);
+    @include box-align(stretch);
+    @include box-pack(center);
+    position: absolute;
+    top: 1.5em;
+    right: 0;
+    bottom: 1em;
+    z-index: 3;
+  }
+  
+  .x-indexbar-body {
+    padding: .3em 0;
+  }
+  
+  .x-indexbar-pressed .x-indexbar-body {
+    @include border-radius(($index-bar-width - .6em)/2);
+    background-color: $index-bar-bg-color;
+  }
+  
+  .x-indexbar-item {
+    color: $index-bar-color;
+    font-size: 0.6em;
+    text-align: center;
+    line-height: 1.1em;
+    font-weight: bold;
+    display: block;
+  }
+}

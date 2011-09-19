@@ -1,5 +1,6 @@
 /**
  * @class Ext.ux.CalendarEvents
+ * @author Stuart Ashworth
  */
 Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 
@@ -352,7 +353,8 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
      * @param {Ext.data.Store} store The store to process - used to then recurse into
      */
     renderEventBars: function(store){
-    
+    	var me = this;
+		
         store.each(function(record){
             var eventRecord = this.getEventRecord(record.get('EventID')),
 				dayEl = this.calendar.getDateCell(record.get('Date')),
@@ -369,10 +371,39 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
             
             new Ext.util.Draggable(eventBar, {
                 revert: true,
-                listeners: {
-                    dragstart: this.onEventDragStart,
-                    scope: this
-                }
+				
+				/**
+				 * Override for Ext.util.Draggable's onStart method to process the Event Bar's element before dragging
+				 * and raise the 'eventdragstart' event
+				 * @method
+				 * @private
+				 * @param {Event} e
+				 */
+				onStart: function(e){
+					
+			        var draggable = this,
+						eventID = draggable.el.getAttribute('eventID'),
+						eventRecord = me.getEventRecord(eventID),
+						eventBarRecord = me.getEventBarRecord(eventID);
+					
+					// Resize dragged Event Bar so it is 1 cell wide
+			        draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
+					// Reposition dragged Event Bar so it is in the middle of the User's finger.
+					draggable.el.setLeft(e.startX - (draggable.el.getWidth()/2));
+					
+					// hide all linked Event Bars
+			        me.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+			            if (eventBar.dom !== draggable.el.dom) {
+			                eventBar.hide();
+			            }
+			        }, this);
+										
+					Ext.util.Draggable.prototype.onStart.apply(this, arguments);
+					
+					me.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
+					
+					return true;
+				}
             });
             
             var barPosition = record.get('BarPosition'),
@@ -407,11 +438,14 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			eventRecord = this.getEventRecord(eventID),
 			eventBarRecord = this.getEventBarRecord(eventID);
         
-		// TODO: Resize and reposition dragged Event Bar so it is 1 cell wide and in the middle of the User's finger.
-		// must update boundary of draggable so the user can drag to the edge of the screen
+		//TODO Reposition dragged Event Bar so it is in the middle of the User's finger.
+		
+		// Resize dragged Event Bar so it is 1 cell wide
         draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
-        //draggable.el.setLeft(e.pageX - (draggable.el.getWidth() / 2));
-        
+		
+		// Update the draggables boundary so the resized bar can be dragged right to the edge.
+		draggable.updateBoundary(true);
+
 		// hide all linked Event Bars
         this.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
             if (eventBar.dom !== draggable.el.dom) {
