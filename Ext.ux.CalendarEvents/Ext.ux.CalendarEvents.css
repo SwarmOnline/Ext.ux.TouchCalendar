@@ -1,3 +1,4 @@
+/*
 .ux-calendar div.event-bar
 {
 	height: 30px;
@@ -30,12 +31,35 @@
 	-webkit-border-bottom-left-radius: 0;
 }
 
-.ux-calendar td.day {
-	dispaly: block;
-}
-
 .ux-calendar td.day.date-cell-hover
 {
 	background-color: red;
 	background-image: none;
 }
+*/
+/*
+ *
+ */
+/*@import compass*/
+.ux-calendar div.event-bar {
+  background-color: blue;
+  border: 1px solid #000099;
+  color: white;
+  font-size: 10px;
+  height: 30px;
+  overflow: hidden;
+  position: absolute;
+  padding: 0px 4px;
+  -webkit-border-radius: 4px;
+  z-index: 100; }
+  .ux-calendar div.event-bar.event-bar-selected {
+    background-color: #00001a; }
+  .ux-calendar div.event-bar.wrap-end {
+    -webkit-border-top-right-radius: 0;
+    -webkit-border-bottom-right-radius: 0; }
+  .ux-calendar div.event-bar.wrap-start {
+    -webkit-border-top-left-radius: 0;
+    -webkit-border-bottom-left-radius: 0; }
+.ux-calendar td.day.date-cell-hover {
+  background-color: red;
+  background-image: none; }

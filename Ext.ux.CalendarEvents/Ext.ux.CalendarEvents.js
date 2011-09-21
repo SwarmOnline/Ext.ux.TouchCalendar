@@ -44,6 +44,11 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
      * @cfg {Number} eventBarSpacing Space (in pixels) between EventBars
      */
     eventBarSpacing: 4,
+	
+	/**
+	 * @cfg {Ext.XTemplate} eventBarTpl Template that will be used to fill the Event Bar
+	 */
+	eventBarTpl: new Ext.XTemplate('{title}'),
     
     init: function(calendar){
     
@@ -133,7 +138,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	 */
 	createDroppableRegion: function(){
 		var me = this;
-		
+		var onDragCount = 0;
 		/**
 		 * @property {Ext.util.Droppable} droppable Contains the Ext.util.Droppable instance on the Calendar's body element
 		 */
@@ -147,27 +152,30 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			 */
             onDrag: function(draggable, e){
 		        this.setCanDrop(this.isDragOver(draggable), draggable, e);
-		
-				var currentDateCell,
-					currentDate,
-					eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
-				
-				me.calendar.dateCellEls.removeCls(me.cellHoverCls);
-		
-				me.calendar.dateCellEls.each(function(cell){
-		            var cellRegion = cell.getPageBox(true);
-		            var eventBarRegion = draggable.el.getPageBox(true);
-		            
-		            if (cellRegion.partial(eventBarRegion)) {
-						currentDateCell = cell;
-						currentDate = this.calendar.getCellDate(cell);
+				onDragCount++;;
+				if (onDragCount % 15 === 0) {
+					var currentDateCell,
+						currentDate,
+						eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
+					
+					me.calendar.dateCellEls.removeCls(me.cellHoverCls);
+					
+					me.calendar.dateCellEls.each(function(cell, index){
+						var cellRegion = cell.getPageBox(true);
+						var eventBarRegion = draggable.el.getPageBox(true);
 						
-		                cell.addCls(me.cellHoverCls);
-						return;
-		            }
-		        }, me);
-				
-				me.calendar.fireEvent('eventdrag', draggable, eventRecord, currentDate, currentDateCell, e);
+						if (cellRegion.partial(eventBarRegion)) {
+							currentDateCell = cell;
+							currentDate = this.calendar.getCellDate(cell);
+							
+							cell.addCls(me.cellHoverCls);
+							return;
+						}
+					}, me);
+					
+					me.calendar.fireEvent('eventdrag', draggable, eventRecord, currentDate, currentDateCell, e);
+					onDragCount = 0;
+				}
 		    },
             listeners: {
                 drop: this.onEventDrop,
@@ -364,7 +372,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
             // create the event bar
             var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
                 tag: 'div',
-                html: eventRecord.get('title'),
+                html: this.eventBarTpl.apply(eventRecord.data),
                 eventID: record.get('EventID'),
                 cls: this.eventBarCls + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
             }, true);

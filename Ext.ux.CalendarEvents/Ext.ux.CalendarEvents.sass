@@ -1,0 +1,50 @@
+/*
+ *
+ */
+
+/*@import compass*/
+
+.ux-calendar
+{
+	$bg-color: blue;
+
+	div.event-bar
+	{
+		background-color: $bg-color;
+		border: 1px solid darken($bg-color, 20%);
+		color: lighten($bg-color, 80%);
+		font-size: 10px;
+		height: 30px;
+		overflow: hidden;
+		padding: 0px 4px;
+		position: absolute;
+		-webkit-border-radius: 4px;
+		z-index: 100;
+	
+		&.event-bar-selected
+		{
+			background-color: darken($bg-color, 45%);
+		}
+			
+		&.wrap-end
+		{
+			-webkit-border-top-right-radius: 0;
+			-webkit-border-bottom-right-radius: 0;
+		}
+		
+		&.wrap-start
+		{
+			-webkit-border-top-left-radius: 0;
+			-webkit-border-bottom-left-radius: 0;
+		}
+	}
+	
+	td
+	{
+		&.day.date-cell-hover
+		{
+			background-color: red;
+			background-image: none;
+		}
+	}
+}
