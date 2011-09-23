@@ -8,6 +8,12 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 */
 	dateField: 'start',
 	
+	multiEventDots: false,
+	
+	wrapperCls: 'simple-event-wrapper',
+	
+	eventDotCls: 'simple-event',
+	
 	/**
 	 * Function used to filter the store for each of the displayed dates
 	 * @param {Object} record - current record
@@ -23,9 +29,9 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * following the filter
 	 */
 	eventTpl: new Ext.XTemplate(
-	'<span class="simple-event-wrapper">',
-		'<tpl for=".">',
-			'<span class="simple-event"></span>',
+	'<span class="{wrapperCls}">',
+		'<tpl for="events">',
+			'<span class="{[parent.eventDotCls]}"></span>',
 		'</tpl>',
 	'</span>'),
 	
@@ -33,6 +39,9 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 		
 		this.calendar = calendar; // cache the parent calendar
 		this.calendar.simpleEventsPlugin = this; // cache the plugin instance on the calendar itself
+		
+		this.wrapperCls = this.wrapperCls + (this.multiEventDots ? '-multi' : '');
+		this.eventDotCls = this.eventDotCls + (this.multiEventDots ? '-multi' : '');
 		
 		this.calendar.showEvents = this.showEvents;
 		this.calendar.hideEvents = this.hideEvents;
@@ -64,7 +73,11 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 						store.filterBy(Ext.createDelegate(this.filterFn, this, [date], true)); // filter store for current date
 						if (store.getRange().length > 0) {
 							// append the event markup
-							var t = this.eventTpl.append(cell, store.getRange(), true);
+							var t = this.eventTpl.append(cell, {
+								events: (this.multiEventDots ? store.getRange() : ['event']),
+								wrapperCls: this.wrapperCls,
+								eventDotCls: this.eventDotCls
+							}, true);
 						}
 					}
 				}, this);
@@ -79,7 +92,7 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	hideEvents: function(){
 		this.simpleEventsPlugin.disabled = true;
 		
-		this.body.select('span.simple-event-wrapper').hide();
+		this.body.select('span.' + this.wrapperCls).hide();
 	},
 	
 	/**
@@ -89,7 +102,7 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	showEvents: function(){
 		this.simpleEventsPlugin.disabled = false;
 		
-		this.body.select('span.simple-event-wrapper').show();
+		this.body.select('span.' + this.wrapperCls).show();
 	},
 	
 	/**
@@ -97,6 +110,6 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * This is added to the parent Calendar's class so must be executed via the parent
 	 */
 	removeEvents: function(){
-		this.body.select('span.simple-event-wrapper').remove();
+		this.body.select('span.' + this.wrapperCls).remove();
 	}	
 });
