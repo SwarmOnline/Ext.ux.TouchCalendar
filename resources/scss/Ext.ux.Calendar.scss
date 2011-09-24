@@ -11,6 +11,7 @@
 .ux-calendar
 {
 	$bd-color: #A3A7AF;
+	$date-bg-color: #cfced3;
 
 	color: #3F4E5E;
 	background-color: #EEE;
@@ -51,12 +52,11 @@
 	td
 	{
 		font-weight: bold;
-		height: 43px;
 		position: relative;
 		text-align: center;
 		vertical-align: middle;
 		font-size: 1.3em;
-		@include background-gradient(#cfced3, 'recessed');
+		@include background-gradient($date-bg-color, 'recessed');
 		
 
 		&.weekend
@@ -105,12 +105,11 @@
 		{
 			color: #89909A;
 		}
-
  	}
  	
 	thead
 	{
-		@include background-gradient(#cfced3, 'matte');
+		@include background-gradient($date-bg-color, 'matte');
 	
 		th
 		{

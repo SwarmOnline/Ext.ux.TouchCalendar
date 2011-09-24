@@ -2806,7 +2806,7 @@ input, textarea {
   background-color: #EEE;
   width: 100%;
 }
-/* line 20, ../scss/Ext.ux.Calendar.scss */
+/* line 21, ../scss/Ext.ux.Calendar.scss */
 .ux-calendar table {
   width: 100%;
   position: relative;
@@ -2814,21 +2814,20 @@ input, textarea {
   table-layout: fixed;
   font-size: 20px;
 }
-/* line 30, ../scss/Ext.ux.Calendar.scss */
+/* line 31, ../scss/Ext.ux.Calendar.scss */
 .ux-calendar table.week td {
   vertical-align: top;
 }
-/* line 40, ../scss/Ext.ux.Calendar.scss */
+/* line 41, ../scss/Ext.ux.Calendar.scss */
 .ux-calendar tbody td {
   border-bottom: 1px solid #a3a7af;
   border-left: 1px solid #a3a7af;
   border-right: 1px solid #dadbde;
   border-top: 1px solid #dadbde;
 }
-/* line 52, ../scss/Ext.ux.Calendar.scss */
+/* line 53, ../scss/Ext.ux.Calendar.scss */
 .ux-calendar td {
   font-weight: bold;
-  height: 43px;
   position: relative;
   text-align: center;
   vertical-align: middle;
@@ -2884,14 +2883,14 @@ input, textarea {
 .ux-calendar td.prev-month, .ux-calendar td.next-month {
   color: #89909A;
 }
-/* line 112, ../scss/Ext.ux.Calendar.scss */
+/* line 111, ../scss/Ext.ux.Calendar.scss */
 .ux-calendar thead {
   background-color: #cfced3;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(2%, #e1e1e4), color-stop(100%, #bdbbc2));
   background-image: -webkit-linear-gradient(#ffffff, #e1e1e4 2%, #bdbbc2);
   background-image: linear-gradient(#ffffff, #e1e1e4 2%, #bdbbc2);
 }
-/* line 116, ../scss/Ext.ux.Calendar.scss */
+/* line 115, ../scss/Ext.ux.Calendar.scss */
 .ux-calendar thead th {
   font-size: 9px;
   vertical-align: bottom;
@@ -2903,17 +2902,17 @@ input, textarea {
   font-weight: bold;
   border-bottom: 1px solid #a3a7af;
 }
-/* line 128, ../scss/Ext.ux.Calendar.scss */
+/* line 127, ../scss/Ext.ux.Calendar.scss */
 .ux-calendar thead th:first-child {
   background: url(../images/larr.png) center center no-repeat;
   cursor: pointer;
 }
-/* line 134, ../scss/Ext.ux.Calendar.scss */
+/* line 133, ../scss/Ext.ux.Calendar.scss */
 .ux-calendar thead th:last-child {
   background: url(../images/rarr.png) center center no-repeat;
   cursor: pointer;
 }
-/* line 140, ../scss/Ext.ux.Calendar.scss */
+/* line 139, ../scss/Ext.ux.Calendar.scss */
 .ux-calendar thead th span {
   font-size: 20px;
   font-weight: bold;
