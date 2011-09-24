@@ -21,17 +21,22 @@
 {
 	position: absolute;
 	left: 2%;
-	bottom: 4%;
+	bottom: 10%;
 	width: 98%;
 	overflow: hidden;
 }
 
 .ux-calendar td span.simple-event
 {
-	height: 10px;
-	width: 10px;
-	-webkit-border-radius: 10px;
-	background-color: black;
+	height: 6px;
+	width: 6px;
+	-webkit-border-radius: 6px;
+	background-color: #3F4E5E;
 	margin: 0 auto;
 	display: block;
+}
+
+.ux-calendar td.selected span.simple-event, .ux-calendar td.today span.simple-event
+{
+	background-color: #FFF;
 }

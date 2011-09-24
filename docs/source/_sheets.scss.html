@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">@import '../global';
+
+<span id='Ext-Sheet'>/**
+</span> * @global {color} [$sheet-bg-color=transparentize(darken($base-color, 40%), .1)]
+ * Background-color for action sheets and message boxes.
+ *
+ * @class Ext.Sheet
+ * @xtype actionsheet
+ */
+$sheet-bg-color: transparentize(darken($base-color, 40%), .1) !default;
+
+<span id='Ext-Sheet'>/**
+</span> * @global {color} [$sheet-bg-gradient=$base-gradient]
+ * Background gradient style for action sheets and message boxes.
+ *
+ * @class Ext.Sheet
+ * @xtype actionsheet
+ */
+$sheet-bg-gradient: $base-gradient !default;
+
+<span id='Ext-Sheet'>/**
+</span> * @global {measurement} [$sheet-button-spacing=.5em]
+ * Vertical spacing between sheet buttons.
+ *
+ * @class Ext.Sheet
+ * @xtype actionsheet
+ */
+$sheet-button-spacing: .5em !default;
+
+<span id='Ext-Sheet'>/**
+</span> * @global {measurement} [$sheet-padding=.7em]
+ * Overall padding in a sheet.
+ *
+ * @class Ext.Sheet
+ * @xtype actionsheet
+ */
+$sheet-padding: .7em !default;
+
+<span id='Ext-Sheet'>/**
+</span> * Includes default sheet styles (also required for message box).
+ *
+ * @class Ext.Sheet
+ * @xtype actionsheet
+ */
+@mixin sencha-sheet {
+  .x-sheet {
+    padding: $sheet-padding;
+    border-top: 1px solid darken($base-color, 30%);
+    @include background-gradient($sheet-bg-color, $sheet-bg-gradient);
+
+    .x-sheet-body .x-button {
+      margin-bottom: $sheet-button-spacing;
+    }
+  }
+
+  .x-sheet-body {
+    position: relative;
+  }
+}</pre>
+</body>
+</html>

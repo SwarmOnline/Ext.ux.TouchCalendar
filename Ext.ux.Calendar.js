@@ -106,6 +106,9 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 			if(values.weekend){
 				classes.push(this.me.weekendCls);
 			}
+			if(values.today){
+				classes.push(this.me.todayCls);
+			}
 			
 			return classes.join(' ');
 		},

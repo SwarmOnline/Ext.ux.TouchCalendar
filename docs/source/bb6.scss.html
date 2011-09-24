@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">$include-highlights: false;
+$include-border-radius: false;
+
+// Let's start with the basics
+$base-color:  #393F45;
+$active-color:  #06f;
+$base-gradient: 'none';
+
+// Lists
+$list_pressed_color: #09f;
+$list_bg_color: #111;
+$list_color: #eee;
+$list_header_bg_color: #aaa;
+$basic-slider: true;
+
+@import 'sencha-touch/default/all';
+
+@include sencha-panel;
+@include sencha-buttons;
+@include sencha-sheet;
+@include sencha-picker;
+@include sencha-tabs;
+@include sencha-toolbar;
+@include sencha-toolbar-forms;
+@include sencha-carousel;
+@include sencha-indexbar;
+@include sencha-list;
+@include sencha-list-paging;
+@include sencha-list-pullrefresh;
+@include sencha-layout;
+@include sencha-form;
+@include sencha-msgbox;
+@include sencha-loading-spinner;
+
+.x-indexbar-item {
+    color: #FFF;
+}
+
+.x-scrollbar-dark {
+  background-color: rgba(255, 255, 255, .6);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+//fixing back/forward buttons in BB.
+$shadow-width: .065em; // Space between tip and its shadow
+$overlap-width: .2em; // how far the mask is clipped
+
+$mask-height: $button-height;
+$mask-width: $mask-height/2.5;
+$mask-offset: $button-radius - $overlap-width - $button-stroke-weight + $shadow-width - .22em;
+
+.x-button-forward, .x-button-back {
+    &amp;:before, &amp;:after {
+        @include insertion($mask-width, $mask-height, -$button-stroke-weight, auto);
+        z-index: 2;
+        -webkit-mask: $mask-offset 0 theme_image($theme-name, &quot;tip.png&quot;) no-repeat;
+        -webkit-mask-size: $mask-width $mask-height;
+        overflow: hidden;
+    }
+}
+
+.x-button-forward, .x-toolbar .x-button-forward {
+    &amp;:before, &amp;:after {
+        -webkit-mask: -$mask-offset 0 theme_image($theme-name, &quot;tip_right.png&quot;) no-repeat;
+    }
+  }
+</pre>
+</body>
+</html>
