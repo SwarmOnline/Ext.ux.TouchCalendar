@@ -1,0 +1,25 @@
+{
+    "projectName": "Ext.ux.Calendar",
+    "deployDir": "",
+    "licenseText": "",
+    "pkgs": [
+        {
+            "name": "Ext.ux.Calendar",
+            "file": "Ext.ux.Calendar-min.js",
+            "isDebug": false,
+            "fileIncludes": [
+                {
+					"text": "Ext.ux.Calendar.js",
+                    "path": "../"
+				},
+				{
+					"text": "Ext.ux.CalendarEvents.js",
+                    "path": "../Ext.ux.CalendarEvents/"
+				}
+            ] 
+        } 
+    ],
+    "resources": [
+        
+    ]
+}

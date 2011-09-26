@@ -26,17 +26,20 @@
                             xtype: 'toolbar',
                             dock: 'top',
                             items: [{
-                                xtype: 'button',
-                                text: 'Month View',
-                                handler: function(){
-                                    calendar.setMode('month');
-                                }
-                            }, {
-                                xtype: 'button',
-                                text: 'Week View',
-                                handler: function(){
-                                    calendar.setMode('week');
-                                }
+                                xtype: 'segmentedbutton',
+								allowMultiple: false,
+                                items: [{
+                                    text: 'Month',
+									pressed: true,
+                                    handler: function(){
+                                        calendar.setMode('month');
+                                    }
+                                }, {
+                                    text: 'Week',
+                                    handler: function(){
+                                        calendar.setMode('week');
+                                    }
+                                }]
                             }]
                         }, {
                             dock: 'bottom',
@@ -61,12 +64,11 @@
                     });
                     
                     calendar.on('selectionchange', function(calendar, previousValue, newValue){
-                    	console.log('selectionchange');
+                        console.log('selectionchange');
                         var eventList = calendar.getDockedItems()[1];
                         
                         calendar.store.filterBy(function(record){
-                            var startDate = record.get('start').clearTime(true).getTime(),
-								endDate = record.get('end').clearTime(true).getTime();
+                            var startDate = record.get('start').clearTime(true).getTime(), endDate = record.get('end').clearTime(true).getTime();
                             
                             return (startDate <= newValue) && (endDate >= newValue);
                         }, this);
