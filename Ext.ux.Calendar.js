@@ -223,7 +223,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 			 * @event selectionchange Fires when the Calendar's selected date is changed
 			 * @param {Ext.ux.Calendar} this
 			 * @param {Date} previousValue Previously selected date
-			 * @param {Date} newvalue Newly selected date
+			 * @param {Date} newValue Newly selected date
 			 */
 			'selectionchange'
 		

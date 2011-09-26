@@ -151,38 +151,40 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			 * @param {Object} e
 			 */
             onDrag: function(draggable, e){
-		        this.setCanDrop(this.isDragOver(draggable), draggable, e);
-				onDragCount++;;
-				if (onDragCount % 15 === 0) {
-					var currentDateCell,
-						currentDate,
-						eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
-					
-					me.calendar.dateCellEls.removeCls(me.cellHoverCls);
-					
-					me.calendar.dateCellEls.each(function(cell, index){
-						var cellRegion = cell.getPageBox(true);
-						var eventBarRegion = draggable.el.getPageBox(true);
+				if (draggable.el.hasCls(this.eventBarCls)) {
+					this.setCanDrop(this.isDragOver(draggable), draggable, e);
+					onDragCount++;
+					;
+					if (onDragCount % 15 === 0) {
+						var currentDateCell, currentDate, eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
 						
-						if (cellRegion.partial(eventBarRegion)) {
-							currentDateCell = cell;
-							currentDate = this.calendar.getCellDate(cell);
+						me.calendar.dateCellEls.removeCls(me.cellHoverCls);
+						
+						me.calendar.dateCellEls.each(function(cell, index){
+							var cellRegion = cell.getPageBox(true);
+							var eventBarRegion = draggable.el.getPageBox(true);
 							
-							cell.addCls(me.cellHoverCls);
-							return;
-						}
-					}, me);
-					
-					me.calendar.fireEvent('eventdrag', draggable, eventRecord, currentDate, currentDateCell, e);
-					onDragCount = 0;
+							if (cellRegion.partial(eventBarRegion)) {
+								currentDateCell = cell;
+								currentDate = this.calendar.getCellDate(cell);
+								
+								cell.addCls(me.cellHoverCls);
+								return;
+							}
+						}, me);
+						
+						me.calendar.fireEvent('eventdrag', draggable, eventRecord, currentDate, currentDateCell, e);
+						onDragCount = 0;
+					}
 				}
-		    },
-            listeners: {
-                drop: this.onEventDrop,
-                dropdeactivate: this.onEventDropDeactivate,
-                scope: this
-            }
+			}
         });
+		
+		this.droppable.on({
+			drop: this.onEventDrop,
+            dropdeactivate: this.onEventDropDeactivate,
+            scope: this
+		});
 	},
 	
 	/**
@@ -195,12 +197,14 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	 * @param {Object} opts
 	 */
 	onEventDropDeactivate: function(droppable, draggable, e, opts){
-        var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID'));
-        
-		// reshow all the hidden linked Event Bars
-        this.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
-            eventBar.show();
-        }, this);
+		if (draggable.el.hasCls(this.eventBarCls)) {
+			var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID'));
+			
+			// reshow all the hidden linked Event Bars
+			this.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+				eventBar.show();
+			}, this);
+		}
     },
 	
 	/**

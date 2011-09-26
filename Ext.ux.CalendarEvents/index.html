@@ -3,69 +3,19 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" type="text/css" href="../lib/sencha/resources/css/sencha-touch.css" media="all"/>
-        <script src="../lib/sencha/sencha-touch-debug.js" type="text/javascript" language="JavaScript">
-        </script>
+        <script src="../lib/sencha/sencha-touch-debug.js" type="text/javascript"></script>
         <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.Calendar.css" media="all"/>
-        <script src="../Ext.ux.Calendar.js" type="text/javascript" language="JavaScript"></script>
+        <script src="../Ext.ux.Calendar.js" type="text/javascript"></script>
 		
-		<script src="Ext.ux.CalendarEvents.js" type="text/javascript" language="JavaScript"></script>
+		<script src="Ext.ux.CalendarEvents.js" type="text/javascript"></script>
 		<link rel="stylesheet" type="text/css" href="resources/css/Ext.ux.CalendarEvents.css" media="all"/>
+		
+		<script src="../examples/EventStore.js" type="text/javascript"></script>
+		
         <script type="text/javascript">
             
             Ext.setup({
                 onReady: function(){
-					
-					Ext.regModel('Event', {
-                        fields: [{
-                            name: 'start',
-                            type: 'date',
-                            dateFormat: 'c'
-                        }, {
-                            name: 'end',
-                            type: 'date',
-                            dateFormat: 'c'
-                        }, {
-                            name: 'title'
-                        }]
-                    });
-                    
-                    var date = new Date();
-                    var d = date.getDate();
-                    var m = date.getMonth();
-                    var y = date.getFullYear();
-                    
-                    var store = new Ext.data.Store({
-                        model: 'Event',
-                        data: [{
-                            title: 'Long',
-                            start: new Date(y, m, 1),
-							end: new Date(y, m, 13)
-                        }, {
-                            title: 'Long Event',
-                            start: new Date(y, m-1, 29),
-                            end: new Date(y, m, 6)
-                        }, {
-                            title: 'Meeting',
-                            start: new Date(y, m, d, 10, 30),
-							end: new Date(y, m, d, 10, 30)
-                        }, {
-                            title: 'Lunch',
-                            start: new Date(y, m, d, 12, 0),
-                            end: new Date(y, m, d, 14, 0)
-                        }, {
-                            title: 'Birthday Party',
-                            start: new Date(y, m, d + 1, 19, 0),
-                            end: new Date(y, m, d + 1, 22, 30)
-                        }, {
-                            title: 'Click for Google',
-                            start: new Date(y, m, 28),
-                            end: new Date(y, m, 29)
-                        }, {
-                            title: 'Click for Google',
-                            start: new Date(y, m, 17),
-                            end: new Date(y, m, 19)
-                        }]
-                    });
                     
                     calendar = new Ext.ux.Calendar({
                         fullscreen: true,
@@ -91,9 +41,11 @@
 						mode: 'month',
 						weekStart: 0,
 						value: new Date(2011, 8, 1),
-						store: store,
+						store: eventStore,
 						
-						plugins: [new Ext.ux.CalendarEvents()]
+						plugins: [new Ext.ux.CalendarEvents({
+							eventBarTpl: new Ext.XTemplate('{event} - {location}')
+						})]
                     });
 					
 					calendar.on('eventtap', function(event){
