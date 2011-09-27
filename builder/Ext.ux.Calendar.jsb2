@@ -15,6 +15,10 @@
 				{
 					"text": "Ext.ux.CalendarEvents.js",
                     "path": "../Ext.ux.CalendarEvents/"
+				},
+				{
+					"text": "Ext.ux.CalendarSimpleEvents.js",
+                    "path": "../Ext.ux.CalendarSimpleEvents/"
 				}
             ] 
         } 

@@ -1,13 +1,4 @@
-
-
-
-Use This For Build:
-
-C:\wamp\www\NES Portal\builder>java -jar JSBuilder2.jar -p "C:\wamp\www\NES Portal\builder\build.jsb2" -d "C:\wamp\www\NES Portal\
-
-
-
-
+java -jar JSBuilder2.jar -v -p D:\Workspace\Ext.ux.Calendar\Builder\Ext.ux.Calendar.jsb2 -d D:\Workspace\Ext.ux.Calendar
 
 
 

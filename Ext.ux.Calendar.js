@@ -1,3 +1,12 @@
+/*!
+ * 
+ */
+/*!
+ * 
+ */
+/*!
+ * 
+ */
 Ext.ns('Ext.ux');
 
 /**
@@ -145,9 +154,10 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		 * @return {Date[]}
 		 */
 		getDaysArray: function(values){
-			var daysArray = [];
+			var daysArray = [],
+				i;
 			
-			for(var i = 0; i < 7; i++){
+			for(i = 0; i < 7; i++){
 				daysArray.push(values.dates[i])	
 			}
 			
@@ -174,8 +184,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	constructor: function(config) {
 	
 		this.tpl = new Ext.XTemplate(
-		'<table class="{[this.me.mode]}">',
-		
+		'<table class="{[this.me.mode]}">',		
 			'<thead>',
 				'<tr>',
 					'<tpl for="this.getDaysArray(values)">',
@@ -363,12 +372,8 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	onTableHeaderTap: function(e, el){
 		el = Ext.fly(el);
 
-		if (el.hasCls(this.prevPeriodCls)) {
-			this.refreshDelta(-1);
-		}
-
-		if (el.hasCls(this.nextPeriodCls)) {
-			this.refreshDelta(1);
+		if (el.hasCls(this.prevPeriodCls) || el.hasCls(this.nextPeriodCls)) {
+			this.refreshDelta(el.hasCls(this.prevPeriodCls) ? -1 : 1);
 		}
 	},
 	
@@ -439,10 +444,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		var newDay = this.modeDeltaFns[this.mode](v, delta);
 
 		// don't move if we've reached the min/max dates
-		if (this.minDate && newDay.getLastDateOfMonth() < this.minDate) {
-			return;
-		}
-		if (this.maxDate && newDay.getFirstDateOfMonth() > this.maxDate) {
+		if ((this.minDate && newDay.getLastDateOfMonth() < this.minDate) || (this.maxDate && newDay.getFirstDateOfMonth() > this.maxDate)) {
 			return;
 		}
 
@@ -622,7 +624,6 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * @return {Date}
 	 */
 	stringToDate: function(dateString) {
-		var a = dateString.split('-');
-		return new Date(Number(a[0]), (a[1]-1), Number(a[2]));
+		return Date.parseDate(dateString, 'Y-m-d');
 	}
 });
