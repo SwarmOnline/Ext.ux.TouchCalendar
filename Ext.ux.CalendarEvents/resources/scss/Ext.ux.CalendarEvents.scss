@@ -10,7 +10,7 @@
 		color: lighten($bg-color, 80%);
 		font-size: 7px;
 		font-weight: bold;
-		height: 10px;
+		height: 15px;
 		overflow: hidden;
 		padding: 0px 4px;
 		position: absolute;
@@ -37,6 +37,8 @@
 	
 	td
 	{
+		vertical-align: top;
+		
 		&.day.date-cell-hover
 		{
 			background-color: lighten($date-bg-color, 5%);

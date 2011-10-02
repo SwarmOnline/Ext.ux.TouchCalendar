@@ -34,3 +34,6 @@
   background-color: #dcdbdf;
   background-image: none;
 }
+.ux-calendar table td {
+  vertical-align: top;
+}
