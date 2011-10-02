@@ -158,10 +158,10 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			 * @param {Object} e
 			 */
             onDrag: function(draggable, e){
-				if (draggable.el.hasCls(this.eventBarCls)) {
+				if (draggable.el.hasCls(me.eventBarCls)) {
 					this.setCanDrop(this.isDragOver(draggable), draggable, e);
 					onDragCount++;
-					;
+
 					if (onDragCount % 15 === 0) {
 						var currentDateCell, currentDate, eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
 						
