@@ -1,6 +1,13 @@
 Ext.ns('Ext.ux');
 
 /**
+ * @copyright 		(c) 2011, by SwarmOnline.com
+ * @date      		2nd October 2011
+ * @version   		0.1
+ * @documentation	
+ * @website	  		http://www.swarmonline.com
+ */
+/**
  * @class Ext.ux.Calendar
  * @author Stuart Ashworth
  */
