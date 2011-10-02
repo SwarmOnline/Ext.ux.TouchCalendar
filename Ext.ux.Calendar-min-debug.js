@@ -7,6 +7,12 @@
 /*!
  * 
  */
+/*!
+ * 
+ */
+/*!
+ * 
+ */
 Ext.ns('Ext.ux');
 
 /**
@@ -541,8 +547,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 */
 	getMonthDeltaDate: function(date, delta){
 		var newMonth = date.getMonth() + delta,
-			newYear = date.getFullYear() + (newMonth > 11 ?  1 : 0),
-			newDate = new Date(newYear, newMonth, 1);
+			newDate = new Date(date.getFullYear(), newMonth, 1);
 		
 		newDate.setDate(newDate.getDaysInMonth() < date.getDate() ? newDate.getDaysInMonth() : date.getDate());
 		
@@ -627,6 +632,12 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		return Date.parseDate(dateString, 'Y-m-d');
 	}
 });
+/*!
+ * 
+ */
+/*!
+ * 
+ */
 /*!
  * 
  */
@@ -1302,6 +1313,12 @@ Ext.override(Ext.util.Region, {
         return horizontalValid && verticalValid;
     }
 });/*!
+ * 
+ */
+/*!
+ * 
+ */
+/*!
  * 
  */
 /*!

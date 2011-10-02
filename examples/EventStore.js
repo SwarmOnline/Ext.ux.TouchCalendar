@@ -1,12 +1,3 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 Ext.regModel('Event', {
     fields: [{
         name: 'event',

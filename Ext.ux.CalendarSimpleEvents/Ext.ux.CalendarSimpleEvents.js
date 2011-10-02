@@ -1,12 +1,3 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 /**
  * @class Ext.ux.CalendarSimpleEvents 
  */

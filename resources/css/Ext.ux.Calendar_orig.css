@@ -7,6 +7,12 @@
 /*!
  * 
  */
+/*!
+ * 
+ */
+/*!
+ * 
+ */
 /* Originally written by Bruno Alexandre, 26.03.2010, twitter.com/balexandre, balexandre.com,  abruno.in.dk [at] gmail.com  Rewritten into CSS3/SASS by Ondrej Jirman <megous@megous.com>, 2011 (for CodeBerry s.r.o.) */
 .ux-calendar { color: #3f4e5e; background-color: #eeeeee; width: 100%; }
 .ux-calendar table { width: 100%; position: relative; border-collapse: separate; table-layout: fixed; font-size: 20px; }
