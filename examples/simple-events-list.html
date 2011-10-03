@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="../lib/sencha/resources/css/sencha-touch.css" media="all"/>
+        <script src="../lib/sencha/sencha-touch-debug.js" type="text/javascript">
+        </script>
+        <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.Calendar.css" media="all"/>
+        <script src="../Ext.ux.Calendar.js" type="text/javascript">
+        </script>
+        <script src="../Ext.ux.CalendarSimpleEvents/Ext.ux.CalendarSimpleEvents.js" type="text/javascript">
+        </script>
+        <link rel="stylesheet" type="text/css" href="../Ext.ux.CalendarSimpleEvents/resources/css/Ext.ux.CalendarSimpleEvents.css" media="all"/>
+        <script src="EventStore.js" type="text/javascript">
+        </script>
+        <script type="text/javascript">
+            
+            Ext.setup({
+                onReady: function(){
+                
+                
+                
+                    calendar = new Ext.ux.Calendar({
+                        fullscreen: true,
+                        dockedItems: [{
+                            xtype: 'toolbar',
+                            dock: 'top',
+                            items: [{
+                                xtype: 'segmentedbutton',
+                                allowMultiple: false,
+                                items: [{
+                                    text: 'Month',
+                                    pressed: true,
+                                    handler: function(){
+                                        calendar.setMode('month');
+                                    }
+                                }, {
+                                    text: 'Week',
+                                    handler: function(){
+                                        calendar.setMode('week');
+                                    }
+                                }]
+                            }]
+                        }, {
+                            dock: 'bottom',
+                            xtype: 'list',
+                            height: 70,
+                            itemTpl: '{event} {location}',
+                            store: new Ext.data.Store({
+                                model: 'Event',
+                                data: []
+                            })
+                        }],
+                        mode: 'month',
+                        weekStart: 0,
+                        value: new Date(),
+                        store: eventStore,
+                        
+                        plugins: [new Ext.ux.CalendarSimpleEvents()],
+                        
+                        listeners: {
+                            initialrender: function(calendar){
+                                console.log('initialrender');
+                                console.log(arguments);
+                            }
+                        }
+                    });
+                    
+                    calendar.on('selectionchange', function(calendar, previousValue, newValue){
+                        console.log('selectionchange');
+                        var eventList = calendar.getDockedItems()[1];
+                        
+                        calendar.store.filterBy(function(record){
+                            var startDate = record.get('start').clearTime(true).getTime(), endDate = record.get('end').clearTime(true).getTime();
+                            
+                            return (startDate <= newValue) && (endDate >= newValue);
+                        }, this);
+                        
+                        eventList.store.loadData(calendar.store.getRange());
+                        
+                    });
+                }
+                
+                
+            });
+        </script>
+        <title></title>
+    </head>
+    <body>
+    </body>
+</html>

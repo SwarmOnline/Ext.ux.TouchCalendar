@@ -42,6 +42,12 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	fullHeight: true,
 	
 	/**
+	 * @cfg {Boolean} moveToMonthOnDateTap True to have the calendar switch month if the user
+	 * taps a date that is part of the next/previous month.
+	 */
+	moveToMonthOnDateTap: false,
+	
+	/**
 	 * @cfg {String} todayCls CSS class added to the today's date cell 
 	 */
 	todayCls: 'today',
@@ -227,12 +233,27 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 			'refresh',
 			
 			/**
+			 * @event initialrender Fires when the Calendar's view is first rendered
+			 * @param {Ext.ux.Calendar} this
+			 */
+			'initialrender',
+			
+			/**
 			 * @event selectionchange Fires when the Calendar's selected date is changed
 			 * @param {Ext.ux.Calendar} this
 			 * @param {Date} previousValue Previously selected date
 			 * @param {Date} newValue Newly selected date
 			 */
-			'selectionchange'
+			'selectionchange',
+			
+			/**
+			 * @event periodchange Fires when the calendar changes to a different date period (i.e. switch using the arrows)
+			 * @param {Ext.ux.Calendar} this
+			 * @param {Date} minDate New view's minimum date
+			 * @param {Date} maxDate New view's maximum date
+			 * @param {string} direction Direction that the view moved ('forward' or 'back')
+			 */
+			'periodchange'
 		
 		);
 
@@ -272,7 +293,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.previousValue = this.value;
 		
-		this.on('afterrender', this.refresh, this);
+		this.on('afterrender', Ext.createDelegate(this.refresh, this, [true], false), this);
 	},
 
 	onRender: function(ct, position) {
@@ -322,7 +343,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * @method
 	 * @return {void}
 	 */
-	refresh: function() {
+	refresh: function(initialRender) {
 		var d = this.value || new Date();
 		
 		this.currentDate = d;
@@ -340,7 +361,12 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.dateCellEls = this.body.select('td.day');
 		
-		this.fireEvent('refresh', this);
+		if (initialRender) {
+			this.fireEvent('initialrender', this);
+		}
+		else {
+			this.fireEvent('refresh', this);
+		}
 	},
 	
 	/**
@@ -412,7 +438,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.body.select('td').each(function(td) {
 			var clickedDate = this.getCellDate(td);
-			if (!td.hasCls(this.prevMonthCls) && !td.hasCls(this.nextMonthCls) && this.isSameDay(date, clickedDate)) {
+			if (((!td.hasCls(this.prevMonthCls) && !td.hasCls(this.nextMonthCls)) || !this.moveToMonthOnDateTap) && this.isSameDay(date, clickedDate)) {
 				td.addCls(this.selectedCls);
 					
 				if((this.value && this.previousValue) && !this.isSameDay(this.value, this.previousValue)){
@@ -439,14 +465,50 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	refreshDelta: function(delta) {
 		var v = this.value || new Date();
 
-		var newDay = this.modeDeltaFns[this.mode](v, delta);
+		var newDate = this.modeDeltaFns[this.mode](v, delta);
 
 		// don't move if we've reached the min/max dates
-		if ((this.minDate && newDay.getLastDateOfMonth() < this.minDate) || (this.maxDate && newDay.getFirstDateOfMonth() > this.maxDate)) {
+		if (this.isOutsideMinMax(newDate)) {
 			return;
 		}
 
-		this.setValue(newDay);
+		this.setValue(newDate);
+		
+		var minMaxDate = this.getPeriodMinMaxDate();
+		
+		this.fireEvent('periodchange', this, minMaxDate.min.date, minMaxDate.max.date, (delta > 0 ? 'forward' : 'back'));
+	},
+	
+	/**
+	 * Returns the current view's minimum and maximum date collection objects
+	 * @method
+	 * @private
+	 * @return {Object} Object in the format {min: {}, max: {}}
+	 */
+	getPeriodMinMaxDate: function(){
+		return {
+			min: this.dateCollection.first(),
+			max: this.dateCollection.last()
+		};
+	},
+	
+	/**
+	 * Returns true or false depending on whether the view that is currently on display is outside or inside the min/max dates set
+	 * @method
+	 * @private
+	 * @param {Date} date A date within the current period, generally the selected date
+	 * @return {Boolean}
+	 */
+	isOutsideMinMax: function(date){
+		var outside = false;
+		
+		if(this.mode === 'month'){
+			outside = ((this.minDate && date.getLastDateOfMonth() < this.minDate) || (this.maxDate && date.getFirstDateOfMonth() > this.maxDate));
+		} else {
+			outside = ((this.minDate && this.getWeekEndDate(date.getDate(), date.getMonth(), date.getFullYear()) < this.minDate) || (this.maxDate && this.getWeekStartDate(date.getDate(), date.getMonth(), date.getFullYear()) > this.maxDate));
+		}
+		
+		return outside;
 	},
 	
 	/**
@@ -527,6 +589,23 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		dayOffset = dayOffset < 0 ? 6 : dayOffset;
 		
 		return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()-0-dayOffset);
+	},
+	
+	/**
+	 * Returns the last day of the week based on the specified date.
+	 * @method
+	 * @private
+	 * @param {Number} day
+	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
+	 * @param {Number} year
+	 * @return {Date}
+	 */
+	getWeekEndDate: function(day, month, year){
+		var currentDate = new Date(year, month, day);
+		var dayOffset = currentDate.getDay() - this.weekStart;
+		dayOffset = dayOffset < 0 ? 6 : dayOffset;
+		
+		return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()+0+dayOffset);
 	},
 	
 	/**
