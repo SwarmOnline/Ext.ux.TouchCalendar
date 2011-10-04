@@ -17,6 +17,17 @@
             
             Ext.setup({
                 onReady: function(){
+					
+					for(var i = 0; i < 200; i ++){
+						var mod = Ext.ModelMgr.create({
+					        event: 'Breaking Development 2011',
+					        location: 'Nashville',
+					        start: new Date(2011, 8, 12),
+					        end: new Date(2011, 8, 14)
+					    }, 'Event');
+						
+						eventStore.add(mod);
+					}
                     
                     calendar = new Ext.ux.Calendar({
                         fullscreen: true,

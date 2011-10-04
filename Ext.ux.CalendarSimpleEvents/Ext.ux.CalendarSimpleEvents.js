@@ -6,7 +6,8 @@
  * @website	  		http://www.swarmonline.com
  */
 /**
- * @class Ext.ux.CalendarSimpleEvents 
+ * @class Ext.ux.CalendarSimpleEvents
+ * @author Stuart Ashworth
  */
 Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	
@@ -15,25 +16,27 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 */
 	dateField: 'start',
 	
+	/**
+	 * @cfg {Boolean} multiEventDots True to display a dot for each event on a day. False to only show one dot regardless
+	 * of how many events there are
+	 */
 	multiEventDots: false,
 	
+	/**
+	 * @cfg {String} wrapperCls CSS class that is added to the event dots' wrapper element
+	 */
 	wrapperCls: 'simple-event-wrapper',
 	
+	/**
+	 * @cfg {String} eventDotCls CSS class that is added to the event dot element itself. Used to provide
+	 * the dots' styling
+	 */
 	eventDotCls: 'simple-event',
 	
 	/**
-	 * Function used to filter the store for each of the displayed dates
-	 * @param {Object} record - current record
-	 * @param {Object} id - ID of passed in record
-	 * @param {Object} currentDate - date we are currently dealing while looping Calendar's dateCollection property
-	 */
-	filterFn: function(record, id, currentDate){
-		return record.get(this.dateField).clearTime(true).getTime() === currentDate.clearTime(true).getTime();
-	},
-	
-	/**
-	 * Template used to create Event markup. Template is merged with the records left
+	 * @cfg {Ext.XTemplate} eventTpl Template used to create the Event markup. Template is merged with the records left
 	 * following the filter
+	 * 
 	 */
 	eventTpl: new Ext.XTemplate(
 	'<span class="{wrapperCls}">',
@@ -41,6 +44,18 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 			'<span class="{[parent.eventDotCls]}"></span>',
 		'</tpl>',
 	'</span>'),
+	
+	/**
+	 * Function used to filter the store for each of the displayed dates
+	 * @method
+	 * @private
+	 * @param {Object} record - current record
+	 * @param {Object} id - ID of passed in record
+	 * @param {Object} currentDate - date we are currently dealing while looping Calendar's dateCollection property
+	 */
+	filterFn: function(record, id, currentDate){
+		return record.get(this.dateField).clearTime(true).getTime() === currentDate.clearTime(true).getTime();
+	},
 	
 	init: function(calendar){
 		
@@ -55,18 +70,25 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 		this.calendar.removeEvents = this.removeEvents;
 		
 		// listen to the Calendar's 'refresh' event and render events when it fires
-		this.calendar.on('refresh', this.renderEvents, this);
+		this.calendar.on({
+			refresh: this.renderEvents,
+			initialrender: this.renderEvents,
+			scope: this
+		});
 	},
 	
 	/**
 	 * Function to execute when the Calendar is refreshed.
 	 * It loops through the Calendar's current dateCollection and gets all Events
 	 * for the current date and inserts the appropriate markup
+	 * @method
+	 * @private
+	 * @return {void}
 	 */
 	renderEvents: function(){
 		if (!this.disabled) {
 			var dc = this.calendar.dateCollection;
-			
+
 			if (dc) {
 				// loop through Calendar's current dateCollection
 				dc.each(function(dateObj){
@@ -77,8 +99,11 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 					
 					if (cell) {
 						store.clearFilter();
-						store.filterBy(Ext.createDelegate(this.filterFn, this, [date], true)); // filter store for current date
-						if (store.getRange().length > 0) {
+
+						// if we only want to show a single dot per day then use findBy for better performance
+						var matchIndex = store[this.multiEventDots ? 'filterBy' : 'findBy'](Ext.createDelegate(this.filterFn, this, [date], true));
+						
+						if ((!this.multiEventDots && matchIndex > -1) || (this.multiEventDots && store.getRange().length > 0)) {
 							// append the event markup
 							var t = this.eventTpl.append(cell, {
 								events: (this.multiEventDots ? store.getRange() : ['event']),
@@ -95,6 +120,8 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	/**
 	 * Hides all the event markers
 	 * This is added to the parent Calendar's class so must be executed via the parent
+	 * @method
+	 * @return {void}
 	 */
 	hideEvents: function(){
 		this.simpleEventsPlugin.disabled = true;
@@ -105,6 +132,8 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	/**
 	 * Shows all the event markers
 	 * This is added to the parent Calendar's class so must be executed via the parent
+	 * @method
+	 * @return {void}
 	 */
 	showEvents: function(){
 		this.simpleEventsPlugin.disabled = false;
@@ -115,6 +144,8 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	/**
 	 * Removes all the event markers and their markup
 	 * This is added to the parent Calendar's class so must be executed via the parent
+	 * @method
+	 * @return {void}
 	 */
 	removeEvents: function(){
 		this.body.select('span.' + this.wrapperCls).remove();

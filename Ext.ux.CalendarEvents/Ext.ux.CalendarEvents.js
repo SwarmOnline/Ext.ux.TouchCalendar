@@ -20,6 +20,12 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
      * @cfg {Stirng} endEventField Name of the Model field which contains the Event's End date
      */
     endEventField: 'end',
+	
+	/**
+	 * @cfg {String} colourField Name of the Model field which contains a colour to be applied to the 
+	 * event bar
+	 */
+	colourField: 'colour',
     
     /**
      * @cfg {String} eventBarCls Base CSS class given to each EventBar
@@ -47,10 +53,15 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	 */
 	autoUpdateEvent: true,
 	
+	/**
+	 * @cfg {Boolean} allowEventDragAndDrop Decides whether the Event Bars can be dragged and dropped
+	 */
+	allowEventDragAndDrop: false,
+	
     /**
      * @cfg {Number} eventBarSpacing Space (in pixels) between EventBars
      */
-    eventBarSpacing: 4,
+    eventBarSpacing: 1,
 	
 	/**
 	 * @cfg {Ext.XTemplate} eventBarTpl Template that will be used to fill the Event Bar
@@ -116,6 +127,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		);
         
         this.calendar.on({
+			initialrender: this.refreshEvents,
             refresh: this.refreshEvents,
             scope: this
         });
@@ -135,7 +147,9 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
         
         this.renderEventBars(this.eventBarStore);
         
-        this.createDroppableRegion();
+		if (this.allowEventDragAndDrop) {
+			this.createDroppableRegion();
+		}
     },
 	
 	/**
@@ -324,6 +338,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
                             Date: currentDate,
                             BarLength: 1,
                             BarPosition: eventBarRecord.get('BarPosition'),
+							Colour: eventBarRecord.get('Colour'),
                             Record: event
                         }, 'Ext.ux.CalendarEventBarModel');
                         
@@ -351,6 +366,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
                         Date: currentDate,
                         BarLength: 1,
                         BarPosition: barPos,
+						Colour: this.getRandomColour(),
                         Record: event
                     }, 'Ext.ux.CalendarEventBarModel');
                     
@@ -383,47 +399,50 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
             // create the event bar
             var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
                 tag: 'div',
+				style: {
+					'background-color': eventRecord.get(this.colourField)
+				},
                 html: this.eventBarTpl.apply(eventRecord.data),
                 eventID: record.get('EventID'),
                 cls: this.eventBarCls + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
             }, true);
-            
-            new Ext.util.Draggable(eventBar, {
-                revert: true,
-				
-				/**
-				 * Override for Ext.util.Draggable's onStart method to process the Event Bar's element before dragging
-				 * and raise the 'eventdragstart' event
-				 * @method
-				 * @private
-				 * @param {Event} e
-				 */
-				onStart: function(e){
+			
+			if (this.allowEventDragAndDrop) {
+			
+				new Ext.util.Draggable(eventBar, {
+					revert: true,
 					
-			        var draggable = this,
-						eventID = draggable.el.getAttribute('eventID'),
-						eventRecord = me.getEventRecord(eventID),
-						eventBarRecord = me.getEventBarRecord(eventID);
+					/**
+					 * Override for Ext.util.Draggable's onStart method to process the Event Bar's element before dragging
+					 * and raise the 'eventdragstart' event
+					 * @method
+					 * @private
+					 * @param {Event} e
+					 */
+					onStart: function(e){
 					
-					// Resize dragged Event Bar so it is 1 cell wide
-			        draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
-					// Reposition dragged Event Bar so it is in the middle of the User's finger.
-					draggable.el.setLeft(e.startX - (draggable.el.getWidth()/2));
-					
-					// hide all linked Event Bars
-			        me.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
-			            if (eventBar.dom !== draggable.el.dom) {
-			                eventBar.hide();
-			            }
-			        }, this);
-										
-					Ext.util.Draggable.prototype.onStart.apply(this, arguments);
-					
-					me.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
-					
-					return true;
-				}
-            });
+						var draggable = this, eventID = draggable.el.getAttribute('eventID'), eventRecord = me.getEventRecord(eventID), eventBarRecord = me.getEventBarRecord(eventID);
+						
+						// Resize dragged Event Bar so it is 1 cell wide
+						draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
+						// Reposition dragged Event Bar so it is in the middle of the User's finger.
+						draggable.el.setLeft(e.startX - (draggable.el.getWidth() / 2));
+						
+						// hide all linked Event Bars
+						me.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+							if (eventBar.dom !== draggable.el.dom) {
+								eventBar.hide();
+							}
+						}, this);
+						
+						Ext.util.Draggable.prototype.onStart.apply(this, arguments);
+						
+						me.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
+						
+						return true;
+					}
+				});
+			}
             
             var barPosition = record.get('BarPosition'),
 				barLength = record.get('BarLength'),
@@ -621,7 +640,11 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		if(this.droppable){
 			this.droppable = null;
 		}
-    }
+    },
+	
+	getRandomColour: function(){
+		return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+	}
 });
 
 
@@ -643,7 +666,10 @@ Ext.regModel('Ext.ux.CalendarEventBarModel', {
     }, {
         name: 'BarPosition',
         type: 'int'
-    }, 'Record'],
+    }, {
+		name: 'Colour',
+		type: 'string'
+	}, 'Record'],
     
     hasMany: [{
         model: 'Ext.ux.CalendarEventBarModel',
