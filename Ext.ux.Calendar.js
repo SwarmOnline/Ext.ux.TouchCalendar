@@ -344,9 +344,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * @return {void}
 	 */
 	refresh: function(initialRender) {
-		var d = this.value || new Date();
-		
-		this.currentDate = d;
+		this.currentDate = this.currentDate || this.value || new Date();
 		
 		this.dateCollection = this.getDateCollection(this.currentDate.getDate(), this.currentDate.getMonth(), this.currentDate.getFullYear());
 		
@@ -419,6 +417,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 			}
 			
 			if (this.value) {
+				this.currentDate = this.value;
 				this.selectDate(this.value);
 			}
 		}
@@ -463,7 +462,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * @return {void}
 	 */
 	refreshDelta: function(delta) {
-		var v = this.value || new Date();
+		var v = this.currentDate || new Date();
 
 		var newDate = this.modeDeltaFns[this.mode](v, delta);
 
@@ -472,7 +471,8 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 			return;
 		}
 
-		this.setValue(newDate);
+		this.currentDate = newDate;
+		this.refresh();
 		
 		var minMaxDate = this.getPeriodMinMaxDate();
 		
