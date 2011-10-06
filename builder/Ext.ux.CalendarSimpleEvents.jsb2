@@ -1,0 +1,36 @@
+{
+    "projectName": "Ext.ux.CalendarSimpleEvents",
+    "deployDir": "Ext.ux.CalendarSimpleEvents",
+    "licenseText": "Ext.ux.CalendarSimpleEvents",
+    "pkgs": [
+        {
+            "name": "Ext.ux.CalendarSimpleEvents",
+            "file": "Ext.ux.CalendarSimpleEvents-min.js",
+            "isDebug": false,
+            "fileIncludes": [
+				{
+					"text": "Ext.ux.CalendarSimpleEvents.js",
+                    "path": "../Ext.ux.CalendarSimpleEvents/"
+				}
+            ] 
+        },
+		{
+            "name": "Ext.ux.CalendarSimpleEventsAll",
+            "file": "Ext.ux.CalendarSimpleEvents-all-min.js",
+            "isDebug": false,
+            "fileIncludes": [
+                {
+					"text": "Ext.ux.Calendar.js",
+                    "path": "../"
+				},
+				{
+					"text": "Ext.ux.CalendarSimpleEvents.js",
+                    "path": "../Ext.ux.CalendarSimpleEvents/"
+				}
+            ] 
+        }
+    ],
+    "resources": [
+        
+    ]
+}

@@ -1,7 +1,7 @@
 {
     "projectName": "Ext.ux.Calendar",
     "deployDir": "",
-    "licenseText": "",
+    "licenseText": "Ext.ux.Calendar",
     "pkgs": [
         {
             "name": "Ext.ux.Calendar",
