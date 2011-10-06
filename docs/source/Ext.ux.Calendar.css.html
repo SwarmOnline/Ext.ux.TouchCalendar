@@ -15,22 +15,131 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js">/* Originally written by Bruno Alexandre, 26.03.2010, twitter.com/balexandre, balexandre.com,  abruno.in.dk [at] gmail.com  Rewritten into CSS3/SASS by Ondrej Jirman &lt;megous@megous.com&gt;, 2011 (for CodeBerry s.r.o.) */
-.ux-calendar { color: #3f4e5e; background-color: #eeeeee; width: 100%; }
-.ux-calendar table { width: 100%; position: relative; border-collapse: separate; table-layout: fixed; font-size: 20px; }
-.ux-calendar tbody td { border-bottom: 1px solid #a3a7af; border-right: 1px solid #a3a7af; border-top: 1px solid white; }
-.ux-calendar tbody td:last-child { border-right: 0px; }
-.ux-calendar td { font-weight: bold; height: 63px; position: relative; text-align: right; vertical-align: top; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d8d7db), color-stop(100%, #d3d2d7)); background-image: -webkit-linear-gradient(#d8d7db, #d3d2d7); background-image: -moz-linear-gradient(#d8d7db, #d3d2d7); background-image: -o-linear-gradient(#d8d7db, #d3d2d7); background-image: -ms-linear-gradient(#d8d7db, #d3d2d7); background-image: linear-gradient(#d8d7db, #d3d2d7); text-shadow: white 1px 1px 1px; }
-.ux-calendar td.weekend { background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #c8c7cd), color-stop(100%, #c3c2c9)); background-image: -webkit-linear-gradient(#c8c7cd, #c3c2c9); background-image: -moz-linear-gradient(#c8c7cd, #c3c2c9); background-image: -o-linear-gradient(#c8c7cd, #c3c2c9); background-image: -ms-linear-gradient(#c8c7cd, #c3c2c9); background-image: linear-gradient(#c8c7cd, #c3c2c9); }
-.ux-calendar td.today { color: white; text-shadow: #333333 1px 1px 2px; border: 1px solid black; background: #7188a8; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #44566f), color-stop(10%, #7188a8), color-stop(90%, #7188a8), color-stop(100%, #b0bdcf)); background-image: -webkit-linear-gradient(#44566f, #7188a8 10%, #7188a8 90%, #b0bdcf); background-image: -moz-linear-gradient(#44566f, #7188a8 10%, #7188a8 90%, #b0bdcf); background-image: -o-linear-gradient(#44566f, #7188a8 10%, #7188a8 90%, #b0bdcf); background-image: -ms-linear-gradient(#44566f, #7188a8 10%, #7188a8 90%, #b0bdcf); background-image: linear-gradient(#44566f, #7188a8 10%, #7188a8 90%, #b0bdcf); }
-.ux-calendar td.unselectable { color: #89909a; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #cda3a8), color-stop(100%, #c89fa5)); background-image: -webkit-linear-gradient(#cda3a8, #c89fa5); background-image: -moz-linear-gradient(#cda3a8, #c89fa5); background-image: -o-linear-gradient(#cda3a8, #c89fa5); background-image: -ms-linear-gradient(#cda3a8, #c89fa5); background-image: linear-gradient(#cda3a8, #c89fa5); }
-.ux-calendar td.selected { color: white; text-shadow: #333333 1px 1px 2px; border: 1px solid black; background: #1980e5; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(50%, #4699eb), color-stop(51%, #1980e5), color-stop(100%, #1466b7)); background-image: -webkit-linear-gradient(#4699eb 50%, #1980e5 51%, #1466b7); background-image: -moz-linear-gradient(#4699eb 50%, #1980e5 51%, #1466b7); background-image: -o-linear-gradient(#4699eb 50%, #1980e5 51%, #1466b7); background-image: -ms-linear-gradient(#4699eb 50%, #1980e5 51%, #1466b7); background-image: linear-gradient(#4699eb 50%, #1980e5 51%, #1466b7); }
-.ux-calendar td.today.selected { color: white; text-shadow: #333333 1px 1px 2px; border: 1px solid black; background: #1980e5; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #0f4d89), color-stop(10%, #1980e5), color-stop(90%, #1980e5), color-stop(100%, #74b3f0)); background-image: -webkit-linear-gradient(#0f4d89, #1980e5 10%, #1980e5 90%, #74b3f0); background-image: -moz-linear-gradient(#0f4d89, #1980e5 10%, #1980e5 90%, #74b3f0); background-image: -o-linear-gradient(#0f4d89, #1980e5 10%, #1980e5 90%, #74b3f0); background-image: -ms-linear-gradient(#0f4d89, #1980e5 10%, #1980e5 90%, #74b3f0); background-image: linear-gradient(#0f4d89, #1980e5 10%, #1980e5 90%, #74b3f0); }
-.ux-calendar td.prev-month, .ux-calendar td.next-month { color: #89909a; }
-.ux-calendar thead { background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(100%, #cfcfd3)); background-image: -webkit-linear-gradient(#f5f5f5, #cfcfd3); background-image: -moz-linear-gradient(#f5f5f5, #cfcfd3); background-image: -o-linear-gradient(#f5f5f5, #cfcfd3); background-image: -ms-linear-gradient(#f5f5f5, #cfcfd3); background-image: linear-gradient(#f5f5f5, #cfcfd3); }
-.ux-calendar thead th { font-size: 9px; vertical-align: bottom; padding-bottom: 3px; color: #3f4e5e; text-align: center; height: 46px; text-shadow: white 1px 1px 1px; }
-.ux-calendar thead th:first-child { background: url(larr.png) center center no-repeat; cursor: pointer; }
-.ux-calendar thead th:last-child { background: url(rarr.png) center center no-repeat; cursor: pointer; }
-.ux-calendar thead th span { font-size: 20px; font-weight: bold; height: 30px; left: 14.5%; position: absolute; text-align: center; top: 6px; width: 71%; z-index: 999; text-shadow: white 1px 1px 1px; }</pre>
+  <pre class="prettyprint lang-js">/* line 12, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar {
+  color: #3F4E5E;
+  background-color: #EEE;
+  width: 100%;
+}
+/* line 21, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar table {
+  width: 100%;
+  position: relative;
+  border-collapse: separate;
+  table-layout: fixed;
+  font-size: 20px;
+}
+/* line 31, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar table.week td {
+  vertical-align: top;
+}
+/* line 41, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar tbody td {
+  border-bottom: 1px solid #a3a7af;
+  border-left: 1px solid #a3a7af;
+  border-right: 1px solid #dadbde;
+  border-top: 1px solid #dadbde;
+}
+/* line 53, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar td {
+  font-weight: bold;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1.3em;
+  background-color: #cfced3;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #b5b3bb), color-stop(10%, #c2c1c7), color-stop(65%, #cfced3), color-stop(100%, #d0cfd4));
+  background-image: -webkit-linear-gradient(#b5b3bb, #c2c1c7 10%, #cfced3 65%, #d0cfd4);
+  background-image: linear-gradient(#b5b3bb, #c2c1c7 10%, #cfced3 65%, #d0cfd4);
+}
+/* line 68, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar td.today {
+  color: white;
+  text-shadow: #333 1px 1px 2px;
+  -webkit-box-shadow: inset 0px 0px 8px #000;
+  border: 1px solid black;
+  background: #7188a8;
+  background-color: #44566f;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #313d4f), color-stop(10%, #3a4a5f), color-stop(65%, #44566f), color-stop(100%, #455771));
+  background-image: -webkit-linear-gradient(#313d4f, #3a4a5f 10%, #44566f 65%, #455771);
+  background-image: linear-gradient(#313d4f, #3a4a5f 10%, #44566f 65%, #455771);
+}
+/* line 79, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar td.unselectable {
+  color: #89909A;
+  background-color: #cda3a8;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #bb8289), color-stop(10%, #c49399), color-stop(65%, #cda3a8), color-stop(100%, #cea5aa));
+  background-image: -webkit-linear-gradient(#bb8289, #c49399 10%, #cda3a8 65%, #cea5aa);
+  background-image: linear-gradient(#bb8289, #c49399 10%, #cda3a8 65%, #cea5aa);
+}
+/* line 85, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar td.selected {
+  color: white;
+  text-shadow: #333 1px 1px 0px;
+  border: 1px solid black;
+  background: #1980e5;
+  background-color: #4699eb;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8bbff2), color-stop(50%, #5da6ed), color-stop(51%, #4699eb), color-stop(100%, #2f8de8));
+  background-image: -webkit-linear-gradient(#8bbff2, #5da6ed 50%, #4699eb 51%, #2f8de8);
+  background-image: linear-gradient(#8bbff2, #5da6ed 50%, #4699eb 51%, #2f8de8);
+}
+/* line 95, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar td.today.selected {
+  color: white;
+  text-shadow: #333 1px 1px 2px;
+  border: 1px solid black;
+  background: #1980e5;
+  background-color: #0f4d89;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #0a335b), color-stop(10%, #0c4072), color-stop(65%, #0f4d89), color-stop(100%, #0f4e8b));
+  background-image: -webkit-linear-gradient(#0a335b, #0c4072 10%, #0f4d89 65%, #0f4e8b);
+  background-image: linear-gradient(#0a335b, #0c4072 10%, #0f4d89 65%, #0f4e8b);
+}
+/* line 105, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar td.prev-month, .ux-calendar td.next-month {
+  color: #89909A;
+}
+/* line 111, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar thead {
+  background-color: #cfced3;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(2%, #e1e1e4), color-stop(100%, #bdbbc2));
+  background-image: -webkit-linear-gradient(#ffffff, #e1e1e4 2%, #bdbbc2);
+  background-image: linear-gradient(#ffffff, #e1e1e4 2%, #bdbbc2);
+}
+/* line 115, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar thead th {
+  font-size: 9px;
+  vertical-align: bottom;
+  padding-bottom: 3px;
+  color: #3F4E5E;
+  text-align: center;
+  height: 46px;
+  text-shadow: white 1px 1px 1px;
+  font-weight: bold;
+  border-bottom: 1px solid #a3a7af;
+}
+/* line 127, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar thead th:first-child {
+  background: url(../images/larr.png) center center no-repeat;
+  cursor: pointer;
+}
+/* line 133, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar thead th:last-child {
+  background: url(../images/rarr.png) center center no-repeat;
+  cursor: pointer;
+}
+/* line 139, ../scss/Ext.ux.Calendar.scss */
+.ux-calendar thead th span {
+  font-size: 20px;
+  font-weight: bold;
+  height: 30px;
+  left: 14.5%;
+  position: absolute;
+  text-align: center;
+  top: 6px;
+  width: 71%;
+  z-index: 999;
+  text-shadow: white 1px 1px 1px;
+}
+</pre>
 </body>
 </html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Ext.ux.CalendarSimpleEvents=Ext.extend(Ext.util.Observable,{dateField:&quot;start&quot;,multiEventDots:false,wrapperCls:&quot;simple-event-wrapper&quot;,eventDotCls:&quot;simple-event&quot;,eventTpl:new Ext.XTemplate('&lt;span class=&quot;{wrapperCls}&quot;&gt;','&lt;tpl for=&quot;events&quot;&gt;','&lt;span class=&quot;{[parent.eventDotCls]}&quot;&gt;&lt;/span&gt;',&quot;&lt;/tpl&gt;&quot;,&quot;&lt;/span&gt;&quot;),filterFn:function(b,c,a){return b.get(this.dateField).clearTime(true).getTime()===a.clearTime(true).getTime()},init:function(a){this.calendar=a;this.calendar.simpleEventsPlugin=this;this.wrapperCls=this.wrapperCls+(this.multiEventDots?&quot;-multi&quot;:&quot;&quot;);this.eventDotCls=this.eventDotCls+(this.multiEventDots?&quot;-multi&quot;:&quot;&quot;);this.calendar.showEvents=this.showEvents;this.calendar.hideEvents=this.hideEvents;this.calendar.removeEvents=this.removeEvents;this.calendar.on({refresh:this.renderEvents,initialrender:this.renderEvents,scope:this})},renderEvents:function(){if(!this.disabled){var a=this.calendar.dateCollection;if(a){a.each(function(d){var f=d.date;var c=this.calendar.getDateCell(f);var e=this.calendar.store;if(c){e.clearFilter();var b=e[this.multiEventDots?&quot;filterBy&quot;:&quot;findBy&quot;](Ext.createDelegate(this.filterFn,this,[f],true));if((!this.multiEventDots&amp;&amp;b&gt;-1)||(this.multiEventDots&amp;&amp;e.getRange().length&gt;0)){var g=this.eventTpl.append(c,{events:(this.multiEventDots?e.getRange():[&quot;event&quot;]),wrapperCls:this.wrapperCls,eventDotCls:this.eventDotCls},true)}}},this)}}},hideEvents:function(){this.simpleEventsPlugin.disabled=true;this.body.select(&quot;span.&quot;+this.wrapperCls).hide()},showEvents:function(){this.simpleEventsPlugin.disabled=false;this.body.select(&quot;span.&quot;+this.wrapperCls).show()},removeEvents:function(){this.body.select(&quot;span.&quot;+this.wrapperCls).remove()}});</pre>
+</body>
+</html>

@@ -11,6 +11,6 @@ cd..
 
 cd..
 
-jsduck-3.0.pre.exe Ext.ux.Calendar --output docs/ --ignore-global --verbose --title "Ext.ux.Calendar Documentation" --footer "Generated with JSDuck"
+jsduck-3.0.pre.exe Ext.ux.Calendar --output Ext.ux.Calendar/docs --ignore-global --title "Ext.ux.Calendar Documentation" --footer "Generated with JSDuck"
 
 PAUSE

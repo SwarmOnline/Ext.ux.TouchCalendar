@@ -27,12 +27,12 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	weekStart: 1,
 	
 	/**
-	 * @cfg {Date} minDate Minimum date allowed to be shown/selected
+	 * @cfg {Date} minDate Minimum date allowed to be shown/selected.
 	 */
 	minDate: null,
 	
 	/**
-	 * @cfg {Date} maxDate Maximum date allowed to be shown/selected
+	 * @cfg {Date} maxDate Maximum date allowed to be shown/selected.
 	 */
 	maxDate: null,
 	
