@@ -1,20 +1,15 @@
 /*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
+ * Ext.ux.Calendar
  */
 Ext.ns('Ext.ux');
 
+/**
+ * @copyright 		(c) 2011, by SwarmOnline.com
+ * @date      		2nd October 2011
+ * @version   		0.1
+ * @documentation	
+ * @website	  		http://www.swarmonline.com
+ */
 /**
  * @class Ext.ux.Calendar
  * @author Stuart Ashworth
@@ -48,6 +43,12 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * @cfg {Boolean} fullHeight True to have the calendar fill the height of the Panel
 	 */
 	fullHeight: true,
+	
+	/**
+	 * @cfg {Boolean} moveToMonthOnDateTap True to have the calendar switch month if the user
+	 * taps a date that is part of the next/previous month.
+	 */
+	moveToMonthOnDateTap: false,
 	
 	/**
 	 * @cfg {String} todayCls CSS class added to the today's date cell 
@@ -235,12 +236,27 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 			'refresh',
 			
 			/**
+			 * @event initialrender Fires when the Calendar's view is first rendered
+			 * @param {Ext.ux.Calendar} this
+			 */
+			'initialrender',
+			
+			/**
 			 * @event selectionchange Fires when the Calendar's selected date is changed
 			 * @param {Ext.ux.Calendar} this
 			 * @param {Date} previousValue Previously selected date
 			 * @param {Date} newValue Newly selected date
 			 */
-			'selectionchange'
+			'selectionchange',
+			
+			/**
+			 * @event periodchange Fires when the calendar changes to a different date period (i.e. switch using the arrows)
+			 * @param {Ext.ux.Calendar} this
+			 * @param {Date} minDate New view's minimum date
+			 * @param {Date} maxDate New view's maximum date
+			 * @param {string} direction Direction that the view moved ('forward' or 'back')
+			 */
+			'periodchange'
 		
 		);
 
@@ -280,7 +296,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.previousValue = this.value;
 		
-		this.on('afterrender', this.refresh, this);
+		this.on('afterrender', Ext.createDelegate(this.refresh, this, [true], false), this);
 	},
 
 	onRender: function(ct, position) {
@@ -330,10 +346,8 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * @method
 	 * @return {void}
 	 */
-	refresh: function() {
-		var d = this.value || new Date();
-		
-		this.currentDate = d;
+	refresh: function(initialRender) {
+		this.currentDate = this.currentDate || this.value || new Date();
 		
 		this.dateCollection = this.getDateCollection(this.currentDate.getDate(), this.currentDate.getMonth(), this.currentDate.getFullYear());
 		
@@ -348,7 +362,12 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.dateCellEls = this.body.select('td.day');
 		
-		this.fireEvent('refresh', this);
+		if (initialRender) {
+			this.fireEvent('initialrender', this);
+		}
+		else {
+			this.fireEvent('refresh', this);
+		}
 	},
 	
 	/**
@@ -401,6 +420,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 			}
 			
 			if (this.value) {
+				this.currentDate = this.value;
 				this.selectDate(this.value);
 			}
 		}
@@ -420,7 +440,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.body.select('td').each(function(td) {
 			var clickedDate = this.getCellDate(td);
-			if (!td.hasCls(this.prevMonthCls) && !td.hasCls(this.nextMonthCls) && this.isSameDay(date, clickedDate)) {
+			if (((!td.hasCls(this.prevMonthCls) && !td.hasCls(this.nextMonthCls)) || !this.moveToMonthOnDateTap) && this.isSameDay(date, clickedDate)) {
 				td.addCls(this.selectedCls);
 					
 				if((this.value && this.previousValue) && !this.isSameDay(this.value, this.previousValue)){
@@ -445,16 +465,53 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * @return {void}
 	 */
 	refreshDelta: function(delta) {
-		var v = this.value || new Date();
+		var v = this.currentDate || new Date();
 
-		var newDay = this.modeDeltaFns[this.mode](v, delta);
+		var newDate = this.modeDeltaFns[this.mode](v, delta);
 
 		// don't move if we've reached the min/max dates
-		if ((this.minDate && newDay.getLastDateOfMonth() < this.minDate) || (this.maxDate && newDay.getFirstDateOfMonth() > this.maxDate)) {
+		if (this.isOutsideMinMax(newDate)) {
 			return;
 		}
 
-		this.setValue(newDay);
+		this.currentDate = newDate;
+		this.refresh();
+		
+		var minMaxDate = this.getPeriodMinMaxDate();
+		
+		this.fireEvent('periodchange', this, minMaxDate.min.date, minMaxDate.max.date, (delta > 0 ? 'forward' : 'back'));
+	},
+	
+	/**
+	 * Returns the current view's minimum and maximum date collection objects
+	 * @method
+	 * @private
+	 * @return {Object} Object in the format {min: {}, max: {}}
+	 */
+	getPeriodMinMaxDate: function(){
+		return {
+			min: this.dateCollection.first(),
+			max: this.dateCollection.last()
+		};
+	},
+	
+	/**
+	 * Returns true or false depending on whether the view that is currently on display is outside or inside the min/max dates set
+	 * @method
+	 * @private
+	 * @param {Date} date A date within the current period, generally the selected date
+	 * @return {Boolean}
+	 */
+	isOutsideMinMax: function(date){
+		var outside = false;
+		
+		if(this.mode === 'month'){
+			outside = ((this.minDate && date.getLastDateOfMonth() < this.minDate) || (this.maxDate && date.getFirstDateOfMonth() > this.maxDate));
+		} else {
+			outside = ((this.minDate && this.getWeekEndDate(date.getDate(), date.getMonth(), date.getFullYear()) < this.minDate) || (this.maxDate && this.getWeekStartDate(date.getDate(), date.getMonth(), date.getFullYear()) > this.maxDate));
+		}
+		
+		return outside;
 	},
 	
 	/**
@@ -535,6 +592,23 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		dayOffset = dayOffset < 0 ? 6 : dayOffset;
 		
 		return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()-0-dayOffset);
+	},
+	
+	/**
+	 * Returns the last day of the week based on the specified date.
+	 * @method
+	 * @private
+	 * @param {Number} day
+	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
+	 * @param {Number} year
+	 * @return {Date}
+	 */
+	getWeekEndDate: function(day, month, year){
+		var currentDate = new Date(year, month, day);
+		var dayOffset = currentDate.getDay() - this.weekStart;
+		dayOffset = dayOffset < 0 ? 6 : dayOffset;
+		
+		return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()+0+dayOffset);
 	},
 	
 	/**
@@ -632,17 +706,12 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		return Date.parseDate(dateString, 'Y-m-d');
 	}
 });
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
+/**
+ * @copyright 		(c) 2011, by SwarmOnline.com
+ * @date      		2nd October 2011
+ * @version   		0.1
+ * @documentation	
+ * @website	  		http://www.swarmonline.com
  */
 /**
  * @class Ext.ux.CalendarEvents
@@ -659,6 +728,12 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
      * @cfg {Stirng} endEventField Name of the Model field which contains the Event's End date
      */
     endEventField: 'end',
+	
+	/**
+	 * @cfg {String} colourField Name of the Model field which contains a colour to be applied to the 
+	 * event bar
+	 */
+	colourField: 'colour',
     
     /**
      * @cfg {String} eventBarCls Base CSS class given to each EventBar
@@ -686,10 +761,15 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	 */
 	autoUpdateEvent: true,
 	
+	/**
+	 * @cfg {Boolean} allowEventDragAndDrop Decides whether the Event Bars can be dragged and dropped
+	 */
+	allowEventDragAndDrop: false,
+	
     /**
      * @cfg {Number} eventBarSpacing Space (in pixels) between EventBars
      */
-    eventBarSpacing: 4,
+    eventBarSpacing: 1,
 	
 	/**
 	 * @cfg {Ext.XTemplate} eventBarTpl Template that will be used to fill the Event Bar
@@ -755,6 +835,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		);
         
         this.calendar.on({
+			initialrender: this.refreshEvents,
             refresh: this.refreshEvents,
             scope: this
         });
@@ -774,7 +855,9 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
         
         this.renderEventBars(this.eventBarStore);
         
-        this.createDroppableRegion();
+		if (this.allowEventDragAndDrop) {
+			this.createDroppableRegion();
+		}
     },
 	
 	/**
@@ -797,10 +880,10 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			 * @param {Object} e
 			 */
             onDrag: function(draggable, e){
-				if (draggable.el.hasCls(this.eventBarCls)) {
+				if (draggable.el.hasCls(me.eventBarCls)) {
 					this.setCanDrop(this.isDragOver(draggable), draggable, e);
 					onDragCount++;
-					;
+
 					if (onDragCount % 15 === 0) {
 						var currentDateCell, currentDate, eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
 						
@@ -963,6 +1046,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
                             Date: currentDate,
                             BarLength: 1,
                             BarPosition: eventBarRecord.get('BarPosition'),
+							Colour: eventBarRecord.get('Colour'),
                             Record: event
                         }, 'Ext.ux.CalendarEventBarModel');
                         
@@ -990,6 +1074,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
                         Date: currentDate,
                         BarLength: 1,
                         BarPosition: barPos,
+						Colour: this.getRandomColour(),
                         Record: event
                     }, 'Ext.ux.CalendarEventBarModel');
                     
@@ -1022,47 +1107,50 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
             // create the event bar
             var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
                 tag: 'div',
+				style: {
+					'background-color': eventRecord.get(this.colourField)
+				},
                 html: this.eventBarTpl.apply(eventRecord.data),
                 eventID: record.get('EventID'),
                 cls: this.eventBarCls + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
             }, true);
-            
-            new Ext.util.Draggable(eventBar, {
-                revert: true,
-				
-				/**
-				 * Override for Ext.util.Draggable's onStart method to process the Event Bar's element before dragging
-				 * and raise the 'eventdragstart' event
-				 * @method
-				 * @private
-				 * @param {Event} e
-				 */
-				onStart: function(e){
+			
+			if (this.allowEventDragAndDrop) {
+			
+				new Ext.util.Draggable(eventBar, {
+					revert: true,
 					
-			        var draggable = this,
-						eventID = draggable.el.getAttribute('eventID'),
-						eventRecord = me.getEventRecord(eventID),
-						eventBarRecord = me.getEventBarRecord(eventID);
+					/**
+					 * Override for Ext.util.Draggable's onStart method to process the Event Bar's element before dragging
+					 * and raise the 'eventdragstart' event
+					 * @method
+					 * @private
+					 * @param {Event} e
+					 */
+					onStart: function(e){
 					
-					// Resize dragged Event Bar so it is 1 cell wide
-			        draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
-					// Reposition dragged Event Bar so it is in the middle of the User's finger.
-					draggable.el.setLeft(e.startX - (draggable.el.getWidth()/2));
-					
-					// hide all linked Event Bars
-			        me.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
-			            if (eventBar.dom !== draggable.el.dom) {
-			                eventBar.hide();
-			            }
-			        }, this);
-										
-					Ext.util.Draggable.prototype.onStart.apply(this, arguments);
-					
-					me.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
-					
-					return true;
-				}
-            });
+						var draggable = this, eventID = draggable.el.getAttribute('eventID'), eventRecord = me.getEventRecord(eventID), eventBarRecord = me.getEventBarRecord(eventID);
+						
+						// Resize dragged Event Bar so it is 1 cell wide
+						draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
+						// Reposition dragged Event Bar so it is in the middle of the User's finger.
+						draggable.el.setLeft(e.startX - (draggable.el.getWidth() / 2));
+						
+						// hide all linked Event Bars
+						me.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+							if (eventBar.dom !== draggable.el.dom) {
+								eventBar.hide();
+							}
+						}, this);
+						
+						Ext.util.Draggable.prototype.onStart.apply(this, arguments);
+						
+						me.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
+						
+						return true;
+					}
+				});
+			}
             
             var barPosition = record.get('BarPosition'),
 				barLength = record.get('BarLength'),
@@ -1260,7 +1348,11 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		if(this.droppable){
 			this.droppable = null;
 		}
-    }
+    },
+	
+	getRandomColour: function(){
+		return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+	}
 });
 
 
@@ -1282,7 +1374,10 @@ Ext.regModel('Ext.ux.CalendarEventBarModel', {
     }, {
         name: 'BarPosition',
         type: 'int'
-    }, 'Record'],
+    }, {
+		name: 'Colour',
+		type: 'string'
+	}, 'Record'],
     
     hasMany: [{
         model: 'Ext.ux.CalendarEventBarModel',
@@ -1312,20 +1407,16 @@ Ext.override(Ext.util.Region, {
         
         return horizontalValid && verticalValid;
     }
-});/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
+});/**
+ * @copyright 		(c) 2011, by SwarmOnline.com
+ * @date      		2nd October 2011
+ * @version   		0.1
+ * @documentation	
+ * @website	  		http://www.swarmonline.com
  */
 /**
- * @class Ext.ux.CalendarSimpleEvents 
+ * @class Ext.ux.CalendarSimpleEvents
+ * @author Stuart Ashworth
  */
 Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	
@@ -1334,25 +1425,27 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 */
 	dateField: 'start',
 	
+	/**
+	 * @cfg {Boolean} multiEventDots True to display a dot for each event on a day. False to only show one dot regardless
+	 * of how many events there are
+	 */
 	multiEventDots: false,
 	
+	/**
+	 * @cfg {String} wrapperCls CSS class that is added to the event dots' wrapper element
+	 */
 	wrapperCls: 'simple-event-wrapper',
 	
+	/**
+	 * @cfg {String} eventDotCls CSS class that is added to the event dot element itself. Used to provide
+	 * the dots' styling
+	 */
 	eventDotCls: 'simple-event',
 	
 	/**
-	 * Function used to filter the store for each of the displayed dates
-	 * @param {Object} record - current record
-	 * @param {Object} id - ID of passed in record
-	 * @param {Object} currentDate - date we are currently dealing while looping Calendar's dateCollection property
-	 */
-	filterFn: function(record, id, currentDate){
-		return record.get(this.dateField).clearTime(true).getTime() === currentDate.clearTime(true).getTime();
-	},
-	
-	/**
-	 * Template used to create Event markup. Template is merged with the records left
+	 * @cfg {Ext.XTemplate} eventTpl Template used to create the Event markup. Template is merged with the records left
 	 * following the filter
+	 * 
 	 */
 	eventTpl: new Ext.XTemplate(
 	'<span class="{wrapperCls}">',
@@ -1360,6 +1453,18 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 			'<span class="{[parent.eventDotCls]}"></span>',
 		'</tpl>',
 	'</span>'),
+	
+	/**
+	 * Function used to filter the store for each of the displayed dates
+	 * @method
+	 * @private
+	 * @param {Object} record - current record
+	 * @param {Object} id - ID of passed in record
+	 * @param {Object} currentDate - date we are currently dealing while looping Calendar's dateCollection property
+	 */
+	filterFn: function(record, id, currentDate){
+		return record.get(this.dateField).clearTime(true).getTime() === currentDate.clearTime(true).getTime();
+	},
 	
 	init: function(calendar){
 		
@@ -1374,18 +1479,25 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 		this.calendar.removeEvents = this.removeEvents;
 		
 		// listen to the Calendar's 'refresh' event and render events when it fires
-		this.calendar.on('refresh', this.renderEvents, this);
+		this.calendar.on({
+			refresh: this.renderEvents,
+			initialrender: this.renderEvents,
+			scope: this
+		});
 	},
 	
 	/**
 	 * Function to execute when the Calendar is refreshed.
 	 * It loops through the Calendar's current dateCollection and gets all Events
 	 * for the current date and inserts the appropriate markup
+	 * @method
+	 * @private
+	 * @return {void}
 	 */
 	renderEvents: function(){
 		if (!this.disabled) {
 			var dc = this.calendar.dateCollection;
-			
+
 			if (dc) {
 				// loop through Calendar's current dateCollection
 				dc.each(function(dateObj){
@@ -1396,8 +1508,11 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 					
 					if (cell) {
 						store.clearFilter();
-						store.filterBy(Ext.createDelegate(this.filterFn, this, [date], true)); // filter store for current date
-						if (store.getRange().length > 0) {
+
+						// if we only want to show a single dot per day then use findBy for better performance
+						var matchIndex = store[this.multiEventDots ? 'filterBy' : 'findBy'](Ext.createDelegate(this.filterFn, this, [date], true));
+						
+						if ((!this.multiEventDots && matchIndex > -1) || (this.multiEventDots && store.getRange().length > 0)) {
 							// append the event markup
 							var t = this.eventTpl.append(cell, {
 								events: (this.multiEventDots ? store.getRange() : ['event']),
@@ -1414,6 +1529,8 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	/**
 	 * Hides all the event markers
 	 * This is added to the parent Calendar's class so must be executed via the parent
+	 * @method
+	 * @return {void}
 	 */
 	hideEvents: function(){
 		this.simpleEventsPlugin.disabled = true;
@@ -1424,6 +1541,8 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	/**
 	 * Shows all the event markers
 	 * This is added to the parent Calendar's class so must be executed via the parent
+	 * @method
+	 * @return {void}
 	 */
 	showEvents: function(){
 		this.simpleEventsPlugin.disabled = false;
@@ -1434,6 +1553,8 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	/**
 	 * Removes all the event markers and their markup
 	 * This is added to the parent Calendar's class so must be executed via the parent
+	 * @method
+	 * @return {void}
 	 */
 	removeEvents: function(){
 		this.body.select('span.' + this.wrapperCls).remove();

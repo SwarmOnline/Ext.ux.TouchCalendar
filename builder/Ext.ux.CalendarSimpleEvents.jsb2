@@ -1,6 +1,6 @@
 {
     "projectName": "Ext.ux.CalendarSimpleEvents",
-    "deployDir": "Ext.ux.CalendarSimpleEvents",
+    "deployDir": "Ext.ux.CalendarSimpleEvents/min",
     "licenseText": "Ext.ux.CalendarSimpleEvents",
     "pkgs": [
         {

@@ -16,6 +16,9 @@ Package Descriptors:
 - isDebug:      Boolean describing whether to generate debug builds
                 This configuration is currently UNUSED. Debug and compressed
                 versions will ALWAYS be generated.
+- keep:         Whether to keep or treat as temporary and remove the final output of
+                this package.  This option only applies when the -t option is set.
+                The default value is true.
 - fileIncludes: An array of files descriptors which need to be included in this
                 package.
 - pkgDeps:      An array of the package descriptor file strings that this 
@@ -41,3 +44,8 @@ Filter Examples:
 - ".*"                 A filter to copy all files
 - ".*[\\.js|\\.css]"   A filter to copy all js and css files.
 
+Notes:
+- As of 2.0.3, resources defined in the .jsb2 file will automatically create any of their dependent
+  sub-directories... such that you can now define something like:
+      "src": "examples/ux/images/", "dest": "images/ux"
+  and it will work.  Before, it would *only* create top level directories, if explicitly defined.
