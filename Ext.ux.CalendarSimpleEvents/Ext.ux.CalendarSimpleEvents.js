@@ -8,6 +8,53 @@
 /**
  * @class Ext.ux.CalendarSimpleEvents
  * @author Stuart Ashworth
+ *
+ * This plugin can be added to an Ext.ux.Calendar instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
+ * does with a dot added to each day to represent the presence of an event.
+ * 
+ * ![Ext.ux.CalendarSimpleEvents Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.CalendarSimpleEvents-ss.png)
+ * 
+ * # Sample Usage
+ * 
+ *     Ext.regModel('Event', {
+           fields: [{
+               name: 'event',
+               type: 'string'
+           }, {
+               name: 'location',
+               type: 'string'
+           }, {
+               name: 'start',
+               type: 'date',
+               dateFormat: 'c'
+           }, {
+               name: 'end',
+               type: 'date',
+               dateFormat: 'c'
+           }]
+       });
+       
+       var calendar = new Ext.ux.Calendar({
+           fullscreen: true,
+           mode: 'month',
+           weekStart: 1,
+           value: new Date(),
+           
+           store: new Ext.data.Store({
+		        model: 'Event',
+		        data: [{
+		            event: 'Sencha Con',
+		            location: 'Austin, Texas',
+		            start: new Date(2011, 9, 23),
+		            end: new Date(2011, 9, 26)
+		        }]
+		    },
+                        
+           plugins: [new Ext.ux.CalendarSimpleEvents()]
+       });
+ *    
+ * # Demo
+ * [Ext.ux.CalendarSimpleEvents Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.CalendarSimpleEvents.html)
  */
 Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	

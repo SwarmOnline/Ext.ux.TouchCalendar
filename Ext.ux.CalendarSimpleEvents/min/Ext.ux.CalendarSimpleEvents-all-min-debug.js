@@ -6,10 +6,25 @@ Ext.ns('Ext.ux');
  * @version   		0.1
  * @documentation	
  * @website	  		http://www.swarmonline.com
- */
+*/
 /**
  * @class Ext.ux.Calendar
  * @author Stuart Ashworth
+ * 
+ * A simple Calendar extension that can be integrated into any Sencha Touch application.
+ * 
+ * ![Ext.ux.Calendar Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.Calendar-ss.png)
+ * 
+ * # Simple Usage
+ *     var calendar = new Ext.ux.Calendar({
+           fullscreen: true,
+           mode: 'month',
+           weekStart: 1,
+           value: new Date()
+       });
+ *    
+ * # Demo
+ * [Ext.ux.Calendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.Calendar.html)
  */
 Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 
@@ -713,6 +728,53 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 /**
  * @class Ext.ux.CalendarSimpleEvents
  * @author Stuart Ashworth
+ *
+ * A simple plugin for the Ext.ux.Calendar extension that allows a store to be bound to it so marker dots
+ * are placed on the days.
+ * 
+ * ![Ext.ux.CalendarSimpleEvents Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.CalendarSimpleEvents-ss.png)
+ * 
+ * # Sample Usage
+ * 
+ *     Ext.regModel('Event', {
+           fields: [{
+               name: 'event',
+               type: 'string'
+           }, {
+               name: 'location',
+               type: 'string'
+           }, {
+               name: 'start',
+               type: 'date',
+               dateFormat: 'c'
+           }, {
+               name: 'end',
+               type: 'date',
+               dateFormat: 'c'
+           }]
+       });
+       
+       var calendar = new Ext.ux.Calendar({
+           fullscreen: true,
+           mode: 'month',
+           weekStart: 1,
+           value: new Date(),
+           
+           store: new Ext.data.Store({
+		        model: 'Event',
+		        data: [{
+		            event: 'Sencha Con',
+		            location: 'Austin, Texas',
+		            start: new Date(2011, 9, 23),
+		            end: new Date(2011, 9, 26)
+		        }]
+		    },
+                        
+           plugins: [new Ext.ux.CalendarSimpleEvents()]
+       });
+ *    
+ * # Demo
+ * [Ext.ux.CalendarSimpleEvents Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.CalendarSimpleEvents.html)
  */
 Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	

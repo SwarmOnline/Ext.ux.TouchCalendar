@@ -23,10 +23,25 @@
  * @version   		0.1
  * @documentation	
  * @website	  		http://www.swarmonline.com
- */
+*/
 <span id='Ext-ux-Calendar'>/**
 </span> * @class Ext.ux.Calendar
  * @author Stuart Ashworth
+ * 
+ * A simple Calendar extension that can be integrated into any Sencha Touch application.
+ * 
+ * ![Ext.ux.Calendar Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.Calendar-ss.png)
+ * 
+ * # Simple Usage
+ *     var calendar = new Ext.ux.Calendar({
+           fullscreen: true,
+           mode: 'month',
+           weekStart: 1,
+           value: new Date()
+       });
+ *    
+ * # Demo
+ * [Ext.ux.Calendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.Calendar.html)
  */
 Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 
