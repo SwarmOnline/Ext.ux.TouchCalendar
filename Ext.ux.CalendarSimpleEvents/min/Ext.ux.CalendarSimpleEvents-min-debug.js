@@ -9,8 +9,8 @@
  * @class Ext.ux.CalendarSimpleEvents
  * @author Stuart Ashworth
  *
- * A simple plugin for the Ext.ux.Calendar extension that allows a store to be bound to it so marker dots
- * are placed on the days.
+ * This plugin can be added to an Ext.ux.Calendar instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
+ * does with a dot added to each day to represent the presence of an event.
  * 
  * ![Ext.ux.CalendarSimpleEvents Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.CalendarSimpleEvents-ss.png)
  * 
@@ -67,7 +67,7 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * @cfg {Boolean} multiEventDots True to display a dot for each event on a day. False to only show one dot regardless
 	 * of how many events there are
 	 */
-	multiEventDots: false,
+	multiEventDots: true,
 	
 	/**
 	 * @cfg {String} wrapperCls CSS class that is added to the event dots' wrapper element
@@ -79,6 +79,12 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * the dots' styling
 	 */
 	eventDotCls: 'simple-event',
+	
+	/**
+	 * @cfg {Number} dotWidth Width in pixels of the dots as defined by CSS. This is used for calculating the positions and
+	 * number of dots able to be shown.
+	 */
+	dotWidth: 6,
 	
 	/**
 	 * @cfg {Ext.XTemplate} eventTpl Template used to create the Event markup. Template is merged with the records left
@@ -149,14 +155,23 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 
 						// if we only want to show a single dot per day then use findBy for better performance
 						var matchIndex = store[this.multiEventDots ? 'filterBy' : 'findBy'](Ext.createDelegate(this.filterFn, this, [date], true));
+						var eventCount = store.getRange().length;
 						
-						if ((!this.multiEventDots && matchIndex > -1) || (this.multiEventDots && store.getRange().length > 0)) {
+						if ((!this.multiEventDots && matchIndex > -1) || (this.multiEventDots && eventCount > 0)) {
+							// get maximum number of dots that can fitted in the cell
+							var maxDots = Math.min((cell.getWidth()/this.dotWidth), eventCount);
+							
 							// append the event markup
 							var t = this.eventTpl.append(cell, {
-								events: (this.multiEventDots ? store.getRange() : ['event']),
+								events: (this.multiEventDots ? store.getRange().slice(0, maxDots) : ['event']),
 								wrapperCls: this.wrapperCls,
 								eventDotCls: this.eventDotCls
 							}, true);
+							
+							// position the dot wrapper based on the cell dimensions and dot count
+							t.setWidth(Math.min((this.multiEventDots ? store.getRange().length : 1) * this.dotWidth, cell.getWidth()));
+							t.setY((cell.getY() + cell.getHeight()) - (t.getHeight() + (cell.getHeight()*0.1)) );
+							t.setX((cell.getX() + (cell.getWidth()/2)) - (t.getWidth()/2) );
 						}
 					}
 				}, this);
