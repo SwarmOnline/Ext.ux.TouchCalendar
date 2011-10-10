@@ -37,6 +37,11 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	value: new Date(),
 	
 	/**
+	 * @cfg {String} mode The mode the calendar will display in. Accepted values are 'month' and 'week'.
+	 */
+	mode: 'month',
+	
+	/**
 	 * @cfg {Number} weekStart Starting day of the week. (0 = Sunday, 1 = Monday ... etc)
 	 */
 	weekStart: 1,
