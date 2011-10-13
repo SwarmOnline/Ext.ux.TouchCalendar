@@ -5,7 +5,7 @@
   width: 100%;
 }
 /* line 21, ../scss/Ext.ux.Calendar.scss */
-.ux-calendar table {
+.ux-calendar {
   width: 100%;
   position: relative;
   border-collapse: separate;

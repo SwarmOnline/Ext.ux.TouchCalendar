@@ -163,7 +163,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		/**
 		 * @property {Ext.util.Droppable} droppable Contains the Ext.util.Droppable instance on the Calendar's body element
 		 */
-		this.droppable = new Ext.util.Droppable(this.calendar.body, {
+		this.droppable = new Ext.util.Droppable(this.calendar.getEl(), {
 			/**
 			 * Override for Droppable's onDrag function to add hover class to active date cell
 			 * @method			 
@@ -222,7 +222,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID'));
 			
 			// reshow all the hidden linked Event Bars
-			this.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+			this.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
 				eventBar.show();
 			}, this);
 		}
@@ -429,7 +429,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 						draggable.el.setLeft(e.startX - (draggable.el.getWidth() / 2));
 						
 						// hide all linked Event Bars
-						me.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+						me.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
 							if (eventBar.dom !== draggable.el.dom) {
 								eventBar.hide();
 							}
@@ -455,7 +455,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
             
             // set sizes and positions
             eventBar.setLeft(dayCellX + (hasWrapped ? 0 : spacing));
-            eventBar.setTop((((dayCellY - this.calendar.body.getY()) + dayCellHeight) - eventBarHeight) - ((barPosition * eventBarHeight + (barPosition * spacing) + spacing)));
+            eventBar.setTop((((dayCellY - this.calendar.getEl().getY()) + dayCellHeight) - eventBarHeight) - ((barPosition * eventBarHeight + (barPosition * spacing) + spacing)));
             eventBar.setWidth((dayCellWidth * barLength) - (spacing * (doesWrap ? (doesWrap && hasWrapped ? 0 : 1) : 2)));
             
             if (record.linked().getCount() > 0) {
@@ -485,7 +485,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		draggable.updateBoundary(true);
 
 		// hide all linked Event Bars
-        this.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+        this.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
             if (eventBar.dom !== draggable.el.dom) {
                 eventBar.hide();
             }
@@ -524,7 +524,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
      */
     createEventWrapper: function(){
         if (this.calendar.rendered && !this.eventWrapperEl) {
-            this.eventWrapperEl = Ext.DomHelper.append(this.calendar.body, {
+            this.eventWrapperEl = Ext.DomHelper.append(this.calendar.getEl().select('thead th').first(), {
                 tag: 'div',
                 cls: this.eventWrapperCls
             }, true);
@@ -603,7 +603,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
      * @return {void}
      */
     deselectEvents: function(){
-        this.calendar.body.select('.' + this.eventBarSelectedCls).removeCls(this.eventBarSelectedCls);
+        this.calendar.getEl().select('.' + this.eventBarSelectedCls).removeCls(this.eventBarSelectedCls);
     },
     
     /**

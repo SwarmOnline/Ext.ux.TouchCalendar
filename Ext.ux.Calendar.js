@@ -26,7 +26,7 @@ Ext.ns('Ext.ux');
  * # Demo
  * [Ext.ux.Calendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.Calendar.html)
  */
-Ext.ux.Calendar = Ext.extend(Ext.Panel, {
+Ext.ux.Calendar = Ext.extend(Ext.Component, {
 
 	cls: 'ux-calendar',
 	autoHeight: true,
@@ -207,8 +207,8 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 */
 	constructor: function(config) {
 	
-		this.tpl = new Ext.XTemplate(
-		'<table class="{[this.me.mode]}">',		
+		this.renderTpl = new Ext.XTemplate(
+		//'<table class="{[this.me.mode]}">',		
 			'<thead>',
 				'<tr>',
 					'<tpl for="this.getDaysArray(values)">',
@@ -239,8 +239,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 				
 				'</tpl>',
 				'</tr>',
-			'</tbody>',
-		'</table>', Ext.apply(this.commonTemplateFunctions, {me: this}));
+			'</tbody>', Ext.apply(this.commonTemplateFunctions, {me: this}));
 
 		Ext.apply(this, config || {});
 
@@ -313,23 +312,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.previousValue = this.value;
 		
-		this.on('afterrender', Ext.createDelegate(this.refresh, this, [true], false), this);
-	},
-
-	onRender: function(ct, position) {
-		Ext.ux.Calendar.superclass.onRender.apply(this, arguments);
-
-		this.body.on({
-			click: this.onDayTap,
-			scope: this,
-			delegate: 'td'
-		});
-		
-		this.body.on({
-			click: this.onTableHeaderTap,
-			scope: this,
-			delegate: 'th'
-		});
+		//this.on('afterrender', Ext.createDelegate(this.refresh, this, [true], false), this);
 	},
 	
 	/**
@@ -353,7 +336,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 */
 	syncHeight: function(){
 		if(this.fullHeight){
-			this.body.down('table').setHeight(this.body.getHeight());
+			//this.body.down('table').setHeight(this.body.getHeight());
 		}
 	},
 
@@ -368,17 +351,20 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.dateCollection = this.getDateCollection(this.currentDate.getDate(), this.currentDate.getMonth(), this.currentDate.getFullYear());
 		
-		this.update({
+		this.update(this.renderTpl.apply({
 			currentDate: this.currentDate,
 			dates: this.dateCollection.items
-		});
+		}));
+		
 		// will force repaint() on iPod Touch 4G
-		this.body.getHeight();
-
-		this.syncHeight();
+		this.el.getHeight();
 		
-		this.dateCellEls = this.body.select('td.day');
-		
+		this.onRefresh(initialRender);
+	},
+	
+	onRefresh: function(initialRender){
+		this.dateCellEls = this.el.select('td.day');
+		this.doComponentLayout();
 		if (initialRender) {
 			this.fireEvent('initialrender', this);
 		}
@@ -455,7 +441,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 		
 		this.removeSelectedCell();
 		
-		this.body.select('td').each(function(td) {
+		this.el.select('td').each(function(td) {
 			var clickedDate = this.getCellDate(td);
 			if (((!td.hasCls(this.prevMonthCls) && !td.hasCls(this.nextMonthCls)) || !this.moveToMonthOnDateTap) && this.isSameDay(date, clickedDate)) {
 				td.addCls(this.selectedCls);
@@ -537,7 +523,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * @return {void}
 	 */
 	removeSelectedCell: function() {
-		this.body.select('.' + this.selectedCls).removeCls(this.selectedCls);
+		this.el.select('.' + this.selectedCls).removeCls(this.selectedCls);
 	},
 	
 	/**
@@ -697,7 +683,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * @return {Ext.Element}
 	 */
 	getDateCell: function(date){
-		return this.body.select('td[datetime="' + this.getDateAttribute(date) + '"]').first();
+		return this.el.select('td[datetime="' + this.getDateAttribute(date) + '"]').first();
 	},
 	
 	/**
@@ -721,5 +707,55 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 */
 	stringToDate: function(dateString) {
 		return Date.parseDate(dateString, 'Y-m-d');
-	}
+	},
+	
+	
+	/**
+	 * NEW STUFF
+	 */
+	initRenderData: function() {
+		this.currentDate = this.currentDate || this.value || new Date();
+		
+        Ext.ux.Calendar.superclass.initRenderData.apply(this, arguments);
+        
+		this.dateCollection = this.getDateCollection(this.currentDate.getDate(), this.currentDate.getMonth(), this.currentDate.getFullYear());
+		
+        Ext.applyIf(this.renderData, {
+            currentDate: this.currentDate,
+			dates: this.dateCollection.items
+        });
+        
+        return this.renderData;
+    },
+	
+	applyRenderSelectors: function() {
+        this.renderSelectors = Ext.applyIf(this.renderSelectors || {}, {
+
+        });
+
+        Ext.form.Field.superclass.applyRenderSelectors.call(this);
+    },
+	
+	onRender: function(ct, position) {
+
+		Ext.ux.Calendar.superclass.onRender.apply(this, arguments);
+
+		this.onRefresh(true);
+
+		this.el.on({
+			click: this.onDayTap,
+			scope: this,
+			delegate: 'td'
+		});
+		
+		this.el.on({
+			click: this.onTableHeaderTap,
+			scope: this,
+			delegate: 'th'
+		});
+	},
+	
+	getElConfig : function() {
+        return {tag: 'table', id: this.id, cls: this.mode};
+    }
 });
