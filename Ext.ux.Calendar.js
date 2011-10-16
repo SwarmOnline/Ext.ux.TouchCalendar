@@ -108,6 +108,11 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 	nextPeriodCls: 'goto-next',
 	
 	/**
+	 * @cfg {String} daySelector CSS selector used to retrieve all day elements
+	 */
+	daySelector: 'td.day',
+	
+	/**
 	 * Object containing common functions to be passed to XTemplate for internal use
 	 * @property {Object} commonTemplateFunctions
 	 * @private
@@ -152,22 +157,22 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 		 * @method
 		 * @private
 		 * @param {Number} currentIndex
-		 * @return {Number}
+		 * @return {Boolean}
 		 */
 		isEndOfRow: function(currentIndex){
-			return (currentIndex % 7) === 0 && (currentIndex > 0)
+			return (currentIndex % 7) === 0 && (currentIndex > 0);
 		},
 		
 		/**
-		 * Returns true if the specific index is at the current mode's period
-		 * Used to determine if another row opening tag is needed
-		 * @param {Number} currentIndex
+		 * Returns true if the specific index is at the start of the row.
+		 * USed to determine whether if a row opening tag is needed
 		 * @method
-		 * @private
-		 * @return {Number}
+		 * @private 
+		 * @param {Number} currentIndex
+		 * @return {Boolean}
 		 */
-		isEndOfPeriod: function(currentIndex){
-			return currentIndex === this.me.totalDays[this.me.mode](this.me.value);
+		isStartOfRow: function(currentIndex){
+			return ((currentIndex-1) % 7) === 0 && (currentIndex-1 >= 0);
 		},
 		
 		/**
@@ -182,7 +187,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 				i;
 			
 			for(i = 0; i < 7; i++){
-				daysArray.push(values.dates[i])	
+				daysArray.push(values.dates[i]);
 			}
 			
 			return daysArray;
@@ -441,7 +446,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 		
 		this.removeSelectedCell();
 		
-		this.el.select('td').each(function(td) {
+		this.el.select(this.daySelector).each(function(td) {
 			var clickedDate = this.getCellDate(td);
 			if (((!td.hasCls(this.prevMonthCls) && !td.hasCls(this.nextMonthCls)) || !this.moveToMonthOnDateTap) && this.isSameDay(date, clickedDate)) {
 				td.addCls(this.selectedCls);
@@ -745,7 +750,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 		this.el.on({
 			click: this.onDayTap,
 			scope: this,
-			delegate: 'td'
+			delegate: this.daySelector
 		});
 		
 		this.el.on({

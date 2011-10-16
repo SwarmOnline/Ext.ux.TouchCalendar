@@ -33,11 +33,11 @@ div.event-bar.wrap-start {
   -webkit-border-bottom-left-radius: 0;
 }
 /* line 45, ../scss/Ext.ux.CalendarEvents.scss */
-td.day.date-cell-hover {
+table.ux-calendar td.day.date-cell-hover {
   background-color: #dcdbdf;
   background-image: none;
 }
-table td {
+table.ux-calendar table td {
   vertical-align: top;
   text-align: right;
   font-size: 0.7em;

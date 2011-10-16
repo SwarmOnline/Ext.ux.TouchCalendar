@@ -67,7 +67,7 @@
 		&.today
 		{
 			$c: #7188a8;
-			color: white;
+			color: #FFFFFF;
 			text-shadow: #333 1px 1px 2px;
 			-webkit-box-shadow: inset 0px 0px 8px #000;
 			border: 1px solid black;
@@ -84,7 +84,7 @@
 		&.selected
 		{
 			$c: #1980e5;
-			color: white;
+			color: #FFFFFF;
 			text-shadow: #333 1px 1px 0px;
 			border: 1px solid black;
 			background: $c;
@@ -94,7 +94,7 @@
 		&.today.selected
 		{
 			$c: #1980e5;
-			color: white;
+			color: #FFFFFF;
 			text-shadow: #333 1px 1px 2px;
 			border: 1px solid black;
 			background: $c;
@@ -104,6 +104,11 @@
 		&.prev-month, &.next-month
 		{
 			color: #89909A;
+		}
+		
+		&.prev-month.selected, &.next-month.selected
+		{
+			color: #FFFFFF;
 		}
  	}
  	
