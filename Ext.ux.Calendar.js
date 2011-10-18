@@ -57,11 +57,6 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 	maxDate: null,
 	
 	/**
-	 * @cfg {Boolean} fullHeight True to have the calendar fill the height of the Panel
-	 */
-	fullHeight: true,
-	
-	/**
 	 * @cfg {Boolean} moveToMonthOnDateTap True to have the calendar switch month if the user
 	 * taps a date that is part of the next/previous month.
 	 */
@@ -212,8 +207,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 	 */
 	constructor: function(config) {
 	
-		this.renderTpl = new Ext.XTemplate(
-		//'<table class="{[this.me.mode]}">',		
+		this.renderTpl = new Ext.XTemplate(	
 			'<thead>',
 				'<tr>',
 					'<tpl for="this.getDaysArray(values)">',
@@ -316,9 +310,66 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 		Ext.ux.Calendar.superclass.initComponent.call(this);
 		
 		this.previousValue = this.value;
-		
-		//this.on('afterrender', Ext.createDelegate(this.refresh, this, [true], false), this);
 	},
+	
+	/**
+	 * Generates the data object that will be applied to the renderTpl.
+	 * Populates the dateCollection collection and combines with with the renderData
+	 * @method
+	 * @private
+	 * @return {Object} renderData 
+	 */
+	initRenderData: function() {
+		this.currentDate = this.currentDate || this.value || new Date();
+		
+        Ext.ux.Calendar.superclass.initRenderData.apply(this, arguments);
+        
+		this.dateCollection = this.getDateCollection(this.currentDate.getDate(), this.currentDate.getMonth(), this.currentDate.getFullYear());
+		
+        Ext.applyIf(this.renderData, {
+            currentDate: this.currentDate,
+			dates: this.dateCollection.items
+        });
+        
+        return this.renderData;
+    },
+
+	/**
+	 * Override of onRender method. Attaches event handlers to the element to handler
+	 * day taps and period switch taps
+	 * @method
+	 * @private
+	 * @return {void}
+	 * @param {Object} ct
+	 * @param {Object} position
+	 */	
+	onRender: function(ct, position) {
+		Ext.ux.Calendar.superclass.onRender.apply(this, arguments);
+
+		this.onRefresh(true);
+
+		this.el.on({
+			click: this.onDayTap,
+			scope: this,
+			delegate: this.daySelector
+		});
+		
+		this.el.on({
+			click: this.onTableHeaderTap,
+			scope: this,
+			delegate: 'th'
+		});
+	},
+	
+	/**
+	 * Returns configuration for the base element
+	 * @method
+	 * @private
+	 * @return {Object} Element configuration
+	 */
+	getElConfig : function() {
+        return {tag: 'table', id: this.id, cls: this.mode};
+    },
 	
 	/**
 	 * Changes the Calendar's mode
@@ -330,19 +381,6 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 		this.mode = mode;
 		
 		this.refresh();
-	},
-	
-	/**
-	 * Updates the Calendar's table's height to match the wrapping Panel if
-	 * fullHeight is set to true
-	 * @method
-	 * @private
-	 * @return {void}
-	 */
-	syncHeight: function(){
-		if(this.fullHeight){
-			//this.body.down('table').setHeight(this.body.getHeight());
-		}
 	},
 
 	/**
@@ -367,8 +405,18 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 		this.onRefresh(initialRender);
 	},
 	
+	/**
+	 * Executed after the calendar is refreshed.
+	 * Caches the day elements and fires the initialrender/refresh event
+	 * @method
+	 * @private
+	 * @return {void}
+	 * @param {Boolean} initialRender - used to decide which event to fire. If true the initialrender event will
+	 * 									fire, this is so logic can be performed on first load rather than everytime it is
+	 * 									refreshed (e.g. during period switches) with refresh event 
+	 */
 	onRefresh: function(initialRender){
-		this.dateCellEls = this.el.select('td.day');
+		this.dateCellEls = this.el.select(this.daySelector);
 		this.doComponentLayout();
 		if (initialRender) {
 			this.fireEvent('initialrender', this);
@@ -516,7 +564,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 		if(this.mode === 'month'){
 			outside = ((this.minDate && date.getLastDateOfMonth() < this.minDate) || (this.maxDate && date.getFirstDateOfMonth() > this.maxDate));
 		} else {
-			outside = ((this.minDate && this.getWeekEndDate(date.getDate(), date.getMonth(), date.getFullYear()) < this.minDate) || (this.maxDate && this.getWeekStartDate(date.getDate(), date.getMonth(), date.getFullYear()) > this.maxDate));
+			outside = ((this.minDate && this.getWeekendDate(date) < this.minDate) || (this.maxDate && this.getWeekStartDate(date) > this.maxDate));
 		}
 		
 		return outside;
@@ -545,7 +593,7 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 			unselectable = true, // variable used to indicate whether a day is allowed to be selected
 			baseDate = new Date(year, month, day), // date to use as base
 		
-			iterDate = Ext.createDelegate(this.modeStartFns[this.mode], this)(day, month, year), // date current mode will start at
+			iterDate = Ext.createDelegate(this.modeStartFns[this.mode], this)(baseDate), // date current mode will start at
 			totalDays = Ext.createDelegate(this.totalDays[this.mode], this)(baseDate); // total days to be rendered in current mode
 		
 		// create dates based on startDate and number of days to render
@@ -576,47 +624,39 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 	 * Gets the first day of the week that the 1st of the month falls on.
 	 * @method
 	 * @private
-	 * @param {Number} day
-	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
-	 * @param {Number} year
+	 * @param {Date} date
 	 * @return {Date}
 	 */
-	getMonthStartDate: function(day, month, year){
-		return this.getWeekStartDate(1, month, year);
+	getMonthStartDate: function(date){
+		return this.getWeekStartDate(new Date(date.getFullYear(), date.getMonth(), 1));
 	},
 	
 	/**
 	 * Returns the first day of the week based on the specified date.
 	 * @method
 	 * @private
-	 * @param {Number} day
-	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
-	 * @param {Number} year
+	 * @param {Date} date
 	 * @return {Date}
 	 */
-	getWeekStartDate: function(day, month, year){
-		var currentDate = new Date(year, month, day);
-		var dayOffset = currentDate.getDay() - this.weekStart;
+	getWeekStartDate: function(date){
+		var dayOffset = date.getDay() - this.weekStart;
 		dayOffset = dayOffset < 0 ? 6 : dayOffset;
 		
-		return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()-0-dayOffset);
+		return new Date(date.getFullYear(), date.getMonth(), date.getDate()-0-dayOffset);
 	},
 	
 	/**
 	 * Returns the last day of the week based on the specified date.
 	 * @method
 	 * @private
-	 * @param {Number} day
-	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
-	 * @param {Number} year
+	 * @param {Date} date
 	 * @return {Date}
 	 */
-	getWeekEndDate: function(day, month, year){
-		var currentDate = new Date(year, month, day);
-		var dayOffset = currentDate.getDay() - this.weekStart;
+	getWeekendDate: function(date){
+		var dayOffset = date.getDay() - this.weekStart;
 		dayOffset = dayOffset < 0 ? 6 : dayOffset;
 		
-		return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()+0+dayOffset);
+		return new Date(date.getFullYear(), date.getMonth(), date.getDate()+0+dayOffset);
 	},
 	
 	/**
@@ -712,55 +752,5 @@ Ext.ux.Calendar = Ext.extend(Ext.Component, {
 	 */
 	stringToDate: function(dateString) {
 		return Date.parseDate(dateString, 'Y-m-d');
-	},
-	
-	
-	/**
-	 * NEW STUFF
-	 */
-	initRenderData: function() {
-		this.currentDate = this.currentDate || this.value || new Date();
-		
-        Ext.ux.Calendar.superclass.initRenderData.apply(this, arguments);
-        
-		this.dateCollection = this.getDateCollection(this.currentDate.getDate(), this.currentDate.getMonth(), this.currentDate.getFullYear());
-		
-        Ext.applyIf(this.renderData, {
-            currentDate: this.currentDate,
-			dates: this.dateCollection.items
-        });
-        
-        return this.renderData;
-    },
-	
-	applyRenderSelectors: function() {
-        this.renderSelectors = Ext.applyIf(this.renderSelectors || {}, {
-
-        });
-
-        Ext.form.Field.superclass.applyRenderSelectors.call(this);
-    },
-	
-	onRender: function(ct, position) {
-
-		Ext.ux.Calendar.superclass.onRender.apply(this, arguments);
-
-		this.onRefresh(true);
-
-		this.el.on({
-			click: this.onDayTap,
-			scope: this,
-			delegate: this.daySelector
-		});
-		
-		this.el.on({
-			click: this.onTableHeaderTap,
-			scope: this,
-			delegate: 'th'
-		});
-	},
-	
-	getElConfig : function() {
-        return {tag: 'table', id: this.id, cls: this.mode};
-    }
+	}
 });
