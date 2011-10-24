@@ -8,14 +8,10 @@
 
 @import 'sencha-touch/default/all';
 
-.ux-calendar
+.touch-calendar-view
 {
 	$bd-color: #A3A7AF;
 	$date-bg-color: #cfced3;
-
-	color: #3F4E5E;
-	background-color: #EEE;
-	width: 100%;
 
 	table
 	{
@@ -23,6 +19,8 @@
 		border-collapse: separate;
 		table-layout: fixed;
 		font-size: 20px;
+		color: #3F4E5E;
+		background-color: #EEE;
 		
 		&.week
 		{
@@ -30,6 +28,20 @@
 			{
 				vertical-align: top;
 			}		
+		}
+		
+		&.day
+		{
+			td
+			{
+				&.time-block
+				{
+					text-align: left;
+					background-image: none;
+					font-size: 0.7em;
+					height: 30px;
+				}
+			}
 		}
 	}
 	
@@ -42,8 +54,6 @@
 			border-left: 1px solid $bd-color;
 			border-right: 1px solid lighten($bd-color, 20%);
 			border-top: 1px solid lighten($bd-color, 20%);
-		
-			
 		}
 	}
 
@@ -56,12 +66,6 @@
 		vertical-align: middle;
 		font-size: 1.3em;
 		@include background-gradient($date-bg-color, 'recessed');
-		
-
-		&.weekend
-		{
-			//@include background-gradient(darken(#d8d7db, 6%), 'recessed');
-		}
 
 		&.today
 		{
