@@ -1,5 +1,10 @@
 Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
-	cls: 'touchcalendar-view',
+	cls: 'touch-calendar-view',
+	
+	/**
+	 * cfg {Number} weekStart 
+	 */
+	weekStart: 1,
 	
 	/**
 	 * @cfg {String} mode The mode the Calendar will be displayed in. Possible values 'month', 'week' or 'day'.
