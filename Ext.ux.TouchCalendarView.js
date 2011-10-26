@@ -2,7 +2,7 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 	cls: 'touch-calendar-view',
 	
 	/**
-	 * cfg {Number} weekStart 
+	 * cfg {Number} weekStart Starting day of the week. (0 = Sunday, 1 = Monday ... etc)
 	 */
 	weekStart: 1,
 	
@@ -231,8 +231,14 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 		
 	},
 	
+	/**
+	 * Handler for the selectionchange event which sets the internal value to the selected one.
+	 * @method
+	 * @private
+	 * @param {Object} selectionModel
+	 * @param {Object} records
+	 */
 	onSelectionChange: function(selectionModel, records){
-		
 		if(records.length > 0){
 			this.setValue(records[0].get('date'));
 		}
@@ -498,15 +504,28 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 		}
 	},
 	
+	/**
+	 * Selects the specified date in the DataView's selection model
+	 * @method
+	 * @param {Date} date
+	 */
 	selectDate: function(date){
-		var dateToSelect = this.getDateRecord(date);
+		var recordToSelect = this.getDateRecord(date);
 		
-		if (dateToSelect < 0) {
+		if (recordToSelect < 0) {
 			this.refresh();
+			
+			recordToSelect = this.getDateRecord(date);
 		}
-		this.getSelectionModel().select(this.getDateRecord(date));
+		this.getSelectionModel().select(recordToSelect);
 	},
 	
+	/**
+	 * Returns the TouchCalendarViewModel model instance containing the passed in date
+	 * @method
+	 * @privatee
+	 * @param {Date} date
+	 */
 	getDateRecord: function(date){
 		return this.store.findBy(function(record){
 			var recordDate = record.get('date').clearTime(true).getTime();
@@ -612,6 +631,12 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 
 
 Ext.ux.TouchCalendarView.MONTH = {
+	/**
+	 * Returns the total number of days to be shown in this view.
+	 * @method
+	 * @private
+	 * @param {Date} date
+	 */
 	getTotalDays: function(date){
 		var firstDate = date.getFirstDateOfMonth();
 		
@@ -651,7 +676,13 @@ Ext.ux.TouchCalendarView.MONTH = {
 };
 
 Ext.ux.TouchCalendarView.WEEK = {
-
+	/**
+	 * Returns the total number of days to be shown in this view.
+	 * As it is the WEEK view it is always 7
+	 * @method
+	 * @private
+	 * @param {Date} date
+	 */
 	getTotalDays: function(date){
 		return 7;
 	},
@@ -687,6 +718,9 @@ Ext.ux.TouchCalendarView.WEEK = {
 
 Ext.ux.TouchCalendarView.DAY = {
 	
+	/**
+	 * Template for the DAY view
+	 */
 	tpl: [
 		'<table class="{[this.me.mode.toLowerCase()]}">',			
 			'<tbody>',
@@ -705,12 +739,19 @@ Ext.ux.TouchCalendarView.DAY = {
 			'</tbody>',
 		'</table>'],
 
+	/**
+	 * Returns the total number of days to be shown in this view.
+	 * As it is DAY view it is always 1
+	 * @method
+	 * @private
+	 * @param {Date} date
+	 */
 	getTotalDays: function(date){
 		return 1;
 	},
 	
 	/**
-	 * Returns the first day of the week based on the specified date.
+	 * Returns the same date as passed in because there is only one date visible
 	 * @method
 	 * @private
 	 * @param {Date} date
@@ -721,7 +762,7 @@ Ext.ux.TouchCalendarView.DAY = {
 	},
 	
 	/**
-	 * Returns a new date based on the date passed and the delta value for WEEK view.
+	 * Returns a new date based on the date passed and the delta value for DAY view.
 	 * @method
 	 * @private
 	 * @param {Date} date

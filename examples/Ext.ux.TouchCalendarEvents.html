@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="../lib/sencha/resources/css/sencha-touch.css" media="all"/>
+        <script src="../lib/sencha/sencha-touch-debug.js" type="text/javascript">
+        </script>
+        <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendar.css" media="all"/>
+        <script src="../Ext.ux.TouchCalendar.js" type="text/javascript">
+        </script>
+		<script src="../Ext.ux.TouchCalendarView.js" type="text/javascript">
+        </script>
+        <script src="../Ext.ux.CalendarEvents/Ext.ux.TouchCalendarEvents.js" type="text/javascript">
+        </script>
+        <link rel="stylesheet" type="text/css" href="../Ext.ux.CalendarEvents/resources/css/Ext.ux.CalendarEvents.css" media="all"/>
+        <script src="EventStore.js" type="text/javascript">
+        </script>
+        <script type="text/javascript">
+            
+            Ext.setup({
+                onReady: function(){
+                
+                    calendar = new Ext.ux.TouchCalendar({
+                        fullscreen: true,
+                        dockedItems: [{
+                            xtype: 'toolbar',
+                            dock: 'top',
+                            items: [{
+                                xtype: 'button',
+                                text: 'Month View',
+                                handler: function(){
+                                    calendar.setMode('month');
+                                }
+                            }, {
+                                xtype: 'button',
+                                text: 'Week View',
+                                handler: function(){
+                                    calendar.setMode('week');
+                                }
+                            }, {
+                                xtype: 'button',
+                                text: 'Day View',
+                                handler: function(){
+                                    calendar.setMode('day');
+                                }
+                            }]
+                        }],
+                        minDate: (new Date()).add(Date.DAY, -40),
+                        maxDate: (new Date()).add(Date.DAY, 55),
+                        mode: 'month',
+                        
+                        value: new Date(),
+                        viewConfig: {
+							weekStart: 0,
+							eventStore: eventStore,
+							plugins: [new Ext.ux.TouchCalendarEvents({
+								eventBarTpl: new Ext.XTemplate('{event} - {location}')
+							})]
+						}
+                    });
+                    
+                    calendar.on('eventtap', function(event){
+                        console.log('eventtap');
+                        //console.log(event);
+                    });
+                    calendar.on('eventdragstart', function(draggable, eventRecord, e){
+                        console.log('eventdragstart');
+                        //console.log(arguments);
+                    });
+                    calendar.on('beforeeventdrop', function(draggable, eventRecord, e){
+                        console.log('beforeeventdrop');
+                        //console.log(arguments);
+                        return true;
+                    });
+                    calendar.on('eventdrop', function(draggable, eventRecord, e){
+                        console.log('eventdrop');
+                        //console.log(arguments);
+                    });
+                    calendar.on('eventdrag', function(draggable, eventRecord, e){
+                        console.log('eventdrag');
+                        //console.log(arguments);
+                    });
+                    
+                }
+                
+                
+            });
+        </script>
+        <title></title>
+    </head>
+    <body>
+    </body>
+</html>
