@@ -556,6 +556,9 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 	 * @return {Boolean}
 	 */
 	isSameDay: function(date1, date2){
+		if(!date1 || !date2){
+			return false;
+		}
 		return date1.clearTime(true).getTime() === date2.clearTime(true).getTime();
 	},
 	

@@ -18,7 +18,7 @@
 					viewConfig: {
 						minDate: (new Date()).add(Date.DAY, -40),
 						maxDate: (new Date()).add(Date.DAY, 55),
-						mode: 'week',
+						mode: 'month',
 						weekStart: 1,
 						value: new Date()
 					}
@@ -53,7 +53,8 @@
                     items: [calendar]
             	});
                 
-				calendar.view.on({
+				/*
+calendar.view.on({
 					periodchange: function(){
 						console.log('periodchange');
 						console.log(arguments);
@@ -63,6 +64,7 @@
 						console.log(arguments);
 					}
 				});
+*/
 				
             }
         });
