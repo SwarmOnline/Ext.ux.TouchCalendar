@@ -5,14 +5,12 @@
         <link rel="stylesheet" type="text/css" href="../lib/sencha/resources/css/sencha-touch.css" media="all"/>
         <script src="../lib/sencha/sencha-touch-debug.js" type="text/javascript">
         </script>
-        <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendar.css" media="all"/>
-        <script src="../Ext.ux.TouchCalendar.js" type="text/javascript">
-        </script>
-		<script src="../Ext.ux.TouchCalendarView.js" type="text/javascript">
+        <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendarView.css" media="all"/>
+        <script src="../Ext.ux.TouchCalendarView.js" type="text/javascript">
         </script>
         <script src="../Ext.ux.CalendarEvents/Ext.ux.TouchCalendarEvents.js" type="text/javascript">
         </script>
-        <link rel="stylesheet" type="text/css" href="../Ext.ux.CalendarEvents/resources/css/Ext.ux.CalendarEvents.css" media="all"/>
+        <link rel="stylesheet" type="text/css" href="../Ext.ux.CalendarEvents/resources/css/Ext.ux.TouchCalendarEvents.css" media="all"/>
         <script src="EventStore.js" type="text/javascript">
         </script>
         <script type="text/javascript">
@@ -20,8 +18,21 @@
             Ext.setup({
                 onReady: function(){
                 
-                    calendar = new Ext.ux.TouchCalendar({
-                        fullscreen: true,
+                    var calendarView = new Ext.ux.TouchCalendarView({
+                        minDate: (new Date()).add(Date.DAY, -40),
+                        maxDate: (new Date()).add(Date.DAY, 55),
+                        mode: 'month',
+                        weekStart: 0,
+                        value: new Date(),
+                        eventStore: eventStore,
+                        
+                        plugins: [new Ext.ux.TouchCalendarEvents({
+                            eventBarTpl: new Ext.XTemplate('{event} - {location}')
+                        })]
+                    });
+                    
+                    var calendarPanel = new Ext.Panel({
+                    	fullscreen: true,
                         dockedItems: [{
                             xtype: 'toolbar',
                             dock: 'top',
@@ -29,54 +40,44 @@
                                 xtype: 'button',
                                 text: 'Month View',
                                 handler: function(){
-                                    calendar.setMode('month');
+                                    calendarView.setMode('month');
                                 }
                             }, {
                                 xtype: 'button',
                                 text: 'Week View',
                                 handler: function(){
-                                    calendar.setMode('week');
+                                    calendarView.setMode('week');
                                 }
                             }, {
                                 xtype: 'button',
                                 text: 'Day View',
                                 handler: function(){
-                                    calendar.setMode('day');
+                                    calendarView.setMode('day');
                                 }
                             }]
                         }],
-                        minDate: (new Date()).add(Date.DAY, -40),
-                        maxDate: (new Date()).add(Date.DAY, 55),
-                        mode: 'month',
-                        
-                        value: new Date(),
-                        viewConfig: {
-							weekStart: 0,
-							eventStore: eventStore,
-							plugins: [new Ext.ux.TouchCalendarEvents({
-								eventBarTpl: new Ext.XTemplate('{event} - {location}')
-							})]
-						}
-                    });
+                        layout: 'fit',
+                        items: [calendarView]
+                    })
                     
-                    calendar.on('eventtap', function(event){
+                    calendarView.on('eventtap', function(event){
                         console.log('eventtap');
                         //console.log(event);
                     });
-                    calendar.on('eventdragstart', function(draggable, eventRecord, e){
+                    calendarView.on('eventdragstart', function(draggable, eventRecord, e){
                         console.log('eventdragstart');
                         //console.log(arguments);
                     });
-                    calendar.on('beforeeventdrop', function(draggable, eventRecord, e){
+                    calendarView.on('beforeeventdrop', function(draggable, eventRecord, e){
                         console.log('beforeeventdrop');
                         //console.log(arguments);
                         return true;
                     });
-                    calendar.on('eventdrop', function(draggable, eventRecord, e){
+                    calendarView.on('eventdrop', function(draggable, eventRecord, e){
                         console.log('eventdrop');
                         //console.log(arguments);
                     });
-                    calendar.on('eventdrag', function(draggable, eventRecord, e){
+                    calendarView.on('eventdrag', function(draggable, eventRecord, e){
                         console.log('eventdrag');
                         //console.log(arguments);
                     });

@@ -14,7 +14,7 @@
         Ext.setup({
             onReady: function(){
             
-                var calendarView = new Ext.ux.TouchCalendarView({
+                var calendar = new Ext.ux.TouchCalendar({
 					viewConfig: {
 						minDate: (new Date()).add(Date.DAY, -40),
 						maxDate: (new Date()).add(Date.DAY, 55),
@@ -33,24 +33,24 @@
                             xtype: 'button',
                             text: 'Month View',
                             handler: function(){
-                                calendarView.setMode('month');
+                                calendar.setMode('month');
                             }
                         }, {
                             xtype: 'button',
                             text: 'Week View',
                             handler: function(){
-                                calendarView.setMode('week');
+                                calendar.setMode('week');
                             }
                         }, {
                             xtype: 'button',
                             text: 'Day View',
                             handler: function(){
-                                calendarView.setMode('day');
+                                calendar.setMode('day');
                             }
                         }]
                     }],
                     layout: 'fit',
-                    items: [calendarView]
+                    items: [calendar]
             	});
             }
         });
