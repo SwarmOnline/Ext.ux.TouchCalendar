@@ -122,22 +122,10 @@ Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 		this.calendar.hideEvents = this.hideEvents;
 		this.calendar.removeEvents = this.removeEvents;
 		
-		this.calendar.syncHeight = Ext.createSequence(this.calendar.syncHeight, this.initEvents, this);
-		
+		// After the calendar's height is synced with it's container we must refresh the events
+		this.calendar.syncHeight = Ext.createSequence(this.calendar.syncHeight, this.refreshEvents, this);
 	},
-	
-	initEvents: function(){
-		
-		this.refreshEvents();
-		
-		// listen to the Calendar's 'refresh' event and render events when it fires
-        /*
-this.calendar.on({
-            refresh: this.refreshEvents,
-            scope: this
-        });
-*/
-	},
+
 	
 	/**
 	 * Function to execute when the Calendar is refreshed.
@@ -151,7 +139,10 @@ this.calendar.on({
 		if (!this.disabled) {
 			var datesStore = this.calendar.store;
 
-			if (datesStore) {
+			if (datesStore && this.calendar.isVisible()) {
+				
+				this.removeEvents(); // remove the event dots already existing
+				
 				// loop through Calendar's current dateCollection
 				datesStore.each(function(dateObj){
 					var date = dateObj.get('date');
@@ -197,7 +188,7 @@ this.calendar.on({
 	hideEvents: function(){
 		this.simpleEventsPlugin.disabled = true;
 		
-		this.body.select('span.' + this.wrapperCls).hide();
+		this.calendar.el.select('span.' + this.wrapperCls).hide();
 	},
 	
 	/**
@@ -209,7 +200,7 @@ this.calendar.on({
 	showEvents: function(){
 		this.simpleEventsPlugin.disabled = false;
 		
-		this.body.select('span.' + this.wrapperCls).show();
+		this.calendar.el.select('span.' + this.wrapperCls).show();
 	},
 	
 	/**
@@ -219,6 +210,8 @@ this.calendar.on({
 	 * @return {void}
 	 */
 	removeEvents: function(){
-		this.body.select('span.' + this.wrapperCls).remove();
+		if(this.calendar.el){
+			this.calendar.el.select('span.' + this.wrapperCls).remove();
+		}
 	}	
 });

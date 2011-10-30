@@ -13,7 +13,7 @@ Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
 	},
 	
 	defaultViewConfig: {
-		mode: 'month',
+		mode: 'MONTH',
         weekStart: 1,
         value: new Date()
 	},
@@ -32,8 +32,7 @@ Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
 		
 		this.viewConfig = Ext.applyIf(this.viewConfig || {}, this.defaultViewConfig);
 		
-		Ext.apply(this, this.viewConfig);
-		this.mode = this.mode.toUpperCase();
+		this.mode = this.viewConfig.mode.toUpperCase();
 	
 		this.initViews();
 	
@@ -48,11 +47,13 @@ Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
 	
 	initViews: function(){
 		this.items = [];
-		var origVal = this.value.clone();
+		var origVal = this.viewConfig.value.clone(),
+			i = (this.enableSwipeNavigate ? -1 : 0),
+			iMax = (this.enableSwipeNavigate ? 1 : 0);
 		
-		for(var i = -1; i <= 1; i++){
+		for(; i <= iMax; i++){
 			var viewValue = origVal.add(Date[this.mode.toUpperCase()], i);
-			console.log(this.origVal);
+			
 			this.items.push(
 				new Ext.ux.TouchCalendarView(Ext.apply(this.viewConfig, {
 					value: viewValue
