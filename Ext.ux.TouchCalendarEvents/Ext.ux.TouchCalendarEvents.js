@@ -1,13 +1,20 @@
 /**
  * @copyright 		(c) 2011, by SwarmOnline.com
- * @date      		2nd October 2011
+ * @date      		2nd November 2011
  * @version   		0.1
  * @documentation	
  * @website	  		http://www.swarmonline.com
  */
 /**
- * @class Ext.ux.CalendarEvents
+ * @class Ext.ux.TouchCalendarEvents
  * @author Stuart Ashworth
+ * 
+ * This plugin also allows a store to be bound to the Ext.ux.TouchCalendar and will display the store's events as bars spanning its relevant days. 
+ * 
+ * ![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/Ext.ux.TouchCalendarEvents-ss.png)
+ * 
+ * [Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
+ * 
  */
 Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 
@@ -126,11 +133,8 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 			
 		);
         
-        this.calendar.on({
-            refresh: this.refreshEvents,
-            scope: this
-        });
-		
+		// create a sequence to refresh the Event Bars when the calendar either refreshes or has a component layout happen
+		this.calendar.refresh = Ext.createSequence(this.calendar.refresh, this.refreshEvents, this);		
 		this.calendar.afterComponentLayout = Ext.createSequence(this.calendar.afterComponentLayout, this.refreshEvents, this);
     },
     
@@ -453,7 +457,8 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 				dayCellWidth = dayEl.getWidth(),
             	eventBarHeight = eventBar.getHeight(),            
             	spacing = this.eventBarSpacing;
-            
+            console.log(dayEl);
+			console.log(dayCellY);
             // set sizes and positions
             eventBar.setLeft(dayCellX + (hasWrapped ? 0 : spacing));
             eventBar.setTop((((dayCellY - this.calendar.getEl().getY()) + dayCellHeight) - eventBarHeight) - ((barPosition * eventBarHeight + (barPosition * spacing) + spacing)));
@@ -525,7 +530,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
      */
     createEventWrapper: function(){
         if (this.calendar.rendered && !this.eventWrapperEl) {
-            this.eventWrapperEl = Ext.DomHelper.append(this.calendar.getEl().select('thead th').first(), {
+            this.eventWrapperEl = Ext.DomHelper.append(this.getEventsWrapperContainer(), {
                 tag: 'div',
                 cls: this.eventWrapperCls
             }, true);
@@ -555,6 +560,10 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
             this.calendar.fireEvent('eventtap', eventRecord, e);
         }
     },
+	
+	getEventsWrapperContainer: function(){
+		return this.calendar.getEl().select('thead th').first() || this.calendar.getEl().select('tr td').first();
+	},
     
     /**
      * Returns the first index number that isn't in the specified array

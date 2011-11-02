@@ -1,3 +1,23 @@
+/**
+ * @copyright 		(c) 2011, by SwarmOnline.com
+ * @date      		2nd November 2011
+ * @version   		0.1
+ * @documentation	
+ * @website	  		http://www.swarmonline.com
+ */
+/**
+ * @class Ext.ux.TouchCalendarView
+ * @author Stuart Ashworth
+ * 
+ * The main extension is contained in the root folder of the repository and can be included in your project (along with its CSS file located within 
+ * the resources/css folder) and will give you a basic calendar view (either showing a month, week or day) that can be configured with various options.
+ * 
+ * ![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/Ext.ux.TouchCalendarView-ss.png)
+ * ![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/Ext.ux.TouchCalendarView-Day-ss.png)
+ * 
+ * [Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
+ * 
+ */
 Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 	cls: 'touch-calendar-view',
 	
@@ -50,6 +70,11 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 	 * @cfg {String} nextPeriodCls CSS class added to the next period navigation cells in the calendar's header
 	 */
 	nextPeriodCls: 'goto-next',
+	
+	/**
+	 * @cfg {Number} dayTimeSlotSize The number of minutes the Day View's time slot will increment by. Defaults to 30 minutes.
+	 */
+	dayTimeSlotSize: 30,
 	
 	itemSelector: 'td.time-block',
 	
@@ -285,6 +310,7 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 		
 		// if the mode is DAY then we need to enable the scroller
 		if (this.scroller) {
+			this.scroller.moveTo(0, this.el.getY()); // reset it back to the top
 			this.scroller.setEnabled((this.mode === 'DAY'));
 		}	
 		
@@ -320,7 +346,7 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 		for(var i = 0; i < totalDays; i++){
 			
 			// increment the date by one day (except on first run)
-			iterDate = new Date(iterDate.getFullYear(), iterDate.getMonth(), iterDate.getDate() + (i===0?0:1));
+			iterDate = this.getNextIterationDate(iterDate, (i===0?0:1));
 			
 			unselectable = (this.minDate && iterDate < this.minDate) || (this.maxDate && iterDate > this.maxDate);
 			
@@ -331,8 +357,7 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 				prevMonth: (iterDate.getMonth() < baseDate.getMonth()),
 				nextMonth: (iterDate.getMonth() > baseDate.getMonth()),
 				weekend: this.isWeekend(iterDate),
-				date: iterDate,
-				timeSlots: this.mode === 'DAY' ? this.getTimeSlots() : []
+				date: iterDate
 			});
 		}
 		
@@ -431,24 +456,6 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 	},
 	
 	/**
-	 * Generate an array of timeslots to be displayed
-	 * @method
-	 * @private
-	 */
-	getTimeSlots: function(){
-		var baseDate = new Date().clearTime(),
-			slotInterval = 30, 
-			noOfSlots = 1440 / slotInterval,
-			slots = [];
-		
-		for(var i = 0; i < noOfSlots; i++){
-			slots.push(baseDate.add(Date.MINUTE, i * slotInterval));
-		}
-		
-		return slots;
-	},
-	
-	/**
 	 * Override for the Ext.DataView's refresh method. Repopulates the store, calls parent then sync the height of the table
 	 * @method
 	 */
@@ -510,14 +517,18 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 	 * @param {Date} date
 	 */
 	selectDate: function(date){
-		var recordToSelect = this.getDateRecord(date);
-		
-		if (recordToSelect < 0) {
-			this.refresh();
+		if (date) {
+			var recordToSelect = this.getDateRecord(date);
 			
-			recordToSelect = this.getDateRecord(date);
+			if (recordToSelect < 0) {
+				this.refresh();
+				
+				recordToSelect = this.getDateRecord(date);
+			}
+			if (recordToSelect >= 0) {
+				this.getSelectionModel().select(recordToSelect);
+			}
 		}
-		this.getSelectionModel().select(recordToSelect);
 	},
 	
 	/**
@@ -616,8 +627,8 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 	 * @param {Date} date
 	 * @return {String}
 	 */
-	getDateAttribute: function(date){
-		return date.format('Y-m-d');
+	getDateAttribute: function(date){		
+		return date.format(this.dateAttributeFormat);
 	},
 
 	/**
@@ -628,12 +639,25 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 	 * @return {Date}
 	 */
 	stringToDate: function(dateString) {
-		return Date.parseDate(dateString, 'Y-m-d');
+		return Date.parseDate(dateString, this.dateAttributeFormat);
 	}
 });
 
 
 Ext.ux.TouchCalendarView.MONTH = {
+			
+	dateAttributeFormat: 'd-m-Y',
+			
+	/**
+	 * Called during the View's Store population. This calculates the next date for the current period.
+	 * The MONTH mode's version just adds 1 (or 0 on the first iteration) to the specified date. 
+	 * @param {Date} d Current Iteration date
+	 * @param {Number} index
+	 */
+	getNextIterationDate: function(d, index){
+		return new Date(d.getFullYear(), d.getMonth(), d.getDate() + (index===0?0:1));
+	},
+	
 	/**
 	 * Returns the total number of days to be shown in this view.
 	 * @method
@@ -679,6 +703,19 @@ Ext.ux.TouchCalendarView.MONTH = {
 };
 
 Ext.ux.TouchCalendarView.WEEK = {
+	
+	dateAttributeFormat: 'd-m-Y',
+		
+	/**
+	 * Called during the View's Store population. This calculates the next date for the current period.
+	 * The WEEK mode's version just adds 1 (or 0 on the first iteration) to the specified date. 
+	 * @param {Date} d Current Iteration date
+	 * @param {Number} index
+	 */
+	getNextIterationDate: function(d, index){
+		return new Date(d.getFullYear(), d.getMonth(), d.getDate() + (index===0?0:1));
+	},
+	
 	/**
 	 * Returns the total number of days to be shown in this view.
 	 * As it is the WEEK view it is always 7
@@ -720,7 +757,12 @@ Ext.ux.TouchCalendarView.WEEK = {
 };
 
 Ext.ux.TouchCalendarView.DAY = {
-	
+	/**
+	 * Date format that the 'datetime' attribute, given to each time slot, has. Day mode needs the time in aswell so
+	 * events etc know what time slot it is
+	 */
+	dateAttributeFormat: 'd-m-Y H:i',
+		
 	/**
 	 * Template for the DAY view
 	 */
@@ -728,29 +770,39 @@ Ext.ux.TouchCalendarView.DAY = {
 		'<table class="{[this.me.mode.toLowerCase()]}">',			
 			'<tbody>',
 				'<tpl for=".">',
-					'<tpl for="timeSlots">',
-						'<tr>',
-					
-							'<td class="time-block">',
-	
-								'{[values.format("H:i")]}',
-							
-							'</td>',
-						'</tr>',
-					'</tpl>',
+					'<tr>',
+				
+						'<td class="time-block" datetime="{[this.me.getDateAttribute(values.date)]}">',
+
+							'{date:date("H:i")}',
+						
+						'</td>',
+					'</tr>',
 				'</tpl>',
 			'</tbody>',
 		'</table>'],
+		
+	/**
+	 * Called during the View's Store population. This calculates the next date for the current period.
+	 * The DAY mode's version just adds another time period on.
+	 * @param {Date} currentIterationDate
+	 * @param {Number} index
+	 */
+	getNextIterationDate: function(currentIterationDate, index){
+		var d = currentIterationDate.getTime() + ((index===0?0:1) * (this.dayTimeSlotSize * 60 * 1000));
+		
+		return new Date(d);
+	},
 
 	/**
-	 * Returns the total number of days to be shown in this view.
-	 * As it is DAY view it is always 1
+	 * Returns the total number of time slots to be shown in this view.
+	 * This is derived from the dayTimeSlotSize property
 	 * @method
 	 * @private
 	 * @param {Date} date
 	 */
 	getTotalDays: function(date){
-		return 1;
+		return 1440 / this.dayTimeSlotSize;
 	},
 	
 	/**
@@ -761,7 +813,7 @@ Ext.ux.TouchCalendarView.DAY = {
 	 * @return {Date}
 	 */
 	getStartDate: function(date){
-		return date;
+		return date.clearTime(true);
 	},
 	
 	/**

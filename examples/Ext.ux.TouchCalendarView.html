@@ -14,14 +14,12 @@
         Ext.setup({
             onReady: function(){
             
-                var calendarView = new Ext.ux.TouchCalendarView({
-					viewConfig: {
-						minDate: (new Date()).add(Date.DAY, -40),
-						maxDate: (new Date()).add(Date.DAY, 55),
-						mode: 'month',
-						weekStart: 1,
-						value: new Date()
-					}
+                calendarView = new Ext.ux.TouchCalendarView({
+					minDate: (new Date()).add(Date.DAY, -40),
+					maxDate: (new Date()).add(Date.DAY, 55),
+					mode: 'month',
+					weekStart: 1,
+					value: new Date()
                 });
                 
                 var panel = new Ext.Panel({

@@ -1,18 +1,18 @@
 /**
  * @copyright 		(c) 2011, by SwarmOnline.com
- * @date      		2nd October 2011
+ * @date      		2nd November 2011
  * @version   		0.1
  * @documentation	
  * @website	  		http://www.swarmonline.com
  */
 /**
- * @class Ext.ux.CalendarSimpleEvents
+ * @class Ext.ux.TouchCalendarSimpleEvents
  * @author Stuart Ashworth
  *
- * This plugin can be added to an Ext.ux.Calendar instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
+ * This plugin can be added to an Ext.ux.TouchCalendarView instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
  * does with a dot added to each day to represent the presence of an event.
  * 
- * ![Ext.ux.CalendarSimpleEvents Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.CalendarSimpleEvents-ss.png)
+ * ![Ext.ux.TouchCalendarSimpleEvents Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/screenshots/Ext.ux.TouchCalendarSimpleEvents-ss.png)
  * 
  * # Sample Usage
  * 
@@ -58,10 +58,15 @@
  */
 Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	
-	/**
-	 * @cfg {Date} dateField Name of the field which contains the Event's date
-	 */
-	dateField: 'start',
+    /**
+     * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
+     */
+    startEventField: 'start',
+    
+    /**
+     * @cfg {Stirng} endEventField Name of the Model field which contains the Event's End date
+     */
+    endEventField: 'end',
 	
 	/**
 	 * @cfg {Boolean} multiEventDots True to display a dot for each event on a day. False to only show one dot regardless
@@ -107,7 +112,11 @@ Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * @param {Object} currentDate - date we are currently dealing while looping Calendar's dateCollection property
 	 */
 	filterFn: function(record, id, currentDate){
-		return record.get(this.dateField).clearTime(true).getTime() === currentDate.clearTime(true).getTime();
+		var startDate = record.get(this.startEventField).clearTime(true).getTime(),
+			endDate = record.get(this.endEventField).clearTime(true).getTime(),
+			currentDate = currentDate.clearTime(true).getTime();
+	                            
+	    return (startDate <= currentDate) && (endDate >= currentDate);
 	},
 	
 	init: function(calendar){

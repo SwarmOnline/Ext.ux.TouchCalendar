@@ -1,3 +1,23 @@
+/**
+ * @copyright 		(c) 2011, by SwarmOnline.com
+ * @date      		2nd November 2011
+ * @version   		0.1
+ * @documentation	
+ * @website	  		http://www.swarmonline.com
+ */
+/**
+ * @class Ext.ux.TouchCalendar
+ * @author Stuart Ashworth
+ * 
+ * This extension wraps the Ext.ux.TouchCalendarView in a Ext.Carousel component and allows the calendar to respond to swipe
+ * gestures to switch the displayed period. It works by creating 3 Ext.ux.TouchCalendarViews and dynamically creating/removing
+ * views as the user moves back/forward through time. 
+ * 
+ * ![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendar-ss.png)
+ * 
+ * [Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
+ * 
+ */
 Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
 	/**
 	 * @cfg {Boolean} enableSwipeNavigate True to allow the calendar's period to be change by swiping across it.
@@ -83,15 +103,6 @@ Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
     	
     	return date.add(Date[scale], number)
     },
-    
-    onSelectionChange: function(selModel, records){
-    	
-    	
-    	
-    	/*if(records.length > 0){
-			this.setValue(records[0].get('date'));
-		}*/
-    },
 	
     /**
      * Creates all the TouchCalendarView instances needed for the Calendar
@@ -126,18 +137,7 @@ Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
 						currentDate: viewValue
 					}, this.getViewConfig(viewValue)))
 		);
-		
-		
-/*		for(; i <= iMax; i++){
-			var viewValue = this.getViewDate(this.viewConfig.currentDate, i);			
-			
-			this.items.push(
-				new Ext.ux.TouchCalendarView(this.getViewConfig(viewValue))
-			);
-			
-			this.viewConfig.currentDate = origVal;
-		}*/
-		
+
 		this.view = this.items[(this.enableSwipeNavigate ? 1: 0)];
 	},
 	
