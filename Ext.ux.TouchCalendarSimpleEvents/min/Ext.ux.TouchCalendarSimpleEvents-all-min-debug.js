@@ -1,417 +1,187 @@
-Ext.ns('Ext.ux');
-
 /**
  * @copyright 		(c) 2011, by SwarmOnline.com
- * @date      		2nd October 2011
+ * @date      		2nd November 2011
  * @version   		0.1
  * @documentation	
  * @website	  		http://www.swarmonline.com
-*/
+ */
 /**
- * @class Ext.ux.Calendar
+ * @class Ext.ux.TouchCalendar
  * @author Stuart Ashworth
  * 
- * A simple Calendar extension that can be integrated into any Sencha Touch application.
+ * This extension wraps the Ext.ux.TouchCalendarView in a Ext.Carousel component and allows the calendar to respond to swipe
+ * gestures to switch the displayed period. It works by creating 3 Ext.ux.TouchCalendarViews and dynamically creating/removing
+ * views as the user moves back/forward through time. 
  * 
- * ![Ext.ux.Calendar Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.Calendar-ss.png)
+ * ![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendar-ss.png)
  * 
- * # Simple Usage
- *     var calendar = new Ext.ux.Calendar({
-           fullscreen: true,
-           mode: 'month',
-           weekStart: 1,
-           value: new Date()
-       });
- *    
- * # Demo
- * [Ext.ux.Calendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.Calendar.html)
+ * [Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
+ * 
  */
-Ext.ux.Calendar = Ext.extend(Ext.Panel, {
-
-	cls: 'ux-calendar',
-	autoHeight: true,
+Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
+	/**
+	 * @cfg {Boolean} enableSwipeNavigate True to allow the calendar's period to be change by swiping across it.
+	 */
+	enableSwipeNavigate: true,
 	
 	/**
-	 * @cfg {Date} value Initially selected date.
+	 * @cfg {Boolean} enableSimpleEvents True to enable the Ext.ux.TouchCalendarSimpleEvents plugin. When true the Ext.ux.TouchCalendarSimpleEvents JS and CSS files
+	 * must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
 	 */
-	value: new Date(),
+	enableSimpleEvents: false,
 	
 	/**
-	 * @cfg {Number} weekStart Starting day of the week. (0 = Sunday, 1 = Monday ... etc)
+	 * @cfg {Boolean} enableEventBars True to enable the Ext.ux.TouchCalendarEvents plugin. When true the Ext.ux.TouchCalendarEvents JS and CSS files
+	 * must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
 	 */
-	weekStart: 1,
+	enableEventBars: false,
 	
 	/**
-	 * @cfg {Date} minDate Minimum date allowed to be shown/selected.
+	 * @cfg {Object} viewConfig A set of configuration options that will be applied to the TouchCalendarView component 
 	 */
-	minDate: null,
-	
-	/**
-	 * @cfg {Date} maxDate Maximum date allowed to be shown/selected.
-	 */
-	maxDate: null,
-	
-	/**
-	 * @cfg {Boolean} fullHeight True to have the calendar fill the height of the Panel
-	 */
-	fullHeight: true,
-	
-	/**
-	 * @cfg {Boolean} moveToMonthOnDateTap True to have the calendar switch month if the user
-	 * taps a date that is part of the next/previous month.
-	 */
-	moveToMonthOnDateTap: false,
-	
-	/**
-	 * @cfg {String} todayCls CSS class added to the today's date cell 
-	 */
-	todayCls: 'today',
-	
-	/**
-	 * @cfg {String} selectedCls CSS class added to the date cell that is currently selected 
-	 */
-	selectedCls: 'selected',
-	
-	/**
-	 * @cfg {String} unselectableCls CSS class added to any date cells that are unselectable
-	 */
-	unselectableCls: 'unselectable',
-	
-	/**
-	 * @cfg {String} prevMonthCls CSS class added to any date cells that are part of the previous month
-	 */
-	prevMonthCls: 'prev-month',
-	
-	/**
-	 * @cfg {String} nextMonthCls CSS class added to any date cells that are part of the next month
-	 */
-	nextMonthCls: 'next-month',
-	
-	/**
-	 * @cfg {String} weekendCls CSS class added to any date cells that are on the weekend
-	 */
-	weekendCls: 'weekend',
-	
-	/**
-	 * @cfg {String} prevPeriodCls CSS class added to the previous period navigation cell in the calendar's header
-	 */
-	prevPeriodCls: 'goto-prev',
-	
-	/**
-	 * @cfg {String} nextPeriodCls CSS class added to the next period navigation cells in the calendar's header
-	 */
-	nextPeriodCls: 'goto-next',
-	
-	/**
-	 * Object containing common functions to be passed to XTemplate for internal use
-	 * @property {Object} commonTemplateFunctions
-	 * @private
-	 */
-	commonTemplateFunctions: {
+	viewConfig: {
 		
-		/**
-		 * Gets the classes that should be applied to the current day's cell
-		 * @method
-		 * @private
-		 * @param {Object} values 
-		 * @return {String}
-		 */
-		getClasses: function(values){
-			var classes = [];
-			
-			if(values.selected){
-				classes.push(this.me.selectedCls);
-			}
-			if(values.unselectable){
-				classes.push(this.me.unselectableCls);
-			}
-			if(values.prevMonth){
-				classes.push(this.me.prevMonthCls);
-			}
-			if(values.nextMonth){
-				classes.push(this.me.nextMonthCls);
-			}
-			if(values.weekend){
-				classes.push(this.me.weekendCls);
-			}
-			if(values.today){
-				classes.push(this.me.todayCls);
-			}
-			
-			return classes.join(' ');
-		},
-		
-		/**
-		 * Returns true if the specific index is at the end of the row
-		 * Used to determine if a row terminating tag is needed
-		 * @method
-		 * @private
-		 * @param {Number} currentIndex
-		 * @return {Number}
-		 */
-		isEndOfRow: function(currentIndex){
-			return (currentIndex % 7) === 0 && (currentIndex > 0)
-		},
-		
-		/**
-		 * Returns true if the specific index is at the current mode's period
-		 * Used to determine if another row opening tag is needed
-		 * @param {Number} currentIndex
-		 * @method
-		 * @private
-		 * @return {Number}
-		 */
-		isEndOfPeriod: function(currentIndex){
-			return currentIndex === this.me.totalDays[this.me.mode](this.me.value);
-		},
-		
-		/**
-		 * Gets an array containing the first 7 dates to be used in headings
-		 * @method
-		 * @private
-		 * @param {Object} values
-		 * @return {Date[]}
-		 */
-		getDaysArray: function(values){
-			var daysArray = [],
-				i;
-			
-			for(i = 0; i < 7; i++){
-				daysArray.push(values.dates[i])	
-			}
-			
-			return daysArray;
-		},
-		
-		/**
-		 * Gets the class to be added to the header cells
-		 * @method
-		 * @private
-		 * @param {Number} currentIndex
-		 * @return {Boolean}
-		 */
-		getHeaderClass: function(currentIndex){
-			return currentIndex === 1 ? this.me.prevPeriodCls : currentIndex === 7 ? this.me.nextPeriodCls : '';
-		}
 	},
 	
-
-	/**
-	 * Instantiate a new calendar
-	 * @method
-	 */
-	constructor: function(config) {
+	defaultViewConfig: {
+		mode: 'MONTH',
+        weekStart: 1,
+        bubbleEvents: ['selectionchange']
+	},
 	
-		this.tpl = new Ext.XTemplate(
-		'<table class="{[this.me.mode]}">',		
-			'<thead>',
-				'<tr>',
-					'<tpl for="this.getDaysArray(values)">',
-						'<th class="{[this.getHeaderClass(xindex)]}">',
-							'<tpl if="xindex === 4">',
-								'<span>{[parent.currentDate.format("F")]} {[parent.currentDate.format("Y")]}</span>',
-							'</tpl>',
-							'{date:date("D")}',
-						'</th>',
-					'</tpl>',
-				'</tr>',
-			'</thead>',
-		
-			'<tbody>',
-				'<tr>',
-				'<tpl for="dates">',
+	indicator: false,
+	
+    initComponent: function(){
 				
-					'<td class="day {[this.getClasses(values)]}" datetime="{[this.me.getDateAttribute(values.date)]}">',
-						'{date:date("j")}',
-					'</td>',
-					
-					'<tpl if="this.isEndOfRow(xindex)">',
-						'</tr>',
-						'<tpl if="!this.isEndOfPeriod(xindex)">',
-							'<tr>',
-						'</tpl>',
-					'</tpl>',
-				
-				'</tpl>',
-				'</tr>',
-			'</tbody>',
-		'</table>', Ext.apply(this.commonTemplateFunctions, {me: this}));
-
-		Ext.apply(this, config || {});
-
-		this.addEvents(
+		this.viewConfig = Ext.applyIf(this.viewConfig || {}, this.defaultViewConfig);
 		
-			/**
-			 * @event refresh Fires when the Calendar's view is regenerated
-			 * @param {Ext.ux.Calendar} this 
-			 */
-			'refresh',
-			
-			/**
-			 * @event initialrender Fires when the Calendar's view is first rendered
-			 * @param {Ext.ux.Calendar} this
-			 */
-			'initialrender',
-			
-			/**
-			 * @event selectionchange Fires when the Calendar's selected date is changed
-			 * @param {Ext.ux.Calendar} this
-			 * @param {Date} previousValue Previously selected date
-			 * @param {Date} newValue Newly selected date
-			 */
-			'selectionchange',
-			
-			/**
-			 * @event periodchange Fires when the calendar changes to a different date period (i.e. switch using the arrows)
-			 * @param {Ext.ux.Calendar} this
-			 * @param {Date} minDate New view's minimum date
-			 * @param {Date} maxDate New view's maximum date
-			 * @param {string} direction Direction that the view moved ('forward' or 'back')
-			 */
-			'periodchange'
+		this.viewConfig.currentDate = this.viewConfig.currentDate || this.viewConfig.value || new Date();
 		
+		this.mode = this.viewConfig.mode.toUpperCase();
+	
+		this.initViews();
+	
+        Ext.apply(this, {
+			cls: 'touch-calendar',
+            activeItem: (this.enableSwipeNavigate ? 1: 0),
+            direction: 'horizontal'      
+        });
+        
+        Ext.ux.TouchCalendar.superclass.initComponent.call(this);
+        
+        this.on('selectionchange', this.onSelectionChange);
+    },
+    
+    /**
+     * Builds the necessary configuration object for the creation of the TouchCalendarView.
+     * @param {Date} viewValue The date Value that the new TouchCalendarView will have
+     * @method
+     * @private 
+     * @return {Object} The new config object for the view
+     */
+    getViewConfig: function(viewValue){
+		var plugins = [];
+		
+		if(this.enableSimpleEvents){
+			plugins.push(new Ext.ux.TouchCalendarSimpleEvents());				
+		} else if (this.enableEventBars){
+			plugins.push(new Ext.ux.TouchCalendarEvents());				
+		}
+
+    	Ext.apply(this.viewConfig, {
+			plugins: plugins,
+			currentDate: viewValue,
+			onTableHeaderTap: Ext.createDelegate(this.onTableHeaderTap, this)
+		});
+    	
+    	return this.viewConfig;    	
+    },
+    
+    getViewDate: function(date, i){
+    	var scale = (this.mode === 'WEEK' ? 'DAY' : this.mode.toUpperCase()),
+    		number = (this.mode === 'WEEK' ? (8 * i) : i);
+    	
+    	return date.add(Date[scale], number)
+    },
+	
+    /**
+     * Creates all the TouchCalendarView instances needed for the Calendar
+     * @method
+     * @private
+     * @return {void}
+     */
+	initViews: function(){
+		this.items = [];
+		var origCurrentDate = this.viewConfig.currentDate.clone(),
+			i = (this.enableSwipeNavigate ? -1 : 0),
+			iMax = (this.enableSwipeNavigate ? 1 : 0),
+			plugins = [];
+		
+		// first out of view
+		var viewValue = this.getViewDate(origCurrentDate, -1);
+		this.items.push(
+				new Ext.ux.TouchCalendarView(Ext.applyIf({
+						currentDate: viewValue
+					}, this.getViewConfig(viewValue)))
+		);
+		
+		// active view
+		this.items.push(
+				new Ext.ux.TouchCalendarView(this.getViewConfig(origCurrentDate))
+		);
+		
+		// second out of view (i.e. third)
+		viewValue = this.getViewDate(origCurrentDate, 1);
+		this.items.push(
+				new Ext.ux.TouchCalendarView(Ext.applyIf({
+						currentDate: viewValue
+					}, this.getViewConfig(viewValue)))
 		);
 
-		Ext.ux.Calendar.superclass.constructor.call(this, config);
-
-		this.minDate = this.minDate ? this.minDate.clearTime(true) : null;
-		this.maxDate = this.maxDate ? this.maxDate.clearTime(true) : null;
-	},
-	
-	initComponent: function(){
-		
-		Ext.apply(this, {
-						
-			totalDays: {
-				month: function(date){
-					var firstDate = date.getFirstDateOfMonth();
-					
-					return this.isWeekend(firstDate) ? 42 : 35;
-				},
-				week: function(date){
-					return 7;
-				}
-			},
-			
-			modeStartFns: {
-				month: this.getMonthStartDate,
-				week: this.getWeekStartDate
-			},
-			
-			modeDeltaFns: {
-				month: this.getMonthDeltaDate,
-				week: this.getWeekDeltaDate
-			}
-		});
-		
-		Ext.ux.Calendar.superclass.initComponent.call(this);
-		
-		this.previousValue = this.value;
-		
-		this.on('afterrender', Ext.createDelegate(this.refresh, this, [true], false), this);
-	},
-
-	onRender: function(ct, position) {
-		Ext.ux.Calendar.superclass.onRender.apply(this, arguments);
-
-		this.body.on({
-			click: this.onDayTap,
-			scope: this,
-			delegate: 'td'
-		});
-		
-		this.body.on({
-			click: this.onTableHeaderTap,
-			scope: this,
-			delegate: 'th'
-		});
+		this.view = this.items[(this.enableSwipeNavigate ? 1: 0)];
 	},
 	
 	/**
-	 * Changes the Calendar's mode
-	 * @method
-	 * @param {String} mode Valid values are 'month' and 'week'
-	 * @return {void}
-	 */
-	setMode: function(mode){
-		this.mode = mode;
-		
-		this.refresh();
-	},
-	
-	/**
-	 * Updates the Calendar's table's height to match the wrapping Panel if
-	 * fullHeight is set to true
-	 * @method
-	 * @private
-	 * @return {void}
-	 */
-	syncHeight: function(){
-		if(this.fullHeight){
-			this.body.down('table').setHeight(this.body.getHeight());
-		}
-	},
-
-	/**
-	 * Refreshes the Calendar focussed around the date in "this.value".
-	 * Fires the 'refresh' event
-	 * @method
-	 * @return {void}
-	 */
-	refresh: function(initialRender) {
-		this.currentDate = this.currentDate || this.value || new Date();
-		
-		this.dateCollection = this.getDateCollection(this.currentDate.getDate(), this.currentDate.getMonth(), this.currentDate.getFullYear());
-		
-		this.update({
-			currentDate: this.currentDate,
-			dates: this.dateCollection.items
-		});
-		// will force repaint() on iPod Touch 4G
-		this.body.getHeight();
-
-		this.syncHeight();
-		
-		this.dateCellEls = this.body.select('td.day');
-		
-		if (initialRender) {
-			this.fireEvent('initialrender', this);
-		}
-		else {
-			this.fireEvent('refresh', this);
-		}
-	},
-	
-	/**
-	 * Handler for a tap on a day's cell
-	 * @method
-	 * @private
-	 * @param {Object} e
-	 * @param {Object} el
-	 * @return {void}
-	 */
-	onDayTap: function(e, el){
-		el = Ext.fly(el);
-	
-		if (!el.hasCls(this.unselectableCls)) {
-			this.setValue(this.getCellDate(el));
-		}
-	},
-	
-	/**
-	 * Handler for a tap on the table header
-	 * @method
-	 * @private
-	 * @param {Object} e
-	 * @param {Object} el
-	 * @return {void}
+	 * Override for the TouchCalendarView's onTableHeaderTap method which is executed when the view's header (specificly the arrows) is tapped.
+	 * When using the TouchCalendar wrapper we must intercept it and use the carousel's prev/next methods to do the switching.
 	 */
 	onTableHeaderTap: function(e, el){
-		el = Ext.fly(el);
+		el = Ext.fly(el);		
 
-		if (el.hasCls(this.prevPeriodCls) || el.hasCls(this.nextPeriodCls)) {
-			this.refreshDelta(el.hasCls(this.prevPeriodCls) ? -1 : 1);
+		if (el.hasCls(this.view.prevPeriodCls) || el.hasCls(this.view.nextPeriodCls)) {
+			this[(el.hasCls(this.view.prevPeriodCls) ? 'prev' : 'next')]();
 		}
+	},
+	
+	/**
+	 * Changes the mode of the calendar to the specified string's value. Possible values are 'month', 'week' and 'day'.
+	 * @method
+	 * @returns {void}
+	 */
+	setMode: function(mode){
+		this.mode = mode.toUpperCase();
+		this.viewConfig.mode = this.mode;
+		
+		this.items.each(function(view, index){
+			
+			view.currentDate = this.getViewDate(this.view.currentDate.clone(), index-1);
+			if(index !== 1){
+				view.value
+			}
+			
+			view.setMode(mode);
+		}, this);
+	},
+	
+	/**
+	 * Returns the Date that is selected.
+	 * @method
+	 * @returns {Date} The selected date
+	 */
+	getValue: function(){
+		var selectedDates = this.view.getSelectionModel().selected;
+
+		return (selectedDates.getCount() > 0) ? selectedDates.first().get('date') : null;
 	},
 	
 	/**
@@ -421,318 +191,77 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
 	 * @return {void}
 	 */
 	setValue: function(v) {
-		if (!this.isSameDay(this.value, v)) {
-			this.previousValue = this.value;
+		this.view.setValue(v)
+	},
+	
+	/**
+	 * Override of the Ext.Carousel's afterRender method to enable/disable the swipe navigation if the enableSwipeNavigate option is set to true/false.
+	 */
+	afterRender: function() {
+        Ext.Carousel.superclass.afterRender.call(this);
+
+		if (this.enableSwipeNavigate) {
+			// Bind the required listeners
+			this.mon(this.body, {
+				drag: this.onDrag,
+				dragThreshold: 5,
+				dragend: this.onDragEnd,
+				direction: this.direction,
+				scope: this
+			});
 			
-			if (Ext.isDate(v)) {
-				this.value = v;
+			this.el.addCls(this.baseCls + '-' + this.direction);
+		}
+    },
+	
+    /**
+     * Override of the onCardSwitch method which adds a new card to the end/beginning of the carousel depending on the direction configured with the next period's
+     * dates.
+     * @method
+     * @private
+     */
+	onCardSwitch: function(newCard, oldCard, index, animated){
+		
+		if (this.enableSwipeNavigate) {
+			var newIndex = this.items.indexOf(newCard), oldIndex = this.items.indexOf(oldCard), direction = (newIndex > oldIndex) ? 'forward' : 'backward';
+			
+			this.counter = (this.counter || 0) + 1;
+			
+			if (direction === 'forward') {
+				this.remove(this.items.get(0));
+				
+				this.add(new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], 1))));
 			}
 			else {
-				this.value = null;
-			}
-			
-			if (this.value) {
-				this.currentDate = this.value;
-				this.selectDate(this.value);
-			}
-		}
-	},
-	
-	/**
-	 * Adds the selected class to the specified date's cell. If it isn't in the current view
-	 * then the calendar will be refreshed to move the date into view.
-	 * @method
-	 * @param {Object} date
-	 * @return {void}
-	 */
-	selectDate: function(date) {
-		var selectionChanged = false; // flag to store whether a date was selected on the current page
-		
-		this.removeSelectedCell();
-		
-		this.body.select('td').each(function(td) {
-			var clickedDate = this.getCellDate(td);
-			if (((!td.hasCls(this.prevMonthCls) && !td.hasCls(this.nextMonthCls)) || !this.moveToMonthOnDateTap) && this.isSameDay(date, clickedDate)) {
-				td.addCls(this.selectedCls);
-					
-				if((this.value && this.previousValue) && !this.isSameDay(this.value, this.previousValue)){
-					this.fireEvent('selectionchange', this, this.previousValue, this.value);	
-				}
+				this.remove(this.items.get(this.items.getCount() - 1));
 				
-				selectionChanged = true;
+				this.insert(0, new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], -1))));
 			}
-		}, this);
-		
-		// if no date was selected then it 
-		// isn't in this month and so we must refresh the view completely
-		if(!selectionChanged){
-			this.refresh();
-		}
-	},
-	
-	/**
-	 * Refreshes the calendar moving it forward (delta = 1) or backward (delta = -1)
-	 * @method
-	 * @param {Number} delta - integer representing direction (1 = forward, =1 = backward)
-	 * @return {void}
-	 */
-	refreshDelta: function(delta) {
-		var v = this.currentDate || new Date();
-
-		var newDate = this.modeDeltaFns[this.mode](v, delta);
-
-		// don't move if we've reached the min/max dates
-		if (this.isOutsideMinMax(newDate)) {
-			return;
-		}
-
-		this.currentDate = newDate;
-		this.refresh();
-		
-		var minMaxDate = this.getPeriodMinMaxDate();
-		
-		this.fireEvent('periodchange', this, minMaxDate.min.date, minMaxDate.max.date, (delta > 0 ? 'forward' : 'back'));
-	},
-	
-	/**
-	 * Returns the current view's minimum and maximum date collection objects
-	 * @method
-	 * @private
-	 * @return {Object} Object in the format {min: {}, max: {}}
-	 */
-	getPeriodMinMaxDate: function(){
-		return {
-			min: this.dateCollection.first(),
-			max: this.dateCollection.last()
-		};
-	},
-	
-	/**
-	 * Returns true or false depending on whether the view that is currently on display is outside or inside the min/max dates set
-	 * @method
-	 * @private
-	 * @param {Date} date A date within the current period, generally the selected date
-	 * @return {Boolean}
-	 */
-	isOutsideMinMax: function(date){
-		var outside = false;
-		
-		if(this.mode === 'month'){
-			outside = ((this.minDate && date.getLastDateOfMonth() < this.minDate) || (this.maxDate && date.getFirstDateOfMonth() > this.maxDate));
-		} else {
-			outside = ((this.minDate && this.getWeekEndDate(date.getDate(), date.getMonth(), date.getFullYear()) < this.minDate) || (this.maxDate && this.getWeekStartDate(date.getDate(), date.getMonth(), date.getFullYear()) > this.maxDate));
-		}
-		
-		return outside;
-	},
-	
-	/**
-	 * Removes the selectedCls from any cells that have it
-	 * @method
-	 * @return {void}
-	 */
-	removeSelectedCell: function() {
-		this.body.select('.' + this.selectedCls).removeCls(this.selectedCls);
-	},
-	
-	/**
-	 * Builds a collection of dates that need to be rendered in the current configuration
-	 * @method
-	 * @private
-	 * @param {Number} day
-	 * @param {Number} month
-	 * @param {Number} year
-	 * @return {Ext.util.MixedCollection} Mixed Collection of Objects with configuration for each date cell
-	 */
-	getDateCollection: function(day, month, year){
-		var dateCollection = new Ext.util.MixedCollection(), // collection to store all the dates to be rendered
-			unselectable = true, // variable used to indicate whether a day is allowed to be selected
-			baseDate = new Date(year, month, day), // date to use as base
-		
-			iterDate = Ext.createDelegate(this.modeStartFns[this.mode], this)(day, month, year), // date current mode will start at
-			totalDays = Ext.createDelegate(this.totalDays[this.mode], this)(baseDate); // total days to be rendered in current mode
-		
-		// create dates based on startDate and number of days to render
-		for(var i = 0; i < totalDays; i++){
 			
-			// increment the date by one day (except on first run)
-			iterDate = new Date(iterDate.getFullYear(), iterDate.getMonth(), iterDate.getDate() + (i===0?0:1));
+			this.doLayout();
 			
-			unselectable = (this.minDate && iterDate < this.minDate) || (this.maxDate && iterDate > this.maxDate);
-			
-			// add to the collection
-			dateCollection.add({
-				today: this.isSameDay(iterDate, new Date()),
-				unselectable: unselectable,
-				selected: this.isSameDay(iterDate, this.value) && !unselectable,
-				prevMonth: (iterDate.getMonth() < baseDate.getMonth()),
-				nextMonth: (iterDate.getMonth() > baseDate.getMonth()),
-				weekend: this.isWeekend(iterDate),
-				date: iterDate
-			});
+			this.view = newCard;
 		}
-		
-		return dateCollection;
-	},
-	
-	/**
-	 * Returns the first day that should be visible for a month view (may not be in the same month)
-	 * Gets the first day of the week that the 1st of the month falls on.
-	 * @method
-	 * @private
-	 * @param {Number} day
-	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
-	 * @param {Number} year
-	 * @return {Date}
-	 */
-	getMonthStartDate: function(day, month, year){
-		return this.getWeekStartDate(1, month, year);
-	},
-	
-	/**
-	 * Returns the first day of the week based on the specified date.
-	 * @method
-	 * @private
-	 * @param {Number} day
-	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
-	 * @param {Number} year
-	 * @return {Date}
-	 */
-	getWeekStartDate: function(day, month, year){
-		var currentDate = new Date(year, month, day);
-		var dayOffset = currentDate.getDay() - this.weekStart;
-		dayOffset = dayOffset < 0 ? 6 : dayOffset;
-		
-		return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()-0-dayOffset);
-	},
-	
-	/**
-	 * Returns the last day of the week based on the specified date.
-	 * @method
-	 * @private
-	 * @param {Number} day
-	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
-	 * @param {Number} year
-	 * @return {Date}
-	 */
-	getWeekEndDate: function(day, month, year){
-		var currentDate = new Date(year, month, day);
-		var dayOffset = currentDate.getDay() - this.weekStart;
-		dayOffset = dayOffset < 0 ? 6 : dayOffset;
-		
-		return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()+0+dayOffset);
-	},
-	
-	/**
-	 * Returns a new date based on the date passed and the delta value for MONTH view.
-	 * @method
-	 * @private
-	 * @param {Date} date
-	 * @param {Number} delta
-	 * @return {Date}
-	 */
-	getMonthDeltaDate: function(date, delta){
-		var newMonth = date.getMonth() + delta,
-			newDate = new Date(date.getFullYear(), newMonth, 1);
-		
-		newDate.setDate(newDate.getDaysInMonth() < date.getDate() ? newDate.getDaysInMonth() : date.getDate());
-		
-		return newDate;
-	},
-	
-	/**
-	 * Returns a new date based on the date passed and the delta value for WEEK view.
-	 * @method
-	 * @private
-	 * @param {Date} date
-	 * @param {Number} delta
-	 * @return {Date}
-	 */
-	getWeekDeltaDate: function(date, delta){
-		return new Date(date.getFullYear(), date.getMonth(), date.getDate() + (delta * 7));
-	},
-	
-	/**
-	 * Returns true if the two dates are the same date (ignores time)
-	 * @method
-	 * @private
-	 * @param {Object} date1
-	 * @param {Object} date2
-	 * @return {Boolean}
-	 */
-	isSameDay: function(date1, date2){
-		return date1.clearTime(true).getTime() === date2.clearTime(true).getTime();
-	},
-	/**
-	 * Returns true if the specified date is a Saturday/Sunday
-	 * @method
-	 * @private
-	 * @param {Object} date
-	 * @return {Boolean}
-	 */
-	isWeekend: function(date){
-		return date.getDay() === 0 || date.getDay() === 6;
-	},
-
-	/**
-	 * Returns the Date associated with the specified cell
-	 * @method
-	 * @param {Ext.Element} dateCell
-	 * @return {Date}
-	 */
-	getCellDate: function(dateCell) {
-		var date = dateCell.dom.getAttribute('datetime');
-		return this.stringToDate(date);
-	},
-	
-	/**
-	 * Returns the cell representing the specified date
-	 * @method
-	 * @param {Ext.Element} date
-	 * @return {Ext.Element}
-	 */
-	getDateCell: function(date){
-		return this.body.select('td[datetime="' + this.getDateAttribute(date) + '"]').first();
-	},
-	
-	/**
-	 * Returns a string format of the specified date
-	 * Used when assigning the datetime attribute to a table cell
-	 * @method
-	 * @private
-	 * @param {Date} date
-	 * @return {String}
-	 */
-	getDateAttribute: function(date){
-		return date.format('Y-m-d');
-	},
-
-	/**
-	 * Converts a string date (used to add to table cells) to a Date object
-	 * @method
-	 * @private
-	 * @param {String} dateString
-	 * @return {Date}
-	 */
-	stringToDate: function(dateString) {
-		return Date.parseDate(dateString, 'Y-m-d');
+		Ext.ux.TouchCalendar.superclass.onCardSwitch.apply(this, arguments);
 	}
+    
+    
 });
 /**
  * @copyright 		(c) 2011, by SwarmOnline.com
- * @date      		2nd October 2011
+ * @date      		2nd November 2011
  * @version   		0.1
  * @documentation	
  * @website	  		http://www.swarmonline.com
  */
 /**
- * @class Ext.ux.CalendarSimpleEvents
+ * @class Ext.ux.TouchCalendarSimpleEvents
  * @author Stuart Ashworth
  *
- * This plugin can be added to an Ext.ux.Calendar instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
+ * This plugin can be added to an Ext.ux.TouchCalendarView instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
  * does with a dot added to each day to represent the presence of an event.
  * 
- * ![Ext.ux.CalendarSimpleEvents Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.CalendarSimpleEvents-ss.png)
+ * ![Ext.ux.TouchCalendarSimpleEvents Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendarSimpleEvents-ss.png)
  * 
  * # Sample Usage
  * 
@@ -774,14 +303,19 @@ Ext.ux.Calendar = Ext.extend(Ext.Panel, {
        });
  *    
  * # Demo
- * [Ext.ux.CalendarSimpleEvents Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.CalendarSimpleEvents.html)
+ * [Ext.ux.CalendarSimpleEvents Demo](http://www.swarmonline.com/calendar/examples/Ext.ux.CalendarSimpleEvents.html)
  */
-Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
+Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	
-	/**
-	 * @cfg {Date} dateField Name of the field which contains the Event's date
-	 */
-	dateField: 'start',
+    /**
+     * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
+     */
+    startEventField: 'start',
+    
+    /**
+     * @cfg {Stirng} endEventField Name of the Model field which contains the Event's End date
+     */
+    endEventField: 'end',
 	
 	/**
 	 * @cfg {Boolean} multiEventDots True to display a dot for each event on a day. False to only show one dot regardless
@@ -827,7 +361,11 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * @param {Object} currentDate - date we are currently dealing while looping Calendar's dateCollection property
 	 */
 	filterFn: function(record, id, currentDate){
-		return record.get(this.dateField).clearTime(true).getTime() === currentDate.clearTime(true).getTime();
+		var startDate = record.get(this.startEventField).clearTime(true).getTime(),
+			endDate = record.get(this.endEventField).clearTime(true).getTime(),
+			currentDate = currentDate.clearTime(true).getTime();
+	                            
+	    return (startDate <= currentDate) && (endDate >= currentDate);
 	},
 	
 	init: function(calendar){
@@ -842,13 +380,10 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 		this.calendar.hideEvents = this.hideEvents;
 		this.calendar.removeEvents = this.removeEvents;
 		
-		// listen to the Calendar's 'refresh' event and render events when it fires
-		this.calendar.on({
-			refresh: this.renderEvents,
-			initialrender: this.renderEvents,
-			scope: this
-		});
+		// After the calendar's height is synced with it's container we must refresh the events
+		this.calendar.syncHeight = Ext.createSequence(this.calendar.syncHeight, this.refreshEvents, this);
 	},
+
 	
 	/**
 	 * Function to execute when the Calendar is refreshed.
@@ -858,17 +393,20 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * @private
 	 * @return {void}
 	 */
-	renderEvents: function(){
+	refreshEvents: function(){
 		if (!this.disabled) {
-			var dc = this.calendar.dateCollection;
+			var datesStore = this.calendar.store;
 
-			if (dc) {
+			if (datesStore && this.calendar.isVisible()) {
+				
+				this.removeEvents(); // remove the event dots already existing
+				
 				// loop through Calendar's current dateCollection
-				dc.each(function(dateObj){
-					var date = dateObj.date;
+				datesStore.each(function(dateObj){
+					var date = dateObj.get('date');
 					
 					var cell = this.calendar.getDateCell(date); // get the table cell for the current date
-					var store = this.calendar.store;
+					var store = this.calendar.eventStore;
 					
 					if (cell) {
 						store.clearFilter();
@@ -908,7 +446,7 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	hideEvents: function(){
 		this.simpleEventsPlugin.disabled = true;
 		
-		this.body.select('span.' + this.wrapperCls).hide();
+		this.calendar.el.select('span.' + this.wrapperCls).hide();
 	},
 	
 	/**
@@ -920,7 +458,7 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	showEvents: function(){
 		this.simpleEventsPlugin.disabled = false;
 		
-		this.body.select('span.' + this.wrapperCls).show();
+		this.calendar.el.select('span.' + this.wrapperCls).show();
 	},
 	
 	/**
@@ -930,6 +468,8 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * @return {void}
 	 */
 	removeEvents: function(){
-		this.body.select('span.' + this.wrapperCls).remove();
+		if(this.calendar.el){
+			this.calendar.el.select('span.' + this.wrapperCls).remove();
+		}
 	}	
 });

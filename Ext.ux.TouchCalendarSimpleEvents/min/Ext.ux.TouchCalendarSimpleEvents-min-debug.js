@@ -1,18 +1,18 @@
 /**
  * @copyright 		(c) 2011, by SwarmOnline.com
- * @date      		2nd October 2011
+ * @date      		2nd November 2011
  * @version   		0.1
  * @documentation	
  * @website	  		http://www.swarmonline.com
  */
 /**
- * @class Ext.ux.CalendarSimpleEvents
+ * @class Ext.ux.TouchCalendarSimpleEvents
  * @author Stuart Ashworth
  *
- * This plugin can be added to an Ext.ux.Calendar instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
+ * This plugin can be added to an Ext.ux.TouchCalendarView instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
  * does with a dot added to each day to represent the presence of an event.
  * 
- * ![Ext.ux.CalendarSimpleEvents Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.CalendarSimpleEvents-ss.png)
+ * ![Ext.ux.TouchCalendarSimpleEvents Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendarSimpleEvents-ss.png)
  * 
  * # Sample Usage
  * 
@@ -54,14 +54,19 @@
        });
  *    
  * # Demo
- * [Ext.ux.CalendarSimpleEvents Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.CalendarSimpleEvents.html)
+ * [Ext.ux.CalendarSimpleEvents Demo](http://www.swarmonline.com/calendar/examples/Ext.ux.CalendarSimpleEvents.html)
  */
-Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
+Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	
-	/**
-	 * @cfg {Date} dateField Name of the field which contains the Event's date
-	 */
-	dateField: 'start',
+    /**
+     * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
+     */
+    startEventField: 'start',
+    
+    /**
+     * @cfg {Stirng} endEventField Name of the Model field which contains the Event's End date
+     */
+    endEventField: 'end',
 	
 	/**
 	 * @cfg {Boolean} multiEventDots True to display a dot for each event on a day. False to only show one dot regardless
@@ -107,7 +112,11 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * @param {Object} currentDate - date we are currently dealing while looping Calendar's dateCollection property
 	 */
 	filterFn: function(record, id, currentDate){
-		return record.get(this.dateField).clearTime(true).getTime() === currentDate.clearTime(true).getTime();
+		var startDate = record.get(this.startEventField).clearTime(true).getTime(),
+			endDate = record.get(this.endEventField).clearTime(true).getTime(),
+			currentDate = currentDate.clearTime(true).getTime();
+	                            
+	    return (startDate <= currentDate) && (endDate >= currentDate);
 	},
 	
 	init: function(calendar){
@@ -122,13 +131,10 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 		this.calendar.hideEvents = this.hideEvents;
 		this.calendar.removeEvents = this.removeEvents;
 		
-		// listen to the Calendar's 'refresh' event and render events when it fires
-		this.calendar.on({
-			refresh: this.renderEvents,
-			initialrender: this.renderEvents,
-			scope: this
-		});
+		// After the calendar's height is synced with it's container we must refresh the events
+		this.calendar.syncHeight = Ext.createSequence(this.calendar.syncHeight, this.refreshEvents, this);
 	},
+
 	
 	/**
 	 * Function to execute when the Calendar is refreshed.
@@ -138,17 +144,20 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * @private
 	 * @return {void}
 	 */
-	renderEvents: function(){
+	refreshEvents: function(){
 		if (!this.disabled) {
-			var dc = this.calendar.dateCollection;
+			var datesStore = this.calendar.store;
 
-			if (dc) {
+			if (datesStore && this.calendar.isVisible()) {
+				
+				this.removeEvents(); // remove the event dots already existing
+				
 				// loop through Calendar's current dateCollection
-				dc.each(function(dateObj){
-					var date = dateObj.date;
+				datesStore.each(function(dateObj){
+					var date = dateObj.get('date');
 					
 					var cell = this.calendar.getDateCell(date); // get the table cell for the current date
-					var store = this.calendar.store;
+					var store = this.calendar.eventStore;
 					
 					if (cell) {
 						store.clearFilter();
@@ -188,7 +197,7 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	hideEvents: function(){
 		this.simpleEventsPlugin.disabled = true;
 		
-		this.body.select('span.' + this.wrapperCls).hide();
+		this.calendar.el.select('span.' + this.wrapperCls).hide();
 	},
 	
 	/**
@@ -200,7 +209,7 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	showEvents: function(){
 		this.simpleEventsPlugin.disabled = false;
 		
-		this.body.select('span.' + this.wrapperCls).show();
+		this.calendar.el.select('span.' + this.wrapperCls).show();
 	},
 	
 	/**
@@ -210,6 +219,8 @@ Ext.ux.CalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * @return {void}
 	 */
 	removeEvents: function(){
-		this.body.select('span.' + this.wrapperCls).remove();
+		if(this.calendar.el){
+			this.calendar.el.select('span.' + this.wrapperCls).remove();
+		}
 	}	
 });

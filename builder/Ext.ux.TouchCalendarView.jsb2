@@ -1,0 +1,21 @@
+{
+    "projectName": "Ext.ux.TouchCalendarView",
+    "deployDir": "Ext.ux.Calendar/min",
+    "licenseText": "Ext.ux.TouchCalendarView",
+    "pkgs": [
+        {
+            "name": "Ext.ux.TouchCalendarView",
+            "file": "Ext.ux.TouchCalendarView-min.js",
+            "isDebug": false,
+            "fileIncludes": [
+				{
+					"text": "Ext.ux.TouchCalendarView.js",
+                    "path": "../"
+				}
+            ] 
+        } 
+    ],
+    "resources": [
+        
+    ]
+}

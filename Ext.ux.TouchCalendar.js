@@ -13,7 +13,7 @@
  * gestures to switch the displayed period. It works by creating 3 Ext.ux.TouchCalendarViews and dynamically creating/removing
  * views as the user moves back/forward through time. 
  * 
- * ![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendar-ss.png)
+ * ![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendar-ss.png)
  * 
  * [Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
  * 

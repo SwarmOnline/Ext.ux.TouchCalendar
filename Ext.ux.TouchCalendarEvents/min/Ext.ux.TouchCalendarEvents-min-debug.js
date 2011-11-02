@@ -1,18 +1,25 @@
 /*!
- * Ext.ux.CalendarEvents
+ * Ext.ux.TouchCalendarEvents
  */
 /**
  * @copyright 		(c) 2011, by SwarmOnline.com
- * @date      		2nd October 2011
+ * @date      		2nd November 2011
  * @version   		0.1
  * @documentation	
  * @website	  		http://www.swarmonline.com
  */
 /**
- * @class Ext.ux.CalendarEvents
+ * @class Ext.ux.TouchCalendarEvents
  * @author Stuart Ashworth
+ * 
+ * This plugin also allows a store to be bound to the Ext.ux.TouchCalendar and will display the store's events as bars spanning its relevant days. 
+ * 
+ * ![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendarEvents-ss.png)
+ * 
+ * [Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/calendar/examples/Ext.ux.TouchCalendarEvents.html)
+ * 
  */
-Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
+Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 
     /**
      * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
@@ -59,7 +66,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	/**
 	 * @cfg {Boolean} allowEventDragAndDrop Decides whether the Event Bars can be dragged and dropped
 	 */
-	allowEventDragAndDrop: false,
+	allowEventDragAndDrop: true,
 	
     /**
      * @cfg {Number} eventBarSpacing Space (in pixels) between EventBars
@@ -129,11 +136,9 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			
 		);
         
-        this.calendar.on({
-			initialrender: this.refreshEvents,
-            refresh: this.refreshEvents,
-            scope: this
-        });
+		// create a sequence to refresh the Event Bars when the calendar either refreshes or has a component layout happen
+		this.calendar.refresh = Ext.createSequence(this.calendar.refresh, this.refreshEvents, this);		
+		this.calendar.afterComponentLayout = Ext.createSequence(this.calendar.afterComponentLayout, this.refreshEvents, this);
     },
     
     /**
@@ -166,7 +171,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		/**
 		 * @property {Ext.util.Droppable} droppable Contains the Ext.util.Droppable instance on the Calendar's body element
 		 */
-		this.droppable = new Ext.util.Droppable(this.calendar.body, {
+		this.droppable = new Ext.util.Droppable(this.calendar.getEl(), {
 			/**
 			 * Override for Droppable's onDrag function to add hover class to active date cell
 			 * @method			 
@@ -182,9 +187,9 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 					if (onDragCount % 15 === 0) {
 						var currentDateCell, currentDate, eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
 						
-						me.calendar.dateCellEls.removeCls(me.cellHoverCls);
+						me.calendar.all.removeCls(me.cellHoverCls);
 						
-						me.calendar.dateCellEls.each(function(cell, index){
+						me.calendar.all.each(function(cell, index){
 							var cellRegion = cell.getPageBox(true);
 							var eventBarRegion = draggable.el.getPageBox(true);
 							
@@ -225,7 +230,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 			var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID'));
 			
 			// reshow all the hidden linked Event Bars
-			this.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+			this.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
 				eventBar.show();
 			}, this);
 		}
@@ -244,7 +249,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 	onEventDrop: function(droppable, draggable, e, opts){
         var validDrop = false;
         
-		this.calendar.dateCellEls.each(function(cell){
+		this.calendar.all.each(function(cell){
             var cellRegion = cell.getPageBox(true);
             var eventBarRegion = draggable.el.getPageBox(true);
             
@@ -267,7 +272,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
             }  
         }, this);
 		
-		this.calendar.dateCellEls.removeCls(this.cellHoverCls);
+		this.calendar.all.removeCls(this.cellHoverCls);
         
         if (!validDrop) { // if it wasn't a valid drop then move the Event Bar back to its original location
 			draggable.setOffset(draggable.startOffset, true);
@@ -290,13 +295,13 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
             data: []
         });
         
-        var dates = this.calendar.dateCollection;
-        var store = this.calendar.store;
+        var dates = this.calendar.store;
+        var store = this.calendar.eventStore;
         var eventBarRecord;
         
         // Loop through Calendar's date collection of visible dates
         dates.each(function(dateObj){
-            var currentDate = dateObj.date,
+            var currentDate = dateObj.get('date'),
 				currentDateTime = currentDate.clearTime(true).getTime(),
 				takenDatePositions = []; // stores 'row positions' that are taken on current date
 				
@@ -432,7 +437,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 						draggable.el.setLeft(e.startX - (draggable.el.getWidth() / 2));
 						
 						// hide all linked Event Bars
-						me.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+						me.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
 							if (eventBar.dom !== draggable.el.dom) {
 								eventBar.hide();
 							}
@@ -455,10 +460,11 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 				dayCellWidth = dayEl.getWidth(),
             	eventBarHeight = eventBar.getHeight(),            
             	spacing = this.eventBarSpacing;
-            
+            console.log(dayEl);
+			console.log(dayCellY);
             // set sizes and positions
             eventBar.setLeft(dayCellX + (hasWrapped ? 0 : spacing));
-            eventBar.setTop((((dayCellY - this.calendar.body.getY()) + dayCellHeight) - eventBarHeight) - ((barPosition * eventBarHeight + (barPosition * spacing) + spacing)));
+            eventBar.setTop((((dayCellY - this.calendar.getEl().getY()) + dayCellHeight) - eventBarHeight) - ((barPosition * eventBarHeight + (barPosition * spacing) + spacing)));
             eventBar.setWidth((dayCellWidth * barLength) - (spacing * (doesWrap ? (doesWrap && hasWrapped ? 0 : 1) : 2)));
             
             if (record.linked().getCount() > 0) {
@@ -488,7 +494,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
 		draggable.updateBoundary(true);
 
 		// hide all linked Event Bars
-        this.calendar.body.select('div.' + eventRecord.internalId).each(function(eventBar){
+        this.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
             if (eventBar.dom !== draggable.el.dom) {
                 eventBar.hide();
             }
@@ -527,7 +533,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
      */
     createEventWrapper: function(){
         if (this.calendar.rendered && !this.eventWrapperEl) {
-            this.eventWrapperEl = Ext.DomHelper.append(this.calendar.body, {
+            this.eventWrapperEl = Ext.DomHelper.append(this.getEventsWrapperContainer(), {
                 tag: 'div',
                 cls: this.eventWrapperCls
             }, true);
@@ -557,6 +563,10 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
             this.calendar.fireEvent('eventtap', eventRecord, e);
         }
     },
+	
+	getEventsWrapperContainer: function(){
+		return this.calendar.getEl().select('thead th').first() || this.calendar.getEl().select('tr td').first();
+	},
     
     /**
      * Returns the first index number that isn't in the specified array
@@ -581,10 +591,10 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
      * @param {Object} eventID
      */
     getEventRecord: function(eventID){
-        var eventRecordIndex = this.calendar.store.findBy(function(rec){
+        var eventRecordIndex = this.calendar.eventStore.findBy(function(rec){
             return rec.internalId === eventID;
         }, this);
-        return this.calendar.store.getAt(eventRecordIndex);
+        return this.calendar.eventStore.getAt(eventRecordIndex);
     },
     
     /**
@@ -606,7 +616,7 @@ Ext.ux.CalendarEvents = Ext.extend(Ext.util.Observable, {
      * @return {void}
      */
     deselectEvents: function(){
-        this.calendar.body.select('.' + this.eventBarSelectedCls).removeCls(this.eventBarSelectedCls);
+        this.calendar.getEl().select('.' + this.eventBarSelectedCls).removeCls(this.eventBarSelectedCls);
     },
     
     /**

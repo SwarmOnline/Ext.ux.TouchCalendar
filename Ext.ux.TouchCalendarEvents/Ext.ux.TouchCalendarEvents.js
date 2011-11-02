@@ -11,9 +11,9 @@
  * 
  * This plugin also allows a store to be bound to the Ext.ux.TouchCalendar and will display the store's events as bars spanning its relevant days. 
  * 
- * ![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/Ext.ux.TouchCalendarEvents-ss.png)
+ * ![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendarEvents-ss.png)
  * 
- * [Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
+ * [Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/calendar/examples/Ext.ux.TouchCalendarEvents.html)
  * 
  */
 Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
