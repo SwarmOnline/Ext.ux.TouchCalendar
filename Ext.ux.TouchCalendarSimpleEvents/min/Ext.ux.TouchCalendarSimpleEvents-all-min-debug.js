@@ -13,7 +13,7 @@
  * gestures to switch the displayed period. It works by creating 3 Ext.ux.TouchCalendarViews and dynamically creating/removing
  * views as the user moves back/forward through time. 
  * 
- * ![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendar-ss.png)
+ * ![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendar-ss.png)
  * 
  * [Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
  * 
@@ -261,7 +261,7 @@ Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
  * This plugin can be added to an Ext.ux.TouchCalendarView instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
  * does with a dot added to each day to represent the presence of an event.
  * 
- * ![Ext.ux.TouchCalendarSimpleEvents Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendarSimpleEvents-ss.png)
+ * ![Ext.ux.TouchCalendarSimpleEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarSimpleEvents-ss.png)
  * 
  * # Sample Usage
  * 
@@ -303,7 +303,7 @@ Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
        });
  *    
  * # Demo
- * [Ext.ux.CalendarSimpleEvents Demo](http://www.swarmonline.com/calendar/examples/Ext.ux.CalendarSimpleEvents.html)
+ * [Ext.ux.CalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.CalendarSimpleEvents.html)
  */
 Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	

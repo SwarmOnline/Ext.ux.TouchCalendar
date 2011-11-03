@@ -12,10 +12,11 @@
  * The main extension is contained in the root folder of the repository and can be included in your project (along with its CSS file located within 
  * the resources/css folder) and will give you a basic calendar view (either showing a month, week or day) that can be configured with various options.
  * 
- * ![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendarView-ss.png)
- * ![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendarView-Day-ss.png)
+ * ![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-month-ss.png)
+ * ![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-week-ss.png)
+ * ![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-day-ss.png)
  * 
- * [Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/calendar/examples/Ext.ux.TouchCalendar.html)
+ * [Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
  */
 Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 	cls: 'touch-calendar-view',

@@ -16,7 +16,7 @@
  * gestures to switch the displayed period. It works by creating 3 Ext.ux.TouchCalendarViews and dynamically creating/removing
  * views as the user moves back/forward through time. 
  * 
- * ![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendar-ss.png)
+ * ![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendar-ss.png)
  * 
  * [Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
  * 
@@ -263,9 +263,9 @@ Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
  * 
  * This plugin also allows a store to be bound to the Ext.ux.TouchCalendar and will display the store's events as bars spanning its relevant days. 
  * 
- * ![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/calendar/screenshots/Ext.ux.TouchCalendarEvents-ss.png)
+ * ![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarEvents-ss.png)
  * 
- * [Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/calendar/examples/Ext.ux.TouchCalendarEvents.html)
+ * [Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
  * 
  */
 Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
