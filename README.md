@@ -5,13 +5,13 @@ applications.
 
 ## Demos
 
-[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/calendar/examples/Ext.ux.TouchCalendar.html)
+[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
 
-[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/calendar/examples/Ext.ux.TouchCalendarSimpleEvents.html)
+[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarSimpleEvents.html)
 
-[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/calendar/examples/Ext.ux.TouchCalendarEvents.html)
+[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
 
-[Calendar with Linked List Demo](http://www.swarmonline.com/calendar/examples/simple-events-list.html)
+[Calendar with Linked List Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/simple-events-list.html)
 
 ## Ext.ux.TouchCalendarView
 
@@ -102,7 +102,6 @@ and accepts any options that that component can.
 						value: new Date()
 					}
                 });
-		
         }
     });
     
@@ -147,8 +146,7 @@ The next step is to create an ``Ext.data.Store`` with event data that we can bin
 We can now instantiate the Ext.ux.TouchCalendarSimpleEvents plugin within the main calendar's ``plugins`` configuration. We
 also pass a ``store`` config option to the Ext.ux.TouchCalendar.
 
-    var calendar = new Ext.ux.TouchCalendar({
-        fullscreen: true,
+    var calendar = new Ext.ux.TouchCalendarView({
         value: new Date(),
         
         store: eventStore,        
@@ -163,8 +161,7 @@ above.
 We can then instantiate the Ext.ux.TouchCalendarEvents plugin and supply it with a simple ``Ext.XTemplate`` which will be 
 used to render the contents of each Event's bar.
 
-    var calendar = new Ext.ux.TouchCalendar({
-       fullscreen: true,
+    var calendar = new Ext.ux.TouchCalendarView({
        value: new Date(),
        store: eventStore,
 	
@@ -182,5 +179,5 @@ There are a few known issues that will be ironed out after the first release, na
 
 ## Acknowledgements
 
-I'd like to thank @megous for his sencha-touch-ux-datepicker extension which this extension originally grew from.
+I'd like to thank @megous for his [sencha-touch-ux-datepicker](https://github.com/megous/sencha-touch-ux-datepicker) extension which this extension originally grew from.
 
