@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="../lib/sencha/resources/css/sencha-touch.css" media="all"/>
+        <script src="../lib/sencha/sencha-touch-debug.js" type="text/javascript" language="JavaScript">
+        </script>
+		<link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendarView.css" media="all"/>
+		<script src="../Ext.ux.TouchCalendarView.js" type="text/javascript" language="JavaScript"></script>
+		<script src="../Ext.ux.TouchCalendar.js" type="text/javascript" language="JavaScript"></script>
+		
+        <script type="text/javascript">
+            
+        Ext.setup({
+            onReady: function(){
+            
+                var calendar = new Ext.ux.TouchCalendar({
+					viewConfig: {
+						minDate: (new Date()).add(Date.DAY, -40),
+						maxDate: (new Date()).add(Date.DAY, 55),
+						mode: 'month',
+						weekStart: 1,
+						value: new Date()
+					}
+                });
+                
+                var panel = new Ext.Panel({
+                    fullscreen: true,
+                    dockedItems: [{
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        items: [{
+                            xtype: 'button',
+                            text: 'Month View',
+                            handler: function(){
+                                calendar.setMode('month');
+                            }
+                        }, {
+                            xtype: 'button',
+                            text: 'Week View',
+                            handler: function(){
+                                calendar.setMode('week');
+                            }
+                        }, {
+                            xtype: 'button',
+                            text: 'Day View',
+                            handler: function(){
+                                calendar.setMode('day');
+                            }
+                        }]
+                    }],
+                    layout: 'fit',
+                    items: [calendar]
+            	});
+            }
+        });
+        </script>
+        <title></title>
+    </head>
+    <body>
+    </body>
+</html>

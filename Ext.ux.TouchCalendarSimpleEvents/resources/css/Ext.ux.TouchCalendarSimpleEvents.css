@@ -1,0 +1,28 @@
+/* line 7, ../scss/Ext.ux.CalendarSimpleEvents.scss */
+.touch-calendar-view td span.simple-event-wrapper, .touch-calendar-view td span.simple-event-wrapper-multi {
+  position: absolute;
+  overflow: hidden;
+}
+/* line 16, ../scss/Ext.ux.CalendarSimpleEvents.scss */
+.touch-calendar-view td span.simple-event-multi {
+  float: left;
+  height: 4px;
+  width: 4px;
+  -webkit-border-radius: 4px;
+  background-color: #3F4E5E;
+  margin: 0 auto 0 2px;
+}
+/* line 26, ../scss/Ext.ux.CalendarSimpleEvents.scss */
+.touch-calendar-view td span.simple-event {
+  height: 6px;
+  width: 6px;
+  -webkit-border-radius: 6px;
+  background-color: #3F4E5E;
+  margin: 0 auto;
+  display: block;
+}
+/* line 36, ../scss/Ext.ux.CalendarSimpleEvents.scss */
+.touch-calendar-view td .selected span.simple-event, .touch-calendar-view td td.today span.simple-event {
+  background-color: #FFF;
+}
+

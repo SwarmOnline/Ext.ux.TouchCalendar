@@ -1,0 +1,44 @@
+/*
+ *
+ */
+/* line 11, ../scss/Ext.ux.CalendarEvents.scss */
+div.event-bar {
+  background-color: #7991b3;
+  border: 1px solid #485e7e;
+  color: white;
+  font-size: 9px;
+  font-weight: bold;
+  height: 13px;
+  overflow: hidden;
+  padding: 0px 4px;
+  position: absolute;
+  -webkit-border-radius: 4px;
+  z-index: 100;
+  letter-spacing: 0.2em;
+  text-shadow: none;
+  text-align: left;
+}
+/* line 25, ../scss/Ext.ux.CalendarEvents.scss */
+div.event-bar.event-bar-selected {
+  background-color: #1a222d;
+}
+/* line 30, ../scss/Ext.ux.CalendarEvents.scss */
+div.event-bar.wrap-end {
+  -webkit-border-top-right-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+}
+/* line 36, ../scss/Ext.ux.CalendarEvents.scss */
+div.event-bar.wrap-start {
+  -webkit-border-top-left-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+}
+/* line 45, ../scss/Ext.ux.CalendarEvents.scss */
+.touch-calendar-view table td.day.date-cell-hover {
+  background-color: #dcdbdf;
+  background-image: none;
+}
+.touch-calendar-view table td {
+  vertical-align: top;
+  text-align: right;
+  font-size: 0.7em;
+}

@@ -1,76 +1,117 @@
-# Ext.ux.Calendar
+# Ext.ux.TouchCalendar
 
-Ext.ux.Calendar is an extension, and set of related plugins, for the Sencha Touch framework that allows easy integration of a calendar component into 
+Ext.ux.TouchCalendar is an extension, and set of related plugins, for the Sencha Touch framework that allows easy integration of a calendar component into 
 applications.
 
 ## Demos
 
-[Ext.ux.Calendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.Calendar.html)
+[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
 
-[Ext.ux.CalendarSimpleEvents Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.CalendarSimpleEvents.html)
+[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarSimpleEvents.html)
 
-[Ext.ux.CalendarEvents Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.CalendarEvents.html)
+[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
 
-[Calendar with Linked List Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/simple-events-list.html)
+[Calendar with Linked List Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/simple-events-list.html)
 
-## Ext.ux.Calendar
+## Ext.ux.TouchCalendarView
 
 The main extension is contained in the root folder of the repository and can be included in your project (along with its CSS file located within 
-the resources/css folder) and will give you a basic calendar view (either showing a month or a week) that can be configured with various options.
+the resources/css folder) and will give you a basic calendar view (either showing a month, week or day) that can be configured with various options.
 
-![Ext.ux.Calendar Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.Calendar-ss.png)
+![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-month-ss.png)
+![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-week-ss.png)
+![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-day-ss.png)
 
-[Ext.ux.Calendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.Calendar.html)
+[Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
 
-## Ext.ux.CalendarSimpleEvents
+## Ext.ux.TouchCalendar
 
-This plugin can be added to an Ext.ux.Calendar instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
+This extension wraps the Ext.ux.TouchCalendarView in a Ext.Carousel component and allows the calendar to respond to swipe
+gestures to switch the displayed period. It works by creating 3 Ext.ux.TouchCalendarViews and dynamically creating/removing
+views as the user moves back/forward through time. 
+
+![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendar-month-ss.png)
+
+[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
+
+
+## Ext.ux.TouchCalendarSimpleEvents
+
+This plugin can be added to an Ext.ux.TouchCalendar instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
 does with a dot added to each day to represent the presence of an event.
 
-![Ext.ux.CalendarSimpleEvents Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.CalendarSimpleEvents-ss.png)
+![Ext.ux.TouchCalendarSimpleEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarSimpleEvents-month-ss.png)
 
-[Ext.ux.CalendarSimpleEvents Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.CalendarSimpleEvents.html)
+[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarSimpleEvents.html)
 
-## Ext.ux.CalendarEvents
+## Ext.ux.TouchCalendarEvents
 
-This plugin also allows a store to be bound to the Ext.ux.Calendar and will display the store's events as bars spanning its relevant days. 
+This plugin also allows a store to be bound to the Ext.ux.TouchCalendar and will display the store's events as bars spanning its relevant days. 
 
-![Ext.ux.CalendarEvents Screenshot](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/Ext.ux.CalendarEvents-ss.png)
+![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarEvents-month-ss.png)
 
-[Ext.ux.CalendarEvents Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.Calendar/examples/Ext.ux.CalendarEvents.html)
+[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
 
 ## Usage
 
-### Ext.ux.Calendar
+### Ext.ux.TouchCalendarView
 
 Include the extension's JS file and related CSS file in your HTML page.
 
-    <link rel="stylesheet" type="text/css" href="resources/css/Ext.ux.Calendar.css" media="all"/>
-    <script src="Ext.ux.Calendar.js" type="text/javascript" language="JavaScript"></script>
+    <link rel="stylesheet" type="text/css" href="resources/css/Ext.ux.TouchCalendarView.css" media="all"/>
+    <script src="Ext.ux.TouchCalendarView.js" type="text/javascript" language="JavaScript"></script>
     
-In your onReady function instantiate an Ext.ux.Calendar instance passing in any configuration options you want it to 
-have. The extension extends the Ext.Panel class so can accept any of its configuration options too. There are no 
-mandatory config options so a simple ``fullscreen: true`` is enough to get it showing.
+In your onReady function instantiate an Ext.ux.TouchCalendarView instance passing in any configuration options you want it to 
+have.
 
     Ext.setup({
         onReady: function(){
   	                    
-            var calendar = new Ext.ux.Calendar({
-                fullscreen: true,
+            var calendarView = new Ext.ux.TouchCalendarView({
                 mode: 'month',
                 value: new Date()
             });
+            
+            var panel = new Ext.Panel({
+                fullscreen: true,
+                layout: 'fit',
+                items: [calendarView]
+        	});
 		
         }
     });
-    
-### Ext.ux.CalendarSimpleEvents
 
-This plugin requires its own source JS and CSS to be included (within the Ext.ux.CalendarSimpleEvents folder) as well 
+### Ext.ux.TouchCalendar
+
+This extension requires its own source JS to be included as well as the Ext.ux.TouchCalendarView's code.
+
+    <script src="Ext.ux.TouchCalendar.js" type="text/javascript" language="JavaScript"></script>
+    
+In your onReady function instantiate an Ext.ux.TouchCalendar instance passing in any configuration options you want it to 
+have. You can specify a viewConfig option which will be used to configure the underlying Ext.ux.TouchCalendarView instances
+and accepts any options that that component can.
+
+    Ext.setup({
+        onReady: function(){
+  	                    
+				var calendar = new Ext.ux.TouchCalendar({
+					fullscreen: true,
+					viewConfig: {
+						mode: 'month',
+						weekStart: 1,
+						value: new Date()
+					}
+                });
+        }
+    });
+    
+### Ext.ux.TouchCalendarSimpleEvents
+
+This plugin requires its own source JS and CSS to be included (within the Ext.ux.TouchCalendarSimpleEvents folder) as well 
 as the main extension's code.
 
-    <script src="Ext.ux.CalendarSimpleEvents.js" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="resources/css/Ext.ux.CalendarSimpleEvents.css" media="all"/>
+    <script src="Ext.ux.TouchCalendarSimpleEvents.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="resources/css/Ext.ux.TouchCalendarSimpleEvents.css" media="all"/>
     
 The next step is to create an ``Ext.data.Store`` with event data that we can bind to the calendar.
 
@@ -102,34 +143,41 @@ The next step is to create an ``Ext.data.Store`` with event data that we can bin
         }]
     });
     
-We can now instantiate the Ext.ux.CalendarSimpleEvents plugin within the main calendar's ``plugins`` configuration. We
-also pass a ``store`` config option to the Ext.ux.Calendar.
+We can now instantiate the Ext.ux.TouchCalendarSimpleEvents plugin within the main calendar's ``plugins`` configuration. We
+also pass a ``store`` config option to the Ext.ux.TouchCalendar.
 
-    var calendar = new Ext.ux.Calendar({
-        fullscreen: true,
+    var calendar = new Ext.ux.TouchCalendarView({
         value: new Date(),
         
         store: eventStore,        
-        plugins: [new Ext.ux.CalendarSimpleEvents()]
+        plugins: [new Ext.ux.TouchCalendarSimpleEvents()]
     });
 
-### Ext.ux.CalendarEvents
+### Ext.ux.TouchCalendarEvents
 
 Once again the plugins files must be included in your HTML file and a store created as we have done in the instructions 
 above.
 
-We can then instantiate the Ext.ux.CalendarEvents plugin and supply it with a simple ``Ext.XTemplate`` which will be 
+We can then instantiate the Ext.ux.TouchCalendarEvents plugin and supply it with a simple ``Ext.XTemplate`` which will be 
 used to render the contents of each Event's bar.
 
-    var calendar = new Ext.ux.Calendar({
-       fullscreen: true,
+    var calendar = new Ext.ux.TouchCalendarView({
        value: new Date(),
        store: eventStore,
 	
-       plugins: [new Ext.ux.CalendarEvents({
+       plugins: [new Ext.ux.TouchCalendarEvents({
            eventBarTpl: new Ext.XTemplate('{event} - {location}')
        })]
     });
 
+## Known Issues
 
+There are a few known issues that will be ironed out after the first release, namely:
+
+* When using the Ext.ux.TouchCalendar the setValue logic isn't complete for dealing with selections across the 3 views.
+* The Ext.ux.TouchCalendarEvents/Ext.ux.TouchCalendarSimpleEvents plugins aren't compatible with the Day mode.
+
+## Acknowledgements
+
+I'd like to thank @megous for his [sencha-touch-ux-datepicker](https://github.com/megous/sencha-touch-ux-datepicker) extension which this extension originally grew from.
 

@@ -1,0 +1,161 @@
+/*
+ * Originally written by Bruno Alexandre, 26.03.2010, twitter.com/balexandre,
+ * balexandre.com,  abruno.in.dk [at] gmail.com
+ *
+ * Rewritten into CSS3/SASS by Ondrej Jirman <megous@megous.com>, 2011 (for
+ * CodeBerry s.r.o.)
+ */
+
+@import 'sencha-touch/default/all';
+
+.touch-calendar-view
+{
+	$bd-color: #A3A7AF;
+	$date-bg-color: #cfced3;
+
+	table
+	{
+		width: 100%;
+		border-collapse: separate;
+		table-layout: fixed;
+		font-size: 20px;
+		color: #3F4E5E;
+		background-color: #EEE;
+		
+		&.week
+		{
+			td
+			{
+				vertical-align: top;
+			}		
+		}
+		
+		&.day
+		{
+			td
+			{
+				&.time-block
+				{
+					text-align: left;
+					background-image: none;
+					font-size: 0.7em;
+					height: 30px;
+				}
+			}
+		}
+	}
+	
+	// borders
+	tbody
+    {
+		td
+		{
+			border-bottom: 1px solid $bd-color;
+			border-left: 1px solid $bd-color;
+			border-right: 1px solid lighten($bd-color, 20%);
+			border-top: 1px solid lighten($bd-color, 20%);
+		}
+	}
+
+	// cell styles
+	td
+	{
+		font-weight: bold;
+		position: relative;
+		text-align: center;
+		vertical-align: middle;
+		font-size: 1.3em;
+		@include background-gradient($date-bg-color, 'recessed');
+
+		&.today
+		{
+			$c: #7188a8;
+			color: #FFFFFF;
+			text-shadow: #333 1px 1px 2px;
+			-webkit-box-shadow: inset 0px 0px 8px #000;
+			border: 1px solid black;
+			background: $c;
+			@include background-gradient(darken($c, 20%), 'recessed');
+		}
+
+		&.unselectable
+		{
+			color: #89909A;
+			@include background-gradient(darken(#d8b7bb, 6%), 'recessed');
+		}
+
+		&.selected
+		{
+			$c: #1980e5;
+			color: #FFFFFF;
+			text-shadow: #333 1px 1px 0px;
+			border: 1px solid black;
+			background: $c;
+			@include background-gradient(lighten($c, 10%), 'glossy');
+		}
+
+		&.today.selected
+		{
+			$c: #1980e5;
+			color: #FFFFFF;
+			text-shadow: #333 1px 1px 2px;
+			border: 1px solid black;
+			background: $c;
+			@include background-gradient(darken($c, 20%), 'recessed');
+		}
+
+		&.prev-month, &.next-month
+		{
+			color: #89909A;
+		}
+		
+		&.prev-month.selected, &.next-month.selected
+		{
+			color: #FFFFFF;
+		}
+ 	}
+ 	
+	thead
+	{
+		@include background-gradient($date-bg-color, 'matte');
+	
+		th
+		{
+			font-size: 9px;
+			vertical-align: bottom;
+			padding-bottom: 3px;
+			color: #3F4E5E;
+			text-align: center;
+			height: 46px;
+			text-shadow: white 1px 1px 1px;
+			font-weight: bold;
+			border-bottom: 1px solid $bd-color;
+	
+			&:first-child
+			{
+				background: url(../images/larr.png) center center no-repeat;
+				cursor: pointer;
+			}
+	
+			&:last-child
+			{
+				background: url(../images/rarr.png) center center no-repeat;
+				cursor: pointer;
+			}
+	
+			span
+			{
+				font-size: 20px;
+				font-weight: bold;
+				height: 30px;
+				left: 14.5%;
+				position: absolute;
+				text-align: center;
+				top: 6px;
+				width: 71%;
+				z-index: 999;
+				text-shadow: white 1px 1px 1px;
+			}
+		}
+	}
+}

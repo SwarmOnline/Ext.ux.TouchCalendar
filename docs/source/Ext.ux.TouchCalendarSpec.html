@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">describe(&quot;Ext.ux.TouchCalendarView&quot;, function(){
+
+    describe(&quot;populateStore&quot;, function(){
+        it(&quot;returns 26/09/2011 when current date is 01/10/2011 (MONTH mode)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month',
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.data.first().get('date')).toEqual(new Date(2011, 8, 26));
+        });
+        
+        it(&quot;returns 06/11/2011 when current date is 01/10/2011 (MONTH mode)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month',
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.data.last().get('date')).toEqual(new Date(2011, 10, 6));
+        });
+        
+        it(&quot;returns 42 items when current date is 01/10/2011 (MONTH mode)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month',
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.getCount()).toEqual(42);
+        });
+        
+        it(&quot;returns 26/09/2011 when current date is 01/10/2011 (MONTH mode, SUNDAY weekStart)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month',
+                weekStart: 0,
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.data.first().get('date')).toEqual(new Date(2011, 8, 25));
+        });
+        
+        it(&quot;returns 06/11/2011 when current date is 01/10/2011 (MONTH mode, SUNDAY weekStart)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month',
+                weekStart: 0,
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.data.last().get('date')).toEqual(new Date(2011, 10, 5));
+        });
+        
+        it(&quot;returns 42 items when current date is 01/10/2011 (MONTH mode, SUNDAY weekStart)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month',
+                weekStart: 0,
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.getCount()).toEqual(42);
+        });
+        
+        it(&quot;returns 35 items when current date is 01/07/2011 (MONTH mode)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month',
+                value: new Date(2011, 6, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.getCount()).toEqual(35);
+        });
+        
+        it(&quot;returns 26/09/2011 when current date is 01/10/2011 (WEEK mode)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week',
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.first().get('date')).toEqual(new Date(2011, 8, 26));
+        });
+        
+        it(&quot;returns 02/10/2011 when current date is 01/10/2011 (WEEK mode)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week',
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.data.last().get('date')).toEqual(new Date(2011, 9, 2));
+        });
+        
+        it(&quot;returns 7 items when current date is 01/10/2011 (WEEK mode)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week',
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.getCount()).toEqual(7);
+        });
+        
+        it(&quot;returns 26/09/2011 when current date is 01/10/2011 (WEEK mode, SUNDAY weekStart)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week',
+                weekStart: 0,
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.data.first().get('date')).toEqual(new Date(2011, 8, 25));
+        });
+        
+        it(&quot;returns 02/10/2011 when current date is 01/10/2011 (WEEK mode, SUNDAY weekStart)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week',
+                weekStart: 0,
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.data.last().get('date')).toEqual(new Date(2011, 9, 1));
+        });
+        
+        it(&quot;returns 7 items when current date is 01/10/2011 (WEEK mode, SUNDAY weekStart)&quot;, function(){
+        
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week',
+                weekStart: 0,
+                value: new Date(2011, 9, 1)
+            });
+            
+            calendarView.populateStore();
+            
+            expect(calendarView.store.getCount()).toEqual(7);
+        });
+    });
+    
+    describe(&quot;getWeekStartDate&quot;, function(){
+        it(&quot;returns 26/09/2011 when 01/10/2011 is passed in (MONTH mode, MONDAY weekStart)&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month'
+            });
+            
+            expect(calendarView.getStartDate(new Date(2011, 9, 1))).toEqual(new Date(2011, 8, 26));
+        });
+        
+        it(&quot; returns 26/09/2011 when 01/10/2011 is passed in (WEEK mode, MONDAY weekStart)&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week'
+            });
+            
+            expect(calendarView.getStartDate(new Date(2011, 9, 1))).toEqual(new Date(2011, 8, 26));
+        });
+        
+        it(&quot;returns 26/09/2011 when 01/10/2011 is passed in (MONTH mode, SUNDAY weekStart)&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month',
+                weekStart: 0
+            });
+            
+            expect(calendarView.getStartDate(new Date(2011, 9, 1))).toEqual(new Date(2011, 8, 25));
+        });
+        
+        it(&quot;returns 26/09/2011 when 01/10/2011 is passed in (WEEK mode, SUNDAY weekStart)&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week',
+                weekStart: 0
+            });
+            
+            expect(calendarView.getStartDate(new Date(2011, 9, 1))).toEqual(new Date(2011, 8, 25));
+        });
+        
+    });
+    
+    describe(&quot;getMonthDeltaDate&quot;, function(){
+        it(&quot;returns 01/11/2011 when 01/10/2011 and 1 is passed in&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month'
+            });
+            
+            expect(calendarView.getDeltaDate(new Date(2011, 9, 1), 1)).toEqual(new Date(2011, 10, 1));
+        });
+        
+        it(&quot;returns 01/09/2011 when 01/10/2011 and -1 is passed in&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month'
+            });
+            
+            expect(calendarView.getDeltaDate(new Date(2011, 9, 1), -1)).toEqual(new Date(2011, 8, 1));
+        });
+        
+        it(&quot;returns 01/01/2012 when 01/12/2011 and 1 is passed in&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month'
+            });
+            
+            expect(calendarView.getDeltaDate(new Date(2011, 11, 1), 1)).toEqual(new Date(2012, 0, 1));
+        });
+        
+        it(&quot;returns 01/12/2011 when 01/01/2012 and -1 is passed in&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'month'
+            });
+            
+            expect(calendarView.getDeltaDate(new Date(2012, 0, 1), -1)).toEqual(new Date(2011, 11, 1));
+        });
+    });
+    
+    describe(&quot;getWeekDeltaDate&quot;, function(){
+        it(&quot;returns 03/10/2011 when 30/09/2011 and 1 is passed in&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week'
+            });
+            
+            expect(calendarView.getDeltaDate(new Date(2011, 8, 30), 1)).toEqual(new Date(2011, 9, 7));
+        });
+        
+        it(&quot;returns 03/10/2011 when 30/09/2011 and -1 is passed in&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week'
+            });
+            
+            expect(calendarView.getDeltaDate(new Date(2011, 8, 30), -1)).toEqual(new Date(2011, 8, 23));
+        });
+        
+        it(&quot;returns 06/01/2012 when 30/12/2011 and 1 is passed in&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week'
+            });
+            
+            expect(calendarView.getDeltaDate(new Date(2011, 11, 30), 1)).toEqual(new Date(2012, 0, 6));
+        });
+        
+        it(&quot;returns 27/12/2011 when 03/01/2012 and -1 is passed in&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week'
+            });
+            
+            expect(calendarView.getDeltaDate(new Date(2012, 0, 3), -1)).toEqual(new Date(2011, 11, 27));
+        });
+    });
+    
+    describe(&quot;isSameDay&quot;, function(){
+        it(&quot;returns true&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week'
+            });
+            
+            expect(calendarView.isSameDay(new Date(2011, 8, 30), new Date(2011, 8, 30))).toEqual(true);
+        });
+        
+        it(&quot;returns false&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week'
+            });
+            
+            expect(calendarView.isSameDay(new Date(2011, 8, 30), new Date(2011, 8, 29))).toEqual(false);
+        });
+    });
+    
+    
+    describe(&quot;isWeekend&quot;, function(){
+        it(&quot;returns true when Saturday&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week'
+            });
+            
+            expect(calendarView.isWeekend(new Date(2011, 9, 1))).toEqual(true);
+        });
+        
+        it(&quot;returns true when Sunday&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week'
+            });
+            
+            expect(calendarView.isWeekend(new Date(2011, 9, 2))).toEqual(true);
+        });
+        
+        it(&quot;returns false when Monday&quot;, function(){
+            var calendarView = new Ext.ux.TouchCalendarView({
+                mode: 'week'
+            });
+            
+            expect(calendarView.isWeekend(new Date(2011, 9, 3))).toEqual(false);
+        });
+    });
+	
+	describe( &quot;getDateAttribute&quot;, function () {
+        it(&quot;returns \&quot;2011-10-01\&quot; when 01/10/2011 is passed in&quot;, function () {
+			var calendarView = new Ext.ux.TouchCalendarView({mode: 'week'});
+			
+			expect(calendarView.getDateAttribute(new Date(2011, 9, 1))).toEqual('2011-10-01');
+        });
+    });
+	
+	
+	describe( &quot;stringToDate&quot;, function () {
+        it(&quot;returns 01/10/2011 when \&quot;2011-10-01\&quot; is passed in&quot;, function () {
+			var calendarView = new Ext.ux.TouchCalendarView({mode: 'week'});
+			
+			expect(calendarView.stringToDate('2011-10-01')).toEqual(new Date(2011, 9, 1));
+        });
+    });
+    
+});
+</pre>
+</body>
+</html>

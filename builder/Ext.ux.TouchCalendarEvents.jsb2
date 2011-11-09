@@ -1,0 +1,36 @@
+{
+    "projectName": "Ext.ux.TouchCalendarEvents",
+    "deployDir": "Ext.ux.TouchCalendarEvents/min",
+    "licenseText": "Ext.ux.TouchCalendarEvents",
+    "pkgs": [
+        {
+            "name": "Ext.ux.TouchCalendarEvents",
+            "file": "Ext.ux.TouchCalendarEvents-min.js",
+            "isDebug": false,
+            "fileIncludes": [
+				{
+					"text": "Ext.ux.TouchCalendarEvents.js",
+                    "path": "../Ext.ux.TouchCalendarEvents/"
+				}
+            ] 
+        },
+		{
+            "name": "Ext.ux.TouchCalendarEventsAll",
+            "file": "Ext.ux.TouchCalendarEvents-all-min.js",
+            "isDebug": false,
+            "fileIncludes": [
+                {
+					"text": "Ext.ux.TouchCalendar.js",
+                    "path": "../"
+				},
+				{
+					"text": "Ext.ux.TouchCalendarEvents.js",
+                    "path": "../Ext.ux.TouchCalendarEvents/"
+				}
+            ] 
+        } 
+    ],
+    "resources": [
+        
+    ]
+}

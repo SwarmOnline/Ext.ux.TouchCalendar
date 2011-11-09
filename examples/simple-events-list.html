@@ -5,12 +5,12 @@
         <link rel="stylesheet" type="text/css" href="../lib/sencha/resources/css/sencha-touch.css" media="all"/>
         <script src="../lib/sencha/sencha-touch-debug.js" type="text/javascript">
         </script>
-        <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.Calendar.css" media="all"/>
-        <script src="../Ext.ux.Calendar.js" type="text/javascript">
+        <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendarView.css" media="all"/>
+        <script src="../Ext.ux.TouchCalendarView.js" type="text/javascript">
         </script>
-        <script src="../Ext.ux.CalendarSimpleEvents/Ext.ux.CalendarSimpleEvents.js" type="text/javascript">
+        <script src="../Ext.ux.TouchCalendarSimpleEvents/Ext.ux.TouchCalendarSimpleEvents.js" type="text/javascript">
         </script>
-        <link rel="stylesheet" type="text/css" href="../Ext.ux.CalendarSimpleEvents/resources/css/Ext.ux.CalendarSimpleEvents.css" media="all"/>
+        <link rel="stylesheet" type="text/css" href="../Ext.ux.TouchCalendarSimpleEvents/resources/css/Ext.ux.TouchCalendarSimpleEvents.css" media="all"/>
         <script src="EventStore.js" type="text/javascript">
         </script>
         <script type="text/javascript">
@@ -20,17 +20,28 @@
                 
                 
                 
-                    calendar = new Ext.ux.Calendar({
-                        fullscreen: true,
+                    var calendar = new Ext.ux.TouchCalendarView({
+                        minDate: (new Date()).add(Date.DAY, -40),
+                        maxDate: (new Date()).add(Date.DAY, 55),
+                        mode: 'month',
+                        weekStart: 0,
+                        value: new Date(2011, 8, 1),
+                        eventStore: eventStore,
+                        
+                        plugins: [new Ext.ux.TouchCalendarSimpleEvents()]
+                    });
+                    
+                    var calendarPanel = new Ext.Panel({
+                    	fullscreen: true,
                         dockedItems: [{
                             xtype: 'toolbar',
                             dock: 'top',
                             items: [{
                                 xtype: 'segmentedbutton',
-                                allowMultiple: false,
+								allowMultiple: false,
                                 items: [{
                                     text: 'Month',
-                                    pressed: true,
+									pressed: true,
                                     handler: function(){
                                         calendar.setMode('month');
                                     }
@@ -44,41 +55,52 @@
                         }, {
                             dock: 'bottom',
                             xtype: 'list',
-                            height: 70,
+                            height: 110,
                             itemTpl: '{event} {location}',
                             store: new Ext.data.Store({
                                 model: 'Event',
                                 data: []
                             })
                         }],
-                        mode: 'month',
-                        weekStart: 0,
-                        value: new Date(),
-                        store: eventStore,
+                        layout: 'fit',
+                        items: [calendar]
+                    });
+                    
+                    calendar.on('selectionchange', function(selModel, records){
+                        console.log('selectionchange');
+                        var eventList = calendarPanel.getDockedItems()[1];
                         
-                        plugins: [new Ext.ux.CalendarSimpleEvents()],
-                        
-                        listeners: {
-                            initialrender: function(calendar){
-                                console.log('initialrender');
-                                console.log(arguments);
-                            }
+                        if(records.length > 0){
+                        	var selectedRecord = records[0],
+                        		selectedDate = selectedRecord.get('date');
+	                        
+	                        calendar.eventStore.filterBy(function(record){
+	                            var startDate = record.get('start').clearTime(true).getTime(), endDate = record.get('end').clearTime(true).getTime();
+	                            
+	                            return (startDate <= selectedDate) && (endDate >= selectedDate);
+	                        }, this);
+	                        
+	                        eventList.store.loadData(calendar.eventStore.getRange());
                         }
                     });
                     
-                    calendar.on('selectionchange', function(calendar, previousValue, newValue){
-                        console.log('selectionchange');
-                        var eventList = calendar.getDockedItems()[1];
-                        
-                        calendar.store.filterBy(function(record){
-                            var startDate = record.get('start').clearTime(true).getTime(), endDate = record.get('end').clearTime(true).getTime();
-                            
-                            return (startDate <= newValue) && (endDate >= newValue);
-                        }, this);
-                        
-                        eventList.store.loadData(calendar.store.getRange());
-                        
+                    calendar.on('eventtap', function(event){
+                        console.log('eventtap');
                     });
+                    calendar.on('eventdragstart', function(draggable, eventRecord, e){
+                        console.log('eventdragstart');
+                    });
+                    calendar.on('beforeeventdrop', function(draggable, eventRecord, e){
+                        console.log('beforeeventdrop');
+                        return true;
+                    });
+                    calendar.on('eventdrop', function(draggable, eventRecord, e){
+                        console.log('eventdrop');
+                    });
+                    calendar.on('eventdrag', function(draggable, eventRecord, e){
+                        console.log('eventdrag');
+                    });
+                    
                 }
                 
                 
