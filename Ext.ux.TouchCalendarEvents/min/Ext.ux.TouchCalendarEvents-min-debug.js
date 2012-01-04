@@ -14,7 +14,7 @@
  * 
  * This plugin also allows a store to be bound to the Ext.ux.TouchCalendar and will display the store's events as bars spanning its relevant days. 
  * 
- * ![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarEvents-ss.png)
+ * ![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarEvents--month-ss.png)
  * 
  * [Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
  * 
@@ -460,8 +460,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 				dayCellWidth = dayEl.getWidth(),
             	eventBarHeight = eventBar.getHeight(),            
             	spacing = this.eventBarSpacing;
-            console.log(dayEl);
-			console.log(dayCellY);
+
             // set sizes and positions
             eventBar.setLeft(dayCellX + (hasWrapped ? 0 : spacing));
             eventBar.setTop((((dayCellY - this.calendar.getEl().getY()) + dayCellHeight) - eventBarHeight) - ((barPosition * eventBarHeight + (barPosition * spacing) + spacing)));
@@ -552,6 +551,8 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
      * @param {Object} node
      */
     onEventWrapperTap: function(e, node){
+        e.stopPropagation(); // stop event bubbling up
+        
         var eventID = node.attributes['eventID'];
         if (eventID) {
             var eventRecord = this.getEventRecord(node.attributes['eventID'].value);

@@ -548,6 +548,8 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
      * @param {Object} node
      */
     onEventWrapperTap: function(e, node){
+        e.stopPropagation(); // stop event bubbling up
+        
         var eventID = node.attributes['eventID'];
         if (eventID) {
             var eventRecord = this.getEventRecord(node.attributes['eventID'].value);
