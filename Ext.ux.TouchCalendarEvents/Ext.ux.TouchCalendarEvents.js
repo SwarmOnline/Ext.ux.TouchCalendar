@@ -245,34 +245,37 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 	 */
 	onEventDrop: function(droppable, draggable, e, opts){
         var validDrop = false;
+
+        if(draggable.el.hasCls(this.eventBarCls)){
         
-		this.calendar.all.each(function(cell){
-            var cellRegion = cell.getPageBox(true);
-            var eventBarRegion = draggable.el.getPageBox(true);
-            
-            if (cellRegion.partial(eventBarRegion) && this.calendar.fireEvent('beforeeventdrop', draggable, droppable, eventRecord, e)) {
-                validDrop = true;                       
-                var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID')),
-					droppedDate = this.calendar.getCellDate(cell),
-					daysDifference = this.getDaysDifference(eventRecord.get(this.startEventField), droppedDate);
-                
-				if (this.autoUpdateEvent) {
-					eventRecord.set(this.startEventField, droppedDate);
-					eventRecord.set(this.endEventField, eventRecord.get(this.endEventField).add(Date.DAY, daysDifference));
-				}
-                
-                this.refreshEvents();
-				
-				this.calendar.fireEvent('eventdrop', draggable, droppable, eventRecord, e)
-                
-                return;
-            }  
-        }, this);
-		
-		this.calendar.all.removeCls(this.cellHoverCls);
-        
-        if (!validDrop) { // if it wasn't a valid drop then move the Event Bar back to its original location
-			draggable.setOffset(draggable.startOffset, true);
+            this.calendar.all.each(function(cell){
+                var cellRegion = cell.getPageBox(true);
+                var eventBarRegion = draggable.el.getPageBox(true);
+
+                if (cellRegion.partial(eventBarRegion) && this.calendar.fireEvent('beforeeventdrop', draggable, droppable, eventRecord, e)) {
+                    validDrop = true;
+                    var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID')),
+                        droppedDate = this.calendar.getCellDate(cell),
+                        daysDifference = this.getDaysDifference(eventRecord.get(this.startEventField), droppedDate);
+
+                    if (this.autoUpdateEvent) {
+                        eventRecord.set(this.startEventField, droppedDate);
+                        eventRecord.set(this.endEventField, eventRecord.get(this.endEventField).add(Date.DAY, daysDifference));
+                    }
+
+                    this.refreshEvents();
+
+                    this.calendar.fireEvent('eventdrop', draggable, droppable, eventRecord, e)
+
+                    return;
+                }
+            }, this);
+
+            this.calendar.all.removeCls(this.cellHoverCls);
+
+            if (!validDrop) { // if it wasn't a valid drop then move the Event Bar back to its original location
+                draggable.setOffset(draggable.startOffset, true);
+            }
         }
     },
     
