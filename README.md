@@ -172,6 +172,91 @@ used to render the contents of each Event's bar.
        })]
     });
 
+## Localisation
+
+The Ext.ux.TouchCalendar can be easily localised to display month and day names in any language.
+
+Unfortunately there are no locale files included with ST1 but we can borrow them from the Ext JS 3 package (available here http://www.sencha.com/products/extjs3/download/ext-js-3.4.0/). If you download this package and navigate to the src/locale folder you should file numerous translations.
+
+If you open up the locale file you want you should see the Date translations near the top. If you copy and paste these into your application (or include them in any current locale file you have) before your application launches you should see the Ext.ux.TouchCalendar display in your chosen language.
+
+The overrides you will require look something like the code below:
+
+    Date.shortMonthNames = [
+       "Janv",
+       "Févr",
+       "Mars",
+       "Avr",
+       "Mai",
+       "Juin",
+       "Juil",
+       "Août",
+       "Sept",
+       "Oct",
+       "Nov",
+       "Déc"
+    ];
+
+    Date.getShortMonthName = function(month) {
+      return Date.shortMonthNames[month];
+    };
+
+    Date.monthNames = [
+       "Janvier",
+       "Février",
+       "Mars",
+       "Avril",
+       "Mai",
+       "Juin",
+       "Juillet",
+       "Août",
+       "Septembre",
+       "Octobre",
+       "Novembre",
+       "Décembre"
+    ];
+
+    Date.monthNumbers = {
+      "Janvier" : 0,
+      "Février" : 1,
+      "Mars" : 2,
+      "Avril" : 3,
+      "Mai" : 4,
+      "Juin" : 5,
+      "Juillet" : 6,
+      "Août" : 7,
+      "Septembre" : 8,
+      "Octobre" : 9,
+      "Novembre" : 10,
+      "Décembre" : 11
+    };
+
+    Date.getMonthNumber = function(name) {
+      return Date.monthNumbers[Ext.util.Format.capitalize(name)];
+    };
+
+    Date.dayNames = [
+       "Dimanche",
+       "Lundi",
+       "Mardi",
+       "Mercredi",
+       "Jeudi",
+       "Vendredi",
+       "Samedi"
+    ];
+
+    Date.getShortDayName = function(day) {
+      return Date.dayNames[day].substring(0, 3);
+    };
+
+    Date.parseCodes.S.s = "(?:er)";
+
+    Ext.override(Date, {
+        getSuffix : function() {
+            return (this.getDate() == 1) ? "er" : "";
+        }
+    });
+
 ## Known Issues
 
 There are a few known issues that will be ironed out after the first release, namely:
