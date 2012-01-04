@@ -14,9 +14,7 @@
         Ext.setup({
             onReady: function(){
             
-                calendarView = new Ext.ux.TouchCalendarView({
-					minDate: (new Date()).add(Date.DAY, -40),
-					maxDate: (new Date()).add(Date.DAY, 55),
+                var calendarView = new Ext.ux.TouchCalendarView({
 					mode: 'month',
 					weekStart: 1,
 					value: new Date()
