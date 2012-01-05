@@ -1,24 +1,3 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 @import '../global';
 
 $panel-border-radius: .3em;
@@ -30,20 +9,21 @@ $panel-border-radius: .3em;
   }
 
   @if $include-floating {
-    .x-floating.x-panel, .x-floating.x-carousel {
+    .x-panel.x-floating {
       padding: 6px;
       @if $include-border-radius { @include border-radius($panel-border-radius); }
       -webkit-box-shadow: rgba(0,0,0,.8) 0 .2em .6em;
       @include background-gradient(darken($base-color, 40%), 'flat');
 
-      &.x-panel-light {
+      &.x-floating-light {
         @include background-gradient($base-color, 'flat');
       }
-    }
 
-    .x-floating .x-panel-body, .x-floating .x-carousel-body {
-      background-color: #fff;
-      @if $include-border-radius { @include border_radius($panel-border-radius); }
+      .x-body,
+      .x-scroll-view {
+        background-color: #fff;
+        @if $include-border-radius { @include border_radius($panel-border-radius); }
+      }
     }
 
     $anchor-height: .7em;

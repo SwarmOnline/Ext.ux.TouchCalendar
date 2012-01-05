@@ -1,80 +1,52 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 @import '../global';
 
 /**
- * @global {color} [$sheet-bg-color=transparentize(darken($base-color, 40%), .1)]
- * Background-color for action sheets and message boxes.
- *
  * @class Ext.Sheet
- * @xtype actionsheet
+ */
+
+/**
+ * @var {color} $sheet-bg-color
+ * Background-color for action sheets and message boxes.
  */
 $sheet-bg-color: transparentize(darken($base-color, 40%), .1) !default;
 
 /**
- * @global {color} [$sheet-bg-gradient=$base-gradient]
+ * @var {color} $sheet-bg-gradient
  * Background gradient style for action sheets and message boxes.
- *
- * @class Ext.Sheet
- * @xtype actionsheet
  */
 $sheet-bg-gradient: $base-gradient !default;
 
 /**
- * @global {measurement} [$sheet-button-spacing=.5em]
+ * @var {measurement} $sheet-button-spacing
  * Vertical spacing between sheet buttons.
- *
- * @class Ext.Sheet
- * @xtype actionsheet
  */
 $sheet-button-spacing: .5em !default;
 
 /**
- * @global {measurement} [$sheet-padding=.7em]
+ * @var {measurement} $sheet-padding
  * Overall padding in a sheet.
- *
- * @class Ext.Sheet
- * @xtype actionsheet
  */
 $sheet-padding: .7em !default;
 
 /**
  * Includes default sheet styles (also required for message box).
- *
- * @class Ext.Sheet
- * @xtype actionsheet
  */
 @mixin sencha-sheet {
   .x-sheet {
     padding: $sheet-padding;
     border-top: 1px solid darken($base-color, 30%);
+    height: auto;
     @include background-gradient($sheet-bg-color, $sheet-bg-gradient);
-
-    .x-sheet-body .x-button {
-      margin-bottom: $sheet-button-spacing;
-    }
+    @include border-radius(0);
   }
 
-  .x-sheet-body {
-    position: relative;
+  .x-sheet-inner {
+    > .x-button {
+      margin-bottom: $sheet-button-spacing;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 }

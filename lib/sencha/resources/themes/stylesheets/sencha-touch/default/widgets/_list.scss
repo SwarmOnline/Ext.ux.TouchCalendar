@@ -1,119 +1,81 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 @import '../global';
 
+/**
+ * @class Ext.dataview.List
+ */
 
 /**
- * @global {color} [$list-color=#000]
+ * @var {color} $list-color
  * Text color for list rows.
- *
- * @class Ext.List
- * @xtype list
  */
 $list-color: #000 !default;
 
 /**
- * @global {color} [$list-bg-color=#f7f7f7]
+ * @var {color} $list-bg-color
  * Background-color for list rows.
- *
- * @class Ext.List
- * @xtype list
  */
 $list-bg-color: #f7f7f7 !default;
 
 /**
- * @global {color} [$list-pressed-color=lighten($active-color, 50%)]
+ * @var {color} $list-pressed-color
  * Background-color for pressed list rows.
- *
- * @class Ext.List
- * @xtype list
  */
 $include-list-highlights: $include-highlights !default;
 
 /**
- * @global {color} [$list-pressed-color=lighten($active-color, 50%)]
+ * @var {color} $list-pressed-color
  * Background-color for pressed list rows.
- *
- * @class Ext.List
- * @xtype list
  */
 $list-pressed-color: lighten($active-color, 50%) !default;
 
 /**
- * @global {color} [$list-active-color=$active-color]
+ * @var {color} $list-active-color
  * Background-color for selected list rows.
- *
- * @class Ext.List
- * @xtype list
  */
 $list-active-color: $active-color !default;
 
 /**
- * @global {string} [$list-active-gradient=$base-gradient]
+ * @var {string} $list-active-gradient
  * Gradient style for selected list rows.
- *
- * @class Ext.List
- * @xtype list
  */
 $list-active-gradient: $base-gradient !default;
 
 /**
- * @global {color} [$list-header-bg-color=lighten(saturate($base-color, 10%), 20%)]
+ * @var {color} $list-header-bg-color
  * Background-color for list header rows (in grouped lists).
- *
- * @class Ext.List
- * @xtype list
  */
 $list-header-bg-color: lighten(saturate($base-color, 10%), 20%) !default;
 
 /**
- * @global {string} [$list-header-gradient=$base-gradient]
+ * @var {string} $list-header-gradient
  * Gradient style for list header rows (in grouped lists).
  *
- * @class Ext.List
- * @xtype list
- * @see background-gradient
+ * See {@link Global_CSS#background-gradient background-gradient}.
  */
 $list-header-gradient: $base-gradient !default;
 
 /**
- * @global {measurement} [$list-disclosure-size=1.7em]
+ * @var {measurement} $list-disclosure-size
  * Default size (width/height) for disclosure icons.
- *
- * @class Ext.List
- * @xtype list
  */
 $list-disclosure-size: 1.7em;
 
 /**
  * Includes default list styles.
- *
- * @class Ext.List
- * @xtype list
  */
 @mixin sencha-list {
   .x-list {
     background-color: $list-bg-color;
+  }
+
+  .x-list {
     position: relative;
+
+    .x-list-disclosure {
+      position: absolute;
+      bottom: 0.5em;
+      right: 0.8em;
+    }
 
     .x-list-disclosure {
       overflow: visible;
@@ -125,7 +87,7 @@ $list-disclosure-size: 1.7em;
     }
 
     &.x-list-indexed .x-list-disclosure {
-      margin-right: 1.3em;
+      margin-right: 1em;
     }
 
     .x-item-selected .x-list-disclosure {
@@ -133,14 +95,15 @@ $list-disclosure-size: 1.7em;
     }
 
     .x-list-item {
+      overflow: hidden;
       position: relative;
       color: $list-color;
-      padding: 0.5em 0.8em;
-
-      min-height: $global-row-height;
-      @include display-box;
-
       border-top: 1px solid darken($list-bg-color, 15%);
+
+      .x-list-item-label {
+        min-height: $global-row-height;
+        padding: 0.7em 0.8em;
+      }
 
       &:first-child {
         border-top: none;
@@ -148,17 +111,6 @@ $list-disclosure-size: 1.7em;
 
       &:last-child {
         border-bottom: 1px solid darken($list-bg-color, 15%);
-      }
-
-      .x-list-item-body {
-        @include box-flex(1);
-        /*@include display-box;*/
-        @include box-align(center);
-        @include box-orient(horizontal);
-
-        span {
-          font-size: .95em;
-        }
       }
 
       &.x-item-pressed {
@@ -198,11 +150,14 @@ $list-disclosure-size: 1.7em;
   }
 
   .x-list-header-swap {
-    z-index: 1;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
+  }
+
+  .x-ios .x-list-header-swap {
+    -webkit-transform: translate3d(0, 0, 0);
   }
 
   .x-list-round {

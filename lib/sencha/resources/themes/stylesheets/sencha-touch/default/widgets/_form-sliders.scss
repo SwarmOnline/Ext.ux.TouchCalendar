@@ -1,39 +1,30 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 @import '../global';
 
 /**
  * Includes default form slider styles.
  *
- * @class Ext.form.Slider
- * @xtype sliderfield
+ * @member Ext.field.Slider
  */
 @mixin sencha-form-sliders {
 
-  .x-slider {
-    position: relative;
-    height: $form-thumb-size;
-    margin: $form-spacing;
-    min-height: 0;
+  .x-slider-field, .x-toggle-field {
+    .x-component-outer {
+      margin: $form-spacing;
+    }
+  }
+
+  .x-slider,
+  .x-toggle {
+      position: relative;
+      height: $form-thumb-size;
+      min-height: 0;
+      min-width: 0;
+
+    > * {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
   }
 
   @if $basic-slider {
@@ -50,7 +41,7 @@
     }
 
     // Create the slider track
-    .x-input-slider:after {
+    .x-slider:after {
       @include insertion(auto, $form-slider-size, $form-toggle-size / 2 - $form-slider-size/2 + $form-spacing/2 - $form-thumb-space / 2, 0);
       right: 0;
       margin: 0 $form-toggle-size/2;
@@ -83,12 +74,8 @@
       }
     }
 
-    .x-input-slider {
-      width: auto;
-    }
-
     // Create the slider track
-    .x-input-slider:after {
+    .x-slider:after {
       @include insertion(auto, $form-slider-size, $form-toggle-size / 2 - $form-slider-size/2 + $form-spacing/2 - $form-thumb-space / 2, 0);
       right: 0;
       margin: 0 $form-toggle-size/2;
@@ -100,19 +87,13 @@
     }
   }
 
-  .x-field-toggle, .x-field-slider {
-    background-color: #fff;
-    @extend .x-input-el;
-  }
-
-  .x-field-toggle .x-slider {
+  .x-toggle {
     width: $form-thumb-size * 2;
     @if $include-border-radius { @include border-radius($form-thumb-size/2); }
     overflow: hidden;
     border: .1em solid darken($form-light, 15%);
-    // -webkit-transform: translate3d(0px, 0px, 0px);
     @include background-gradient($form-light, 'recessed');
-    z-index: 2;
+    -webkit-box-flex: 0;
 
     // Masking the slider doesn't work in iOS 3, so we're fake-masking the outer area
     // UPDATED: Doesnt fly on Android...
@@ -126,11 +107,6 @@
     // }
 
     .x-thumb {
-
-      .x-toggle-thumb-off, .x-toggle-thumb-on {
-        display: none;
-      }
-
       &.x-dragging {
         opacity: 1;
       }
@@ -162,10 +138,10 @@
       //   -webkit-transition: left .2s ease-in-out;
       // }
     }
+  }
 
-    &.x-toggle-on {
-      @include background-gradient($confirm-color, 'recessed');
-    }
+  .x-toggle-on {
+    @include background-gradient($confirm-color, 'recessed');
   }
 
   .x-android .x-field-toggle .x-slider {

@@ -1,84 +1,83 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 @import '../global';
 
 /**
- * @global {measurement} [$carousel-indicator-size=.5em] Size (width/height) of carousel indicator dots.
- *
- * @class Ext.Carousel.Indicator
- * @xtype carouselindicator
+ * @class Ext.carousel.Indicator
+ */
+
+/**
+ * @var {measurement} $carousel-indicator-size Size (width/height) of carousel indicator dots.
  */
 $carousel-indicator-size: .5em !default;
 
 /**
- * @global {measurement} [$carousel-indicator-spacing=.2em]
+ * @var {measurement} $carousel-indicator-spacing
  * Amount of space between carousel indicator dots.
- *
- * @class Ext.Carousel.Indicator
- * @xtype carouselindicator
  */
 $carousel-indicator-spacing: .2em !default;
 
 /**
- * @global {measurement} [$carousel-track-size=1.5em] Size of the track the carousel indicator dots are in.
- *
- * @class Ext.Carousel.Indicator
- * @xtype carouselindicator
+ * @var {measurement} $carousel-track-size Size of the track the carousel indicator dots are in.
  */
 $carousel-track-size: 1.5em !default;
 
 /**
- * Includes basic carousel formatting.
+ * Creates a theme UI for carousel indicator components.
  *
- * @class Ext.Carousel
- * @xtype carousel
+ * @param {string} $ui-label The name of the UI being created.
+ *   Can not included spaces or special punctuation (used in class names)
+ * @param {color} $color Base color for the UI.
+ * @param {string} $gradient Default gradient for the UI.
+ * @param {color} $active-color Active color for the UI.
+ * @param {string} $active-gradient Active gradient for the UI.
+ */
+@mixin sencha-carousel-indicator-ui($ui-label, $color, $gradient, $active-color, $active-gradient) {
+  .x-carousel-indicator-#{$ui-label} span {
+    @include background-gradient($color, $gradient);
+
+    &.x-carousel-indicator-active {
+      @include background-gradient($active-color, $active-gradient)
+    }
+  }
+}
+
+/**
+ * @class Ext.carousel.Carousel
+ */
+
+/**
+ * Includes basic carousel formatting.
  */
 @mixin sencha-carousel {
-
-  .x-carousel-body {
-    overflow: hidden;
+  .x-carousel {
     position: relative;
+    overflow: hidden;
   }
 
   .x-carousel-item {
     position: absolute;
     width: 100%;
     height: 100%;
-    //-webkit-transform: translate3d(0px, 0px, 0px);
 
-    // This declares the default state (non-moving) for carousel items
-    @include transition(matrix3d, 0, ease-out);
-  }
-
-  .x-android .x-carousel-item {
-    //-webkit-transform: translate(0px, 0px);
-    @include transition(translate, 0, ease-out);
+    > * {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
   }
 
   .x-carousel-indicator {
-    position: absolute;
-    z-index: 1;
-    vertical-align: middle;
-    text-align: center;
+    // @TODO: we should not have to cancel out the x-floating styling
+    padding: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    background-color: transparent;
+    background-image: none;
+  }
+
+  .x-carousel-indicator {
+    -webkit-box-flex: 1;
+
     @include display-box;
     @include box-pack(center);
     @include box-align(center);
@@ -94,18 +93,13 @@ $carousel-track-size: 1.5em !default;
 
   .x-carousel-indicator-horizontal {
     height: $carousel-track-size;
-    bottom: 0;
-    left: 0;
     width: 100%;
-    @include box-orient(horizontal);
   }
 
   .x-carousel-indicator-vertical {
+    @include box-orient(vertical);
     width: $carousel-track-size;
     height: 100%;
-    right: 0;
-    top: 0;
-    @include box-orient(vertical);
   }
 
   $indicator-light: rgba(#fff, .1);
@@ -117,25 +111,3 @@ $carousel-track-size: 1.5em !default;
   @include sencha-carousel-indicator-ui('dark', $indicator-dark, 'flat', $indicator-dark-active, 'flat');
 }
 
-/**
- * Creates a theme UI for carousel indicator components.
- *
- * @param {string} $ui-label The name of the UI being created.
- *   Can not included spaces or special punctuation (used in class names)
- * @param {color} $color Base color for the UI.
- * @param {string} $gradient Default gradient for the UI.
- * @param {color} $active-color Active color for the UI.
- * @param {string} $active-gradient Active gradient for the UI.
- * 
- * @class Ext.Carousel.Indicator
- * @xtype carouselindicator
- */
-@mixin sencha-carousel-indicator-ui($ui-label, $color, $gradient, $active-color, $active-gradient) {
-  .x-carousel-indicator-#{$ui-label} span {
-    @include background-gradient($color, $gradient);
-
-    &.x-carousel-indicator-active {
-      @include background-gradient($active-color, $active-gradient)
-    }
-  }
-}

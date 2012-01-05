@@ -1,89 +1,76 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 @import '../global';
 
 /**
- * @global {measurement} [$index-bar-width=2.1em]
- * Width of the index bar.
- *
- * @class Ext.IndexBar
- * @xtype indexbar
+ * @class Ext.dataview.IndexBar
  */
-$index-bar-width: 2.1em !default;
 
 /**
- * @global {color} [$index-bar-bg-color=hsla(hue($base-color), 10%, 60%, .8)]
+ * @var {measurement} $index-bar-width
+ * Width of the index bar.
+ */
+$index-bar-width: 1.1em !default;
+
+/**
+ * @var {color} $index-bar-bg-color
  * Background-color of the index bar.
- *
- * @class Ext.IndexBar
- * @xtype indexbar
  */
 $index-bar-bg-color: hsla(hue($base-color), 10%, 60%, .8) !default;
 
 /**
- * @global {color} [$index-bar-color=darken(desaturate($base-color, 5%), 15%)]
+ * @var {color} $index-bar-color
  * Text color of the index bar.
- *
- * @class Ext.IndexBar
- * @xtype indexbar
  */
 $index-bar-color: darken(desaturate($base-color, 5%), 15%) !default;
 
 /**
  * Includes default index bar styles.
- *
- * @class Ext.FormPanel
- * @xtype indexbar
  */
 @mixin sencha-indexbar {
-  .x-indexbar {
-    padding: 0 .3em;
+  .x-indexbar-wrapper {
+    -webkit-box-pack: end !important;
+    box-pack: end !important;
+    pointer-events: none;
+  }
+
+  .x-indexbar-vertical {
     width: $index-bar-width;
-    @include display-box;
     @include box-orient(vertical);
-    @include box-align(stretch);
-    @include box-pack(center);
-    position: absolute;
-    top: 1.5em;
-    right: 0;
-    bottom: 1em;
-    z-index: 3;
+    margin-right: 8px;
   }
-  
-  .x-indexbar-body {
+
+  .x-indexbar-horizontal {
+    height: $index-bar-width;
+    @include box-orient(horizontal);
+    margin-bottom: 8px;
+  }
+
+  .x-indexbar {
+    pointer-events: auto;
+    z-index: 2;
     padding: .3em 0;
+    min-height: 0 !important;
+    height: auto !important;
+    -webkit-box-flex: 0 !important;
+
+    > div {
+      color: $index-bar-color;
+      font-size: 0.6em;
+      text-align: center;
+      line-height: 1.1em;
+      font-weight: bold;
+      display: block;
+    }
   }
-  
-  .x-indexbar-pressed .x-indexbar-body {
-    @include border-radius(($index-bar-width - .6em)/2);
+
+  .x-phone.x-landscape .x-indexbar {
+    > div {
+        font-size: 0.38em;
+        line-height: 1em;
+    }
+  }
+
+  .x-indexbar-pressed {
+    @include border-radius(($index-bar-width)/2);
     background-color: $index-bar-bg-color;
-  }
-  
-  .x-indexbar-item {
-    color: $index-bar-color;
-    font-size: 0.6em;
-    text-align: center;
-    line-height: 1.1em;
-    font-weight: bold;
-    display: block;
   }
 }

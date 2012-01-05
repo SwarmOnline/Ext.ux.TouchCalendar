@@ -1,24 +1,3 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 /* line 3, ../themes/stylesheets/sencha-touch/default/core/_reset.scss */
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3,
 h4, h5, h6, pre, code, form, fieldset, legend,
@@ -1475,83 +1454,83 @@ input, textarea {
 /**
  * @global {boolean} [$include-tabbar-uis=$include-default-uis] Optionally disable separate tabbar UIs (light and dark).
  *
- * @class Ext.TabBar
+ * @class Ext.tab.Bar
  * @xtype tabbar
  */
 /**
  * @global {boolean} [$include-top-tabs=true]
  * Optionally exclude top tab styles by setting to false.
  *
- * @class Ext.TabBar
+ * @class Ext.tab.Bar
  * @xtype tabbar
  */
 /**
  * @global {boolean} [$include-bottom-tabs=true]
  * Optionally exclude bottom tab styles by setting to false.
  *
- * @class Ext.TabBar
+ * @class Ext.tab.Bar
  * @xtype tabbar
  */
 /**
  * @global {color} [$tabs-light=lighten(desaturate($base-color, 10%), 5%)]
  * Base color for "light" UI tabs.
  *
- * @class Ext.TabBar
+ * @class Ext.tab.Bar
  * @xtype tabbar
  */
 /**
  * @global {color} [$tabs-light-active=saturate($active-color, 20%)]
  * Active color for "light" UI tabs.
  *
- * @class Ext.TabBar
+ * @class Ext.tab.Bar
  * @xtype tabbar
  */
 /**
  * @global {color} [$tabs-dark=darken($base-color, 20%)]
  * Base color for "dark" UI tabs.
  *
- * @class Ext.TabBar
+ * @class Ext.tab.Bar
  * @xtype tabbar
  */
 /**
  * @global {color} [$tabs-dark-active=saturate(lighten($active-color, 30%), 70%)]
  * Active color for "dark" UI tabs.
  *
- * @class Ext.TabBar
+ * @class Ext.tab.Bar
  * @xtype tabbar
  */
 /**
  * @global {string} [$tabs-bar-gradient=$base-gradient]
  * Background gradient style for tab bars.
  *
- * @class Ext.TabBar
+ * @class Ext.tab.Bar
  * @xtype tabbar
  */
 /**
  * @global {string} [$tabs-bottom-radius=.25em]
  * Border-radius for bottom tabs.
  *
- * @class Ext.Tab
+ * @class Ext.tab.Tab
  * @xtype tab
  */
 /**
  * @global {string} [$tabs-bottom-icon-size=1.65em]
  * Icon size for bottom tabs
  *
- * @class Ext.Tab
+ * @class Ext.tab.Tab
  * @xtype tab
  */
 /**
  * @global {string} [$tabs-bottom-active-gradient='glossy']
  * Background gradient style for active bottom tabs.
  *
- * @class Ext.Tab
+ * @class Ext.tab.Tab
  * @xtype tab
  */
 /**
  * Includes default tab styles.
  *
- * @class Ext.TabBar
+ * @class Ext.tab.Bar
  * @xtype tabbar
  */
 /**
@@ -1568,7 +1547,7 @@ input, textarea {
  * @include sencha-button-ui('pink', #333, 'matte', #AE537A);
  * 
  * // JS
- * var tabs = new Ext.TabPanel({
+ * var tabs = new Ext.tab.Panel({
  *    tabBar: {
  *      ui: 'pink',
  *      dock: 'bottom',
@@ -1577,7 +1556,7 @@ input, textarea {
  *    ...
  * });
  * 
- * @class Ext.TabBar
+ * @class Ext.tab.Bar
  * @xtype tabbar
  */
 /**
@@ -2800,7 +2779,7 @@ input, textarea {
 /**
  * Includes default toolbar form field styles.
  *
- * @class Ext.TabBar
+ * @class Ext.tab.Bar
  * @xtype tabbar
  */
 /**

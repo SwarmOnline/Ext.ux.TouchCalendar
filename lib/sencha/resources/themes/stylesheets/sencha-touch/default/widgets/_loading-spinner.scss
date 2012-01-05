@@ -1,29 +1,10 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 /**
- * @global {color} [$loading-spinner-color=#aaa]
- * Background-color for the bars in the loading spinner.
- *
  * @class Ext.LoadMask
+ */
+
+/**
+ * @var {color} $loading-spinner-color
+ * Background-color for the bars in the loading spinner.
  */
 $loading-spinner-color: #aaa !default;
 
@@ -34,8 +15,6 @@ $loading-spinner-bar-height: .25em;
 
 /**
  * Includes default loading spinner styles (for dataviews).
- *
- * @class Ext.LoadMask
  */
 @mixin sencha-loading-spinner {
   .x-loading-spinner {

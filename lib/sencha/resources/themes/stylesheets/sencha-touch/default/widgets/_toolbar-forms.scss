@@ -1,59 +1,30 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 @import '../global';
 
 /**
- * @global {color} [$toolbar-input-bg=#fff]
+ * @class Ext.field.Field
+ */
+
+/**
+ * @var {color} $toolbar-input-bg
  * Background-color for toolbar form fields.
- *
- * @class Ext.form.Field
- * @xtype field
  */
 $toolbar-input-bg: #fff !default;
 
 /**
- * @global {color} [$toolbar-input-color=#000]
+ * @var {color} $toolbar-input-color
  * Text color for toolbar form fields.
- *
- * @class Ext.form.Field
- * @xtype field
  */
 $toolbar-input-color: #000 !default;
 
 /**
- * @global {measurement} [$toolbar-input-height=1.5em]
+ * @var {measurement} $toolbar-input-height
  * Text color for toolbar form fields.
- *
- * @class Ext.form.Field
- * @xtype field
  */
 $toolbar-input-height: 1.5em !default;
 
 /**
- * @global {color} [$toolbar-input-border-color=rgba(#000, .5)]
+ * @var {color} $toolbar-input-border-color
  * Border color for toolbar form fields.
- *
- * @class Ext.form.Field
- * @xtype field
  */
 $toolbar-input-border-color: rgba(#000, .5) !default;
 
@@ -64,15 +35,14 @@ $toolbar-search-left-padding: 1.67em;
 /**
  * Includes default toolbar form field styles.
  *
- * @class Ext.TabBar
- * @xtype tabbar
+ * @member Ext.tab.Bar
  */
 @mixin sencha-toolbar-forms {
 
   @if $include-highlights {
     .x-android .x-toolbar {
-      .x-input-text, .x-input-search, .x-input-number {
-        -webkit-box-shadow: inset $toolbar-input-border-color 0 .1em .1em, inset $toolbar-input-border-color 0 -.1em .1em, inset $toolbar-input-border-color .1em 0 .1em, inset $toolbar-input-border-color -.1em 0 .1em, inset rgba(#000, .5) 0 .15em .4em;
+      .x-form-field-container {
+//        -webkit-box-shadow: inset $toolbar-input-border-color 0 .1em .1em, inset $toolbar-input-border-color 0 -.1em .1em, inset $toolbar-input-border-color .1em 0 .1em, inset $toolbar-input-border-color -.1em 0 .1em, inset rgba(#000, .5) 0 .15em .4em;
       }
     }
   }
@@ -84,36 +54,59 @@ $toolbar-search-left-padding: 1.67em;
   }
 
   .x-toolbar {
-    .x-field {
-      margin: .3em .5em;
-      min-height: 0;
-      border-bottom: 0;
-      width: auto;
+    .x-form-field-container {
+      @if $include-border-radius { padding: 0 .3em; }
     }
 
-    .x-input-text, .x-input-search, .x-input-number {
+    .x-field {
+      width: 13em;
+      margin: .5em;
+      min-height: 0;
+
       @if $include-border-radius { @include border-radius(.3em); }
-      @include background-clip(padding-box);
+      background-color: $toolbar-input-bg;
+
+      @if $include-highlights {
+        -webkit-box-shadow: inset $toolbar-input-border-color 0 .1em 0, inset $toolbar-input-border-color 0 -.1em 0, inset $toolbar-input-border-color .1em 0 0, inset $toolbar-input-border-color -.1em 0 0, inset rgba(#000, .5) 0 .15em .4em;
+      }
+
+      .x-field-clear-container {
+        min-height: 0;
+        background-color: transparent;
+
+        .x-field-clear {
+          font-size: .8em;
+          line-height: 0.8em;
+        }
+      }
+    }
+
+    .x-field {
+      border-bottom: 0;
+    }
+
+    .x-input-text,
+    .x-input-search,
+    .x-input-number {
+//      @if $include-border-radius { @include border-radius(.3em); }
+//      @include background-clip(padding-box);
       height: $toolbar-input-height;
       color: lighten($toolbar-input-color, 43%);
-      background-color: $toolbar-input-bg;
+      background: transparent;
+//      background-color: $toolbar-input-bg;
       min-height: 0;
       line-height: 1.3em;
       -webkit-appearance: none;
       padding: 0em .3em;
       margin: 0;
 
-      @if $include-highlights {
-        -webkit-box-shadow: inset $toolbar-input-border-color 0 .1em 0, inset $toolbar-input-border-color 0 -.1em 0, inset $toolbar-input-border-color .1em 0 0, inset $toolbar-input-border-color -.1em 0 0, inset rgba(#000, .5) 0 .15em .4em;
-      }
-
       &:focus {
         color: $toolbar-input-color;
       }
     }
 
-    .x-input-search, .x-field-select .x-input-text {
-      padding: 0em .5em;
+    .x-field-select,
+    .x-field-search {
       @if $include-border-radius { @include border-radius($toolbar-input-height/2); }
     }
 
@@ -126,6 +119,10 @@ $toolbar-search-left-padding: 1.67em;
     }
 
     .x-field-select {
+      -webkit-box-shadow: none;
+    }
+
+    .x-field-select {
       &:after {
         top: -.5em;
         right: -.5em;
@@ -135,7 +132,8 @@ $toolbar-search-left-padding: 1.67em;
       &:before {
         width: $toolbar-select-overflow-mask-width;
         border-left: none;
-        @if $include-border-radius { @include border-right-radius($toolbar-input-height/2); }
+        background: transparent;
+//        @if $include-border-radius { @include border-right-radius($toolbar-input-height/2); }
         @if $include-highlights {
             -webkit-mask: theme_image($theme-name, "select_mask.png");
             -webkit-mask-position: right top;
@@ -147,13 +145,8 @@ $toolbar-search-left-padding: 1.67em;
         }
       }
 
-      .x-input-text, &:before {
-        -webkit-box-shadow: none;
-      }
-
       .x-input-text {
-        padding-right: 1.5em;
-        display: block;
+        color: #fff;
       }
     }
   }

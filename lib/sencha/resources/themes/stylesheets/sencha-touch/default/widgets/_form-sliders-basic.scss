@@ -1,31 +1,9 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 @import '../global';
 
 /**
  * Includes basic form slider styles.
  *
- * @class Ext.form.Slider
- * @xtype sliderfield
+ * @member Ext.field.Slider
  */
 @mixin sencha-form-sliders {
 
@@ -54,7 +32,7 @@
 
   .x-field-toggle, .x-field-slider {
     background-color: #fff;
-    @extend .x-input-el;
+//    @extend .x-input-el;
   }
 
   .x-field-toggle .x-slider {
