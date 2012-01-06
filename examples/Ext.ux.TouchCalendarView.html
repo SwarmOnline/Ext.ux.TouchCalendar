@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" type="text/css" href="../lib/sencha/resources/css/sencha-touch.css" media="all"/>
-        <script src="../lib/sencha/sencha-touch-debug.js" type="text/javascript" language="JavaScript">
+        <script src="../lib/sencha/sencha-touch-all-debug.js" type="text/javascript" language="JavaScript">
         </script>
 		<link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendarView.css" media="all"/>
 		<script src="../Ext.ux.TouchCalendarView.js" type="text/javascript" language="JavaScript"></script>
@@ -14,7 +14,7 @@
         Ext.setup({
             onReady: function(){
             
-                var calendarView = new Ext.ux.TouchCalendarView({
+                calendarView = new Ext.ux.TouchCalendarView({
 					mode: 'month',
 					weekStart: 1,
 					value: new Date()
@@ -22,9 +22,10 @@
                 
                 var panel = new Ext.Panel({
                     fullscreen: true,
-                    dockedItems: [{
+                    layout: 'fit',
+                    items: [calendarView, {
                         xtype: 'toolbar',
-                        dock: 'top',
+                        docked: 'top',
                         items: [{
                             xtype: 'button',
                             text: 'Month View',
@@ -44,9 +45,7 @@
                                 calendarView.setMode('day');
                             }
                         }]
-                    }],
-                    layout: 'fit',
-                    items: [calendarView]
+                    }]
             	});
             }
         });
