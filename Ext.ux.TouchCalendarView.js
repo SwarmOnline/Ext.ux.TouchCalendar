@@ -176,7 +176,7 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 		this.initModel();
 		
 		this.store = new Ext.data.Store({
-			model: 'TouchCalendarViewModel'
+			model: 'Ext.ux.TouchCalendarViewModel'
 		});
 		
 		this.baseTpl = [	
@@ -218,15 +218,13 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 		});		
 		
 		this.addEvents(
-			
+
 			/**
 			 * @event selectionchange Fires when the Calendar's selected date is changed
 			 * @param {Ext.ux.Calendar} this
-			 * @param {Date} previousValue Previously selected date
-			 * @param {Date} newValue Newly selected date
+			 * @param {Array[Ext.ux.TouchCalendarViewModel]} selectedDates An array of the selected date records
 			 */
-			'selectionchange',
-			
+
 			/**
 			 * @event periodchange Fires when the calendar changes to a different date period (i.e. switch using the arrows)
 			 * @param {Ext.ux.Calendar} this
@@ -275,9 +273,9 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 	 * @private
 	 */
 	initModel: function(){
-		if(!Ext.ModelMgr.getModel('TouchCalendarViewModel'))
+		if(!Ext.ModelMgr.getModel('Ext.ux.TouchCalendarViewModel'))
 		{
-			Ext.regModel('TouchCalendarViewModel', {
+			Ext.regModel('Ext.ux.TouchCalendarViewModel', {
 				fields: [
 					{name: 'date', type: 'date'},
 					{name: 'today', type: 'boolean'},
@@ -532,7 +530,7 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 	},
 	
 	/**
-	 * Returns the TouchCalendarViewModel model instance containing the passed in date
+	 * Returns the Ext.ux.TouchCalendarViewModel model instance containing the passed in date
 	 * @method
 	 * @privatee
 	 * @param {Date} date
