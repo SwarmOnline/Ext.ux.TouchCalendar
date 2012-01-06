@@ -12,6 +12,6 @@ cd..
 
 cd..
 
-jsduck-3.0.pre.exe Ext.ux.TouchCalendar --output Ext.ux.TouchCalendar/docs --ignore-global --title "Ext.ux.TouchCalendar Documentation" --footer "Generated with JSDuck"
+jsduck-3.3.0.exe Ext.ux.TouchCalendar --output Ext.ux.TouchCalendar/docs --ignore-global --title "Ext.ux.TouchCalendar Documentation" --footer "Generated with JSDuck"
 
 PAUSE

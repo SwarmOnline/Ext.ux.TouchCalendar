@@ -221,13 +221,13 @@ Ext.ux.TouchCalendarView = Ext.extend(Ext.DataView, {
 
 			/**
 			 * @event selectionchange Fires when the Calendar's selected date is changed
-			 * @param {Ext.ux.Calendar} this
+			 * @param {Ext.ux.TouchCalendarView} this
 			 * @param {Array[Ext.ux.TouchCalendarViewModel]} selectedDates An array of the selected date records
 			 */
 
 			/**
 			 * @event periodchange Fires when the calendar changes to a different date period (i.e. switch using the arrows)
-			 * @param {Ext.ux.Calendar} this
+			 * @param {Ext.ux.TouchCalendarView} this
 			 * @param {Date} minDate New view's minimum date
 			 * @param {Date} maxDate New view's maximum date
 			 * @param {string} direction Direction that the view moved ('forward' or 'back')
