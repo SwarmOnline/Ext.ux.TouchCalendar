@@ -17,7 +17,7 @@
             
             Ext.setup({
                 onReady: function(){
-                
+
                     calendarView = new Ext.ux.TouchCalendarView({
                         //minDate: (new Date()).add(Date.DAY, -40),
                         //maxDate: (new Date()).add(Date.DAY, 55),
@@ -58,7 +58,7 @@
                         }],
                         layout: 'fit',
                         items: [calendarView]
-                    })
+                    });
                     
                     calendarView.on('eventtap', function(event){
                         console.log('eventtap');
@@ -81,7 +81,7 @@
                         console.log('eventdrag');
                         //console.log(arguments);
                     });
-                    
+
                 }
                 
                 

@@ -69,6 +69,11 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
      * @cfg {Number} eventBarSpacing Space (in pixels) between EventBars
      */
     eventBarSpacing: 1,
+
+    /**
+     * Prefix used to add to Event records' internalIDs before being added as a class.
+     */
+    internalIDPrefix: 'tc-',
 	
 	/**
 	 * @cfg {Ext.XTemplate} eventBarTpl Template that will be used to fill the Event Bar
@@ -182,7 +187,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 					onDragCount++;
 
 					if (onDragCount % 15 === 0) {
-						var currentDateCell, currentDate, eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
+						var currentDateCell, currentDate, eventRecord = me.getEventRecord(me.removeInternalIDPrefix(draggable.el.getAttribute('eventID')));
 						
 						me.calendar.all.removeCls(me.cellHoverCls);
 						
@@ -224,10 +229,10 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 	 */
 	onEventDropDeactivate: function(droppable, draggable, e, opts){
 		if (draggable.el.hasCls(this.eventBarCls)) {
-			var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID'));
+			var eventRecord = this.getEventRecord(this.removeInternalIDPrefix(draggable.el.getAttribute('eventID')));
 			
 			// reshow all the hidden linked Event Bars
-			this.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
+			this.calendar.getEl().select('div.' + this.addInternalIDPrefix(eventRecord.internalId)).each(function(eventBar){
 				eventBar.show();
 			}, this);
 		}
@@ -254,7 +259,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 
                 if (cellRegion.partial(eventBarRegion) && this.calendar.fireEvent('beforeeventdrop', draggable, droppable, eventRecord, e)) {
                     validDrop = true;
-                    var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID')),
+                    var eventRecord = this.getEventRecord(this.removeInternalIDPrefix(draggable.el.getAttribute('eventID'))),
                         droppedDate = this.calendar.getCellDate(cell),
                         daysDifference = this.getDaysDifference(eventRecord.get(this.startEventField), droppedDate);
 
@@ -320,7 +325,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
             store.each(function(event){
                 // Find any Event Bar record in the EventBarStore for the current Event's record (using internalID)
                 var eventBarIndex = this.eventBarStore.findBy(function(record, id){
-                    return record.get('EventID') === event.internalId;
+                    return record.get('EventID') == event.internalId;
                 }, this);
                 
                 // if an EventBarRecord was found then it is a multiple day Event so we must link them
@@ -411,7 +416,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 					'background-color': eventRecord.get(this.colourField)
 				},
                 html: this.eventBarTpl.apply(eventRecord.data),
-                eventID: record.get('EventID'),
+                eventID: this.addInternalIDPrefix(record.get('EventID')),
                 cls: this.eventBarCls + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
             }, true);
 			
@@ -429,7 +434,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 					 */
 					onStart: function(e){
 					
-						var draggable = this, eventID = draggable.el.getAttribute('eventID'), eventRecord = me.getEventRecord(eventID), eventBarRecord = me.getEventBarRecord(eventID);
+						var draggable = this, eventID = me.removeInternalIDPrefix(draggable.el.getAttribute('eventID')), eventRecord = me.getEventRecord(eventID), eventBarRecord = me.getEventBarRecord(eventID);
 						
 						// Resize dragged Event Bar so it is 1 cell wide
 						draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
@@ -437,7 +442,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 						draggable.el.setLeft(e.startX - (draggable.el.getWidth() / 2));
 						
 						// hide all linked Event Bars
-						me.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
+						me.calendar.getEl().select('div.' + me.addInternalIDPrefix(eventRecord.internalId)).each(function(eventBar){
 							if (eventBar.dom !== draggable.el.dom) {
 								eventBar.hide();
 							}
@@ -480,7 +485,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 	 * @param {Event} e
 	 */
 	onEventDragStart: function(draggable, e){
-        var eventID = draggable.el.getAttribute('eventID'),
+        var eventID = this.removeInternalIDPrefix(draggable.el.getAttribute('eventID')),
 			eventRecord = this.getEventRecord(eventID),
 			eventBarRecord = this.getEventBarRecord(eventID);
         
@@ -493,7 +498,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 		draggable.updateBoundary(true);
 
 		// hide all linked Event Bars
-        this.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
+        this.calendar.getEl().select('div.' + this.addInternalIDPrefix(eventRecord.internalId)).each(function(eventBar){
             if (eventBar.dom !== draggable.el.dom) {
                 eventBar.hide();
             }
@@ -555,11 +560,11 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
         
         var eventID = node.attributes['eventID'];
         if (eventID) {
-            var eventRecord = this.getEventRecord(node.attributes['eventID'].value);
+            var eventRecord = this.getEventRecord(this.removeInternalIDPrefix(node.attributes['eventID'].value));
             
             this.deselectEvents();
             
-            this.eventWrapperEl.select('div.' + eventRecord.internalId).addCls(this.eventBarSelectedCls);
+            Ext.fly(node).addCls(this.eventBarSelectedCls);
             
             this.calendar.fireEvent('eventtap', eventRecord, e);
         }
@@ -593,7 +598,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
      */
     getEventRecord: function(eventID){
         var eventRecordIndex = this.calendar.eventStore.findBy(function(rec){
-            return rec.internalId === eventID;
+            return rec.internalId == eventID;
         }, this);
         return this.calendar.eventStore.getAt(eventRecordIndex);
     },
@@ -606,7 +611,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
      */
     getEventBarRecord: function(eventID){
         var eventRecordIndex = this.eventBarStore.findBy(function(rec){
-            return rec.get('EventID') === eventID;
+            return rec.get('EventID') == eventID;
         }, this);
         return this.eventBarStore.getAt(eventRecordIndex);
     },
@@ -658,7 +663,30 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
 	
 	getRandomColour: function(){
 		return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
-	}
+	},
+
+    /**
+     * Prefixes the internalIDPrefix property to the specified internalID. This is to allow EventStores with integer IDs to be used - the record's
+     * internalID is applied to the event bar as a class which cannot begin with integers.
+     * @method
+     * @private
+     * @param internalID {String/Integer} The internalID to have the prefix applied to
+     * @return {String } the new internalID
+     */
+    addInternalIDPrefix: function(internalID){
+        return this.internalIDPrefix + internalID.toString();
+    },
+    /**
+     * Removes the internalIDPrefix property from the specified internalID. This is used to reverse the action of addInternalIDPrefix so the internalID can be used
+     * to find the Event record again.
+     * @method
+     * @private
+     * @param internalID
+     * @return {String} the original internalID
+     */
+    removeInternalIDPrefix: function(internalID){
+        return internalID.substring(this.internalIDPrefix.length, internalID.length);
+    }
 });
 
 
