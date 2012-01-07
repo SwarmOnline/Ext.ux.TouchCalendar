@@ -15,7 +15,7 @@
             onReady: function(){
             
                 calendarView = new Ext.ux.TouchCalendarView({
-					mode: 'month',
+					mode: 'day',
 					weekStart: 1,
 					value: new Date()
                 });
@@ -30,19 +30,19 @@
                             xtype: 'button',
                             text: 'Month View',
                             handler: function(){
-                                calendarView.setMode('month');
+                                calendarView.setViewMode('month');
                             }
                         }, {
                             xtype: 'button',
                             text: 'Week View',
                             handler: function(){
-                                calendarView.setMode('week');
+                                calendarView.setViewMode('week');
                             }
                         }, {
                             xtype: 'button',
                             text: 'Day View',
                             handler: function(){
-                                calendarView.setMode('day');
+                                calendarView.setViewMode('day');
                             }
                         }]
                     }]

@@ -20,7 +20,7 @@
  */
 Ext.define('Ext.ux.TouchCalendarView', {
 	
-	extend: 'Ext.dataview.DataView',
+	extend: 'Ext.Container',
 
 	config: {
         /**
@@ -77,6 +77,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		 * @cfg {Number} dayTimeSlotSize The number of minutes the Day View's time slot will increment by. Defaults to 30 minutes.
 		 */
 		dayTimeSlotSize: 30,
+
+        store: null,
 		
 		baseTpl: [	
 					'<table class="{[this.me.getViewMode().toLowerCase()]}">',
@@ -85,7 +87,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 								'<tpl for="this.getDaysArray(values)">',
 									'<th class="{[this.getHeaderClass(xindex)]}">',
 										'<tpl if="xindex === 4">',
-											'<span>{[this.me.currentDate.format("F")]} {[this.me.currentDate.format("Y")]}</span>',
+											'<span>{[Ext.Date.format(this.me.currentDate, "F")]} {[Ext.Date.format(this.me.currentDate, "Y")]}</span>',
 										'</tpl>',
 										'{date:date("D")}',
 									'</th>',
@@ -114,7 +116,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
         cls: 'touch-calendar-view',
 
-	itemSelector: 'td.time-block'
+	    itemSelector: 'td.time-block'
 	
 	},
 	
@@ -138,7 +140,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 			var classes = [];
 			
 			if(values.selected){
-				classes.push(this.me.getSelectedCls());
+				classes.push(this.me.getSelectedItemCls());
 			}
 			if(values.unselectable){
 				classes.push(this.me.getUnselectableCls());
@@ -209,7 +211,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		 * @return {Boolean}
 		 */
 		getHeaderClass: function(currentIndex){
-			return currentIndex === 1 ? this.me.getPrevPeriodCls() : currentIndex === 7 ? this.me.getPrevPeriodCls() : '';
+			return currentIndex === 1 ? this.me.getPrevPeriodCls() : currentIndex === 7 ? this.me.getNextPeriodCls() : '';
 		}
 	},
 	
@@ -221,32 +223,22 @@ Ext.define('Ext.ux.TouchCalendarView', {
 			selectionMode: 'SINGLE'
 		});		
 		
-			
-			/**
-			 * @event selectionchange Fires when the Calendar's selected date is changed
-			 * @param {Ext.ux.Calendar} this
-			 * @param {Date} previousValue Previously selected date
-			 * @param {Date} newValue Newly selected date
-			 */
+        /**
+         * @event selectionchange Fires when the Calendar's selected date is changed
+         * @param {Ext.ux.TouchCalendarView} this
+         * @param {Array[Ext.ux.TouchCalendarViewModel]} selectedDates An array of the selected date records
+         */
 
-			
-			/**
-			 * @event periodchange Fires when the calendar changes to a different date period (i.e. switch using the arrows)
-			 * @param {Ext.ux.Calendar} this
-			 * @param {Date} minDate New view's minimum date
-			 * @param {Date} maxDate New view's maximum date
-			 * @param {string} direction Direction that the view moved ('forward' or 'back')
-			 */
+
+        /**
+         * @event periodchange Fires when the calendar changes to a different date period (i.e. switch using the arrows)
+         * @param {Ext.ux.TouchCalendarView} this
+         * @param {Date} minDate New view's minimum date
+         * @param {Date} maxDate New view's maximum date
+         * @param {string} direction Direction that the view moved ('forward' or 'back')
+         */
 		
 		this.callParent(arguments);
-
-        this.suspendRefresh = true;
-        this.setViewMode('month');
-        this.suspendRefresh = false;
-
-		this.setStore(Ext.create('Ext.data.Store', {
-			model: 'TouchCalendarViewModel'
-		}));
 
 		this.minDate = this.minDate ? Ext.Date.clearTime(this.minDate, true) : null;
 		this.maxDate = this.maxDate ? Ext.Date.clearTime(this.maxDate, true) : null;	
@@ -263,17 +255,31 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @method
 	 * @private
 	 * @return {void}
-	 * @param {Object} ct
-	 * @param {Object} position
 	 */
-	initialize: function(ct, position) {
-		this.setScrollable(false);
+	initialize: function() {
+
+
+        this.setStore(Ext.create('Ext.data.Store', {
+			model: 'TouchCalendarViewModel'
+		}));
+
+        this.suspendRefresh = true;
+        this.setViewMode('day');
+        this.suspendRefresh = false;
 
 		this.element.on({
 			click: this.onTableHeaderTap,
 			scope: this,
 			delegate: 'th'
 		});
+
+        this.on({
+            painted: this.syncHeight,
+            scope: this
+        });
+
+        this.refresh();
+        this.callParent();
 	},
 	
 	/**
@@ -333,10 +339,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		this.setTpl(new Ext.XTemplate((viewModeFns.tpl || this.getBaseTpl()).join(''), Ext.apply(this.commonTemplateFunctions, {me: this})));
 		
 		// if the mode is DAY then we need to enable the scroller
-		if (this.scroller) {
-			this.scroller.moveTo(0, this.element.getY()); // reset it back to the top
-			this.scroller.setEnabled((this.viewMode === 'DAY'));
-		}	
+		if (this.getScrollable()) {
+			//this.getScrollable().getScroller().moveTo(0, this.element.getY()); // reset it back to the top //TODO: scroll container to top
+        }
+		this.setScrollable(viewMode.toUpperCase() === 'DAY' ? 'vertical' : false);
 		
 		if(!this.suspendRefresh){
 			this.refresh();
@@ -346,44 +352,6 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
         return viewMode;
 	},
-
-    doRefresh: function(me) {
-        var store = me.getStore(),
-            records = store.getRange(),
-            scrollable = me.getScrollable(),
-            i, item;
-
-        if (scrollable) {
-            scrollable.getScroller().scrollTo(0, 0);
-        }
-
-/*        // No items, hide all the items from the collection.
-        if (recordsLn < 1) {
-            me.onStoreClear();
-            return;
-        }
-
-        // Too many items, hide the unused ones
-        if (deltaLn < 0) {
-            this.moveItemsToCache(itemsLn + deltaLn, itemsLn - 1);
-            // Items can changed, we need to refresh our references
-            items = me.getViewItems();
-            itemsLn = items.length;
-        }
-        // Not enough items, create new ones
-        else if (deltaLn > 0) {
-            this.doCreateItems(store.getRange(itemsLn), itemsLn);
-        }
-
-        // Update Data and insert the new html for existing items
-        for (i = 0; i < itemsLn; i++) {
-            item = items[i];
-            me.updateListItem(records[i], item);
-        }*/
-        console.log('MY REFRESH');
-
-        this.setData(this.collectData(records));
-    },
 
     collectData: function(records){
         var data = [];
@@ -470,8 +438,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 */
 	getPeriodMinMaxDate: function(){
 		return {
-			min: this.store.data.first(),
-			max: this.store.data.last()
+			min: this.getStore().data.first(),
+			max: this.getStore().data.last()
 		};
 	},
 	
@@ -505,8 +473,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	onTableHeaderTap: function(e, el){
 		el = Ext.fly(el);
 
-		if (el.hasCls(this.prevPeriodCls) || el.hasCls(this.nextPeriodCls)) {
-			this.refreshDelta(el.hasCls(this.prevPeriodCls) ? -1 : 1);
+		if (el.hasCls(this.getPrevPeriodCls()) || el.hasCls(this.getNextPeriodCls())) {
+			this.refreshDelta(el.hasCls(this.getPrevPeriodCls()) ? -1 : 1);
 		}
 	},
 	
@@ -516,28 +484,20 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 */
 	refresh: function(){
 		this.populateStore();
+
+        var records = this.getStore().getRange();
+
+        this.setData(this.collectData(records));
+        console.log('REFRESH');
 		
-		this.callParent(arguments);
-		
-		//this.syncHeight();
-	},
-	
-	/**
-	 * Override of the Ext.DataView's afterComponentLayout method to sync the height of the table
-	 * @method
-	 * @private
-	 */
-	afterComponentLayout: function(){
-		Ext.ux.TouchCalendarView.superclass.afterComponentLayout.call(this);
-		
-		//this.syncHeight();
+		this.syncHeight();
 	},
 	
 	/**
 	 * Syncs the table's Ext.Element to the height of the Ext.DataView's component. (Only if it isn't in DAY mode)
 	 */
 	syncHeight: function(){
-		if (this.viewMode !== 'DAY') {
+		if (this.getViewMode() !== 'DAY') {
 			this.element.select('table').first().setHeight(this.element.getHeight());
 		}
 	},
@@ -593,7 +553,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @param {Date} date
 	 */
 	getDateRecord: function(date){
-		return this.store.findBy(function(record){
+		return this.getStore().findBy(function(record){
 			var recordDate = Ext.Date.clearTime(record.get('date'), true).getTime();
                 
             return recordDate === Ext.Date.clearTime(date, true).getTime();
@@ -647,7 +607,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @return {Date}
 	 */
 	getWeekendDate: function(date){
-		var dayOffset = date.getDay() - this.weekStart;
+		var dayOffset = date.getDay() - this.getWeekStart();
 		dayOffset = dayOffset < 0 ? 6 : dayOffset;
 		
 		return new Date(date.getFullYear(), date.getMonth(), date.getDate()+0+dayOffset);
@@ -683,7 +643,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @return {String}
 	 */
 	getDateAttribute: function(date){		
-		return date.format(this.dateAttributeFormat);
+		return Ext.Date.format(date, this.dateAttributeFormat);
 	},
 
 	/**
@@ -749,7 +709,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 					var newMonth = date.getMonth() + delta,
 						newDate = new Date(date.getFullYear(), newMonth, 1);
 					
-					newDate.setDate(newDate.getDaysInMonth() < date.getDate() ? newDate.getDaysInMonth() : date.getDate());
+					newDate.setDate(Ext.Date.getDaysInMonth(newDate) < date.getDate() ? Ext.Date.getDaysInMonth(newDate) : date.getDate());
 					
 					return newDate;
 				},
@@ -790,7 +750,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				 * @return {Date}
 				 */
 				getStartDate: function(date){
-					var dayOffset = date.getDay() - this.weekStart;
+					var dayOffset = date.getDay() - this.getWeekStart();
 					dayOffset = dayOffset < 0 ? 6 : dayOffset;
 					
 					return new Date(date.getFullYear(), date.getMonth(), date.getDate()-0-dayOffset);
@@ -822,7 +782,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 					 * Template for the DAY view
 					 */
 					tpl: [
-						'<table class="{[this.me.viewMode.toLowerCase()]}">',			
+						'<table class="{[this.me.getViewMode().toLowerCase()]}">',
 							'<tbody>',
 								'<tpl for=".">',
 									'<tr>',
@@ -844,7 +804,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 					 * @param {Number} index
 					 */
 					getNextIterationDate: function(currentIterationDate, index){
-						var d = currentIterationDate.getTime() + ((index===0?0:1) * (this.dayTimeSlotSize * 60 * 1000));
+						var d = currentIterationDate.getTime() + ((index===0?0:1) * (this.getDayTimeSlotSize() * 60 * 1000));
 						
 						return new Date(d);
 					},
@@ -857,7 +817,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 					 * @param {Date} date
 					 */
 					getTotalDays: function(date){
-						return 1440 / this.dayTimeSlotSize;
+						return 1440 / this.getDayTimeSlotSize();
 					},
 					
 					/**

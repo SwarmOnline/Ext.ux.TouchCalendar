@@ -1,6 +1,6 @@
 {
     "projectName": "Ext.ux.TouchCalendarView",
-    "deployDir": "Ext.ux.Calendar/min",
+    "deployDir": "min",
     "licenseText": "Ext.ux.TouchCalendarView",
     "pkgs": [
         {
