@@ -726,11 +726,22 @@ Ext.define('Ext.ux.TouchCalendarView', {
 					 */
 					tpl: [
 						'<table class="{[this.me.getViewMode().toLowerCase()]}">',
+                            '<thead>',
+                                '<tr>',
+                                    '<th class="{[this.me.getPrevPeriodCls()]} style="display: block;">',
+                                    '</th>',
+                                    '<th>',
+                                        '<span style="position: static;">{[Ext.Date.format(values[0].date, "D jS M Y")]}</span>',
+                                    '</th>',
+                                    '<th class="{[this.me.getNextPeriodCls()]} style="display: block;"">',
+                                    '</th>',
+                                '</tr>',
+                            '</thead>',
 							'<tbody>',
 								'<tpl for=".">',
 									'<tr>',
 								
-										'<td class="time-block" datetime="{[this.me.getDateAttribute(values.date)]}">',
+										'<td class="time-block" datetime="{[this.me.getDateAttribute(values.date)]}" colspan="3">',
 	
 											'{date:date("H:i")}',
 										
