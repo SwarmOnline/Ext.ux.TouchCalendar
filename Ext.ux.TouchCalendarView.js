@@ -1,236 +1,213 @@
-/**
- * @copyright 		(c) 2011, by SwarmOnline.com
- * @date      		2nd November 2011
- * @version   		0.1
- * @documentation	
- * @website	  		http://www.swarmonline.com
- */
-/**
- * @class Ext.ux.TouchCalendarView
- * @author Stuart Ashworth
- * 
- * The main extension is contained in the root folder of the repository and can be included in your project (along with its CSS file located within 
- * the resources/css folder) and will give you a basic calendar view (either showing a month, week or day) that can be configured with various options.
- * 
- * ![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-month-ss.png)
- * ![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-week-ss.png)
- * ![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-day-ss.png)
- * 
- * [Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
- */
+
 Ext.define('Ext.ux.TouchCalendarView', {
 	
 	extend: 'Ext.Container',
 
-	config: {
+    config: {
         /**
          * @cfg {String} mode The mode the Calendar will be displayed in. Possible values 'month', 'week' or 'day'.
          */
         viewMode: 'month',
 
-		/**
-		 * cfg {Number} weekStart Starting day of the week. (0 = Sunday, 1 = Monday ... etc)
-		 */
-		weekStart: 1,
-		
-		/**
-		 * @cfg {String} todayCls CSS class added to the today's date cell 
-		 */
-		todayCls: 'today',
-		
-		/**
-		 * @cfg {String} selectedItemCls CSS class added to the date cell that is currently selected 
-		 */
-		selectedItemCls: 'selected',
-		
-		/**
-		 * @cfg {String} unselectableCls CSS class added to any date cells that are unselectable
-		 */
-		unselectableCls: 'unselectable',
-		
-		/**
-		 * @cfg {String} prevMonthCls CSS class added to any date cells that are part of the previous month
-		 */
-		prevMonthCls: 'prev-month',
-		
-		/**
-		 * @cfg {String} nextMonthCls CSS class added to any date cells that are part of the next month
-		 */
-		nextMonthCls: 'next-month',
-		
-		/**
-		 * @cfg {String} weekendCls CSS class added to any date cells that are on the weekend
-		 */
-		weekendCls: 'weekend',
-		
-		/**
-		 * @cfg {String} prevPeriodCls CSS class added to the previous period navigation cell in the calendar's header
-		 */
-		prevPeriodCls: 'goto-prev',
-		
-		/**
-		 * @cfg {String} nextPeriodCls CSS class added to the next period navigation cells in the calendar's header
-		 */
-		nextPeriodCls: 'goto-next',
-		
-		/**
-		 * @cfg {Number} dayTimeSlotSize The number of minutes the Day View's time slot will increment by. Defaults to 30 minutes.
-		 */
-		dayTimeSlotSize: 30,
+        /**
+         * cfg {Number} weekStart Starting day of the week. (0 = Sunday, 1 = Monday ... etc)
+         */
+        weekStart: 1,
+
+        /**
+         * @cfg {String} todayCls CSS class added to the today's date cell
+         */
+        todayCls: 'today',
+
+        /**
+         * @cfg {String} selectedItemCls CSS class added to the date cell that is currently selected
+         */
+        selectedItemCls: 'selected',
+
+        /**
+         * @cfg {String} unselectableCls CSS class added to any date cells that are unselectable
+         */
+        unselectableCls: 'unselectable',
+
+        /**
+         * @cfg {String} prevMonthCls CSS class added to any date cells that are part of the previous month
+         */
+        prevMonthCls: 'prev-month',
+
+        /**
+         * @cfg {String} nextMonthCls CSS class added to any date cells that are part of the next month
+         */
+        nextMonthCls: 'next-month',
+
+        /**
+         * @cfg {String} weekendCls CSS class added to any date cells that are on the weekend
+         */
+        weekendCls: 'weekend',
+
+        /**
+         * @cfg {String} prevPeriodCls CSS class added to the previous period navigation cell in the calendar's header
+         */
+        prevPeriodCls: 'goto-prev',
+
+        /**
+         * @cfg {String} nextPeriodCls CSS class added to the next period navigation cells in the calendar's header
+         */
+        nextPeriodCls: 'goto-next',
+
+        /**
+         * @cfg {Number} dayTimeSlotSize The number of minutes the Day View's time slot will increment by. Defaults to 30 minutes.
+         */
+        dayTimeSlotSize: 30,
 
         value: null,
 
         store: null,
-		
-		baseTpl: [	
-					'<table class="{[this.me.getViewMode().toLowerCase()]}">',
-						'<thead>',
-							'<tr>',
-								'<tpl for="this.getDaysArray(values)">',
-									'<th class="{[this.getHeaderClass(xindex)]}">',
-										'<tpl if="xindex === 4">',
-											'<span>{[Ext.Date.format(this.me.currentDate, "F")]} {[Ext.Date.format(this.me.currentDate, "Y")]}</span>',
-										'</tpl>',
-										'{date:date("D")}',
-									'</th>',
-								'</tpl>',
-							'</tr>',
-						'</thead>',	
-						'<tbody>',
-							'<tr>',
-							'<tpl for=".">',
-							
-								'<td class="time-block {[this.getClasses(values)]}" datetime="{[this.me.getDateAttribute(values.date)]}">',
-									'{date:date("j")}',
-								'</td>',
-								
-								'<tpl if="this.isEndOfRow(xindex)">',
-									'</tr>',
-									'<tpl if="!this.isEndOfPeriod(xindex)">',
-										'<tr>',
-									'</tpl>',
-								'</tpl>',
-							
-							'</tpl>',
-							'</tr>',
-						'</tbody>',
-					'</table>'],
+
+        baseTpl: [
+                    '<table class="{[this.me.getViewMode().toLowerCase()]}">',
+                        '<thead>',
+                            '<tr>',
+                                '<tpl for="this.getDaysArray(values)">',
+                                    '<th class="{[this.getHeaderClass(xindex)]}">',
+                                        '<tpl if="xindex === 4">',
+                                            '<span>{[Ext.Date.format(this.me.currentDate, "F")]} {[Ext.Date.format(this.me.currentDate, "Y")]}</span>',
+                                        '</tpl>',
+                                        '{date:date("D")}',
+                                    '</th>',
+                                '</tpl>',
+                            '</tr>',
+                        '</thead>',
+                        '<tbody>',
+                            '<tr>',
+                            '<tpl for=".">',
+
+                                '<td class="time-block {[this.getClasses(values)]}" datetime="{[this.me.getDateAttribute(values.date)]}">',
+                                    '{date:date("j")}',
+                                '</td>',
+
+                                '<tpl if="this.isEndOfRow(xindex)">',
+                                    '</tr>',
+                                    '<tpl if="!this.isEndOfPeriod(xindex)">',
+                                        '<tr>',
+                                    '</tpl>',
+                                '</tpl>',
+
+                            '</tpl>',
+                            '</tr>',
+                        '</tbody>',
+                    '</table>'],
 
         cls: 'touch-calendar-view',
 
-	    itemSelector: 'td.time-block'
-	
-	},
-	
+        itemSelector: 'td.time-block'
 
-	
-	/**
-	 * Object containing common functions to be passed to XTemplate for internal use
-	 * @property {Object} commonTemplateFunctions
-	 * @private
-	 */
-	commonTemplateFunctions: {
+    },
 
-		/**
-		 * Gets the classes that should be applied to the current day's cell
-		 * @method
-		 * @private
-		 * @param {Object} values 
-		 * @return {String}
-		 */
-		getClasses: function(values){
-			var classes = [];
-			
-			if(values.selected){
-				classes.push(this.me.getSelectedItemCls());
-			}
-			if(values.unselectable){
-				classes.push(this.me.getUnselectableCls());
-			}
-			if(values.prevMonth){
-				classes.push(this.me.getPrevMonthCls());
-			}
-			if(values.nextMonth){
-				classes.push(this.me.getNextMonthCls());
-			}
-			if(values.weekend){
-				classes.push(this.me.getWeekendCls());
-			}
-			if(values.today){
-				classes.push(this.me.getTodayCls());
-			}
-			
-			return classes.join(' ');
-		},
-		
-		/**
-		 * Returns true if the specific index is at the end of the row
-		 * Used to determine if a row terminating tag is needed
-		 * @method
-		 * @private
-		 * @param {Number} currentIndex
-		 * @return {Boolean}
-		 */
-		isEndOfRow: function(currentIndex){
-			return (currentIndex % 7) === 0 && (currentIndex > 0);
-		},
-		
-		/**
-		 * Returns true if the specific index is at the start of the row.
-		 * USed to determine whether if a row opening tag is needed
-		 * @method
-		 * @private 
-		 * @param {Number} currentIndex
-		 * @return {Boolean}
-		 */
-		isStartOfRow: function(currentIndex){
-			return ((currentIndex-1) % 7) === 0 && (currentIndex-1 >= 0);
-		},
-		
-		/**
-		 * Gets an array containing the first 7 dates to be used in headings
-		 * @method
-		 * @private
-		 * @param {Object} values
-		 * @return {Date[]}
-		 */
-		getDaysArray: function(values){
-			var daysArray = [],
-				i;
-			
-			for(i = 0; i < this.me.periodRowDayCount; i++){
-				daysArray.push(values[i]);
-			}
-			
-			return daysArray;
-		},
-		
-		/**
-		 * Gets the class to be added to the header cells
-		 * @method
-		 * @private
-		 * @param {Number} currentIndex
-		 * @return {Boolean}
-		 */
-		getHeaderClass: function(currentIndex){
-			return currentIndex === 1 ? this.me.getPrevPeriodCls() : currentIndex === 7 ? this.me.getNextPeriodCls() : '';
-		}
-	},
-	
+    /**
+   	 * Object containing common functions to be passed to XTemplate for internal use
+   	 * @property {Object} commonTemplateFunctions
+   	 * @private
+   	 */
+   	commonTemplateFunctions: {
+
+   		/**
+   		 * Gets the classes that should be applied to the current day's cell
+   		 * @method
+   		 * @private
+   		 * @param {Object} values
+   		 * @return {String}
+   		 */
+   		getClasses: function(values){
+   			var classes = [];
+
+   			if(values.selected){
+   				classes.push(this.me.getSelectedItemCls());
+   			}
+   			if(values.unselectable){
+   				classes.push(this.me.getUnselectableCls());
+   			}
+   			if(values.prevMonth){
+   				classes.push(this.me.getPrevMonthCls());
+   			}
+   			if(values.nextMonth){
+   				classes.push(this.me.getNextMonthCls());
+   			}
+   			if(values.weekend){
+   				classes.push(this.me.getWeekendCls());
+   			}
+   			if(values.today){
+   				classes.push(this.me.getTodayCls());
+   			}
+
+   			return classes.join(' ');
+   		},
+
+   		/**
+   		 * Returns true if the specific index is at the end of the row
+   		 * Used to determine if a row terminating tag is needed
+   		 * @method
+   		 * @private
+   		 * @param {Number} currentIndex
+   		 * @return {Boolean}
+   		 */
+   		isEndOfRow: function(currentIndex){
+   			return (currentIndex % 7) === 0 && (currentIndex > 0);
+   		},
+
+   		/**
+   		 * Returns true if the specific index is at the start of the row.
+   		 * USed to determine whether if a row opening tag is needed
+   		 * @method
+   		 * @private
+   		 * @param {Number} currentIndex
+   		 * @return {Boolean}
+   		 */
+   		isStartOfRow: function(currentIndex){
+   			return ((currentIndex-1) % 7) === 0 && (currentIndex-1 >= 0);
+   		},
+
+   		/**
+   		 * Gets an array containing the first 7 dates to be used in headings
+   		 * @method
+   		 * @private
+   		 * @param {Object} values
+   		 * @return {Date[]}
+   		 */
+   		getDaysArray: function(values){
+   			var daysArray = [],
+   				i;
+
+   			for(i = 0; i < this.me.periodRowDayCount; i++){
+   				daysArray.push(values[i]);
+   			}
+
+   			return daysArray;
+   		},
+
+   		/**
+   		 * Gets the class to be added to the header cells
+   		 * @method
+   		 * @private
+   		 * @param {Number} currentIndex
+   		 * @return {Boolean}
+   		 */
+   		getHeaderClass: function(currentIndex){
+   			return currentIndex === 1 ? this.me.getPrevPeriodCls() : currentIndex === 7 ? this.me.getNextPeriodCls() : '';
+   		}
+   	},
+
 	constructor: function(config){
 		
 		this.initModel();
 
 		Ext.apply(this, config || {
-			selectionMode: 'SINGLE'
-		});		
+		});
 		
         /**
          * @event selectionchange Fires when the Calendar's selected date is changed
          * @param {Ext.ux.TouchCalendarView} this
          * @param {Array[Ext.ux.TouchCalendarViewModel]} selectedDates An array of the selected date records
          */
-
 
         /**
          * @event periodchange Fires when the calendar changes to a different date period (i.e. switch using the arrows)
@@ -243,13 +220,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		this.callParent(arguments);
 
 		this.minDate = this.minDate ? Ext.Date.clearTime(this.minDate, true) : null;
-		this.maxDate = this.maxDate ? Ext.Date.clearTime(this.maxDate, true) : null;	
-	
-		this.on({
-			selectionchange: this.onSelectionChange,
-			scope: this
-		});
-	},
+		this.maxDate = this.maxDate ? Ext.Date.clearTime(this.maxDate, true) : null;
+
+        this.refresh();
+    },
     
 	/**
 	 * Override of onRender method. Attaches event handlers to the element to handler
@@ -260,14 +234,9 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 */
 	initialize: function() {
 
-
         this.setStore(Ext.create('Ext.data.Store', {
 			model: 'TouchCalendarViewModel'
 		}));
-
-        this.suspendRefresh = true;
-        this.setViewMode('day');
-        this.suspendRefresh = false;
 
 		this.element.on({
 			click: this.onTableHeaderTap,
@@ -275,34 +244,9 @@ Ext.define('Ext.ux.TouchCalendarView', {
 			delegate: 'th'
 		});
 
-        this.element.on({
-            click: this.onTimeSlotTap,
-            scope: this,
-            delegate: this.getItemSelector()
-        });
-
-        this.on({
-            painted: this.syncHeight,
-            scope: this
-        });
-
-        this.refresh();
         this.callParent();
 	},
-	
-	/**
-	 * Handler for the selectionchange event which sets the internal value to the selected one.
-	 * @method
-	 * @private
-	 * @param {Object} selectionModel
-	 * @param {Object} records
-	 */
-	onSelectionChange: function(selectionModel, records){
-		if(records.length > 0){
-			this.setValue(records[0].get('date'));
-		}
-	},
-	
+
 	/**
 	 * Creates the Calendar's Model if it doesn't already exist
 	 * @method
@@ -342,21 +286,13 @@ Ext.define('Ext.ux.TouchCalendarView', {
         this.getNextIterationDate = viewModeFns.getNextIterationDate;
         this.getDeltaDate = viewModeFns.getDeltaDate;
         this.periodRowDayCount = viewModeFns.periodRowDayCount;
-		
+
+        Ext.apply(this.commonTemplateFunctions, {me: this})
+
 		// Create the template
-		this.setTpl(new Ext.XTemplate((viewModeFns.tpl || this.getBaseTpl()).join(''), Ext.apply(this.commonTemplateFunctions, {me: this})));
+		this.setTpl(new Ext.XTemplate((viewModeFns.tpl || this.getBaseTpl()).join(''), this.commonTemplateFunctions));
 		
-		// if the mode is DAY then we need to enable the scroller
-		if (this.getScrollable()) {
-			//this.getScrollable().getScroller().moveTo(0, this.element.getY()); // reset it back to the top //TODO: scroll container to top
-        }
 		this.setScrollable(viewMode.toUpperCase() === 'DAY' ? 'vertical' : false);
-		
-		if(!this.suspendRefresh){
-			this.refresh();
-			
-			this.selectDate(this.value);
-		}
 
         return viewMode;
 	},
@@ -431,6 +367,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		}
 
 		this.currentDate = newDate;
+
 		this.refresh();
 		
 		var minMaxDate = this.getPeriodMinMaxDate();
@@ -487,8 +424,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	},
 
     onTimeSlotTap: function(e){
-
         var newDate = this.getCellDate(Ext.fly(e));
+
         this.setValue(newDate);
 
         this.fireEvent('selectionchange', this, newDate, this.getPreviousValue());
@@ -504,47 +441,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
         var records = this.getStore().getRange();
 
         this.setData(this.collectData(records));
-        console.log('REFRESH');
-		
-		this.syncHeight();
 	},
-	
-	/**
-	 * Syncs the table's Ext.Element to the height of the Ext.DataView's component. (Only if it isn't in DAY mode)
-	 */
-	syncHeight: function(){
-		if (this.getViewMode() !== 'DAY') {
-			this.element.select('table').first().setHeight(this.element.getHeight());
-		}
-	},
-	
-	/**
-	 * Set selected date.
-	 * @method
-	 * @param {Date} v Date to select.
-	 * @return {void}
-	 */
-	applyValue: function(v) {
-		if (!this.isSameDay(this.value, v)) {
-			this.setPreviousValue(this.getValue());
-			
-			if (Ext.isDate(v)) {
-				this.setValue(v);
-			}
-			else {
-				this.setValue(null);
-			}
-			
-			if (this.getValue()) {
 
-
-
-				this.setCurrentDate(this.getValue());
-				//this.selectDate(this.value); TODO
-			}
-		}
-	},
-	
 	/**
 	 * Selects the specified date in the DataView's selection model
 	 * @method
