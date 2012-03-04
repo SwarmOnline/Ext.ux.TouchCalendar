@@ -270,9 +270,19 @@ Ext.define('Ext.ux.TouchCalendarView', {
 			});
 		}
 	},
+
+    /**
+     * Updater for the viewMode configuration option.
+     * Refreshes the calendar once the new viewMode is applied and set.
+     * @param viewMode
+     * @param oldViewMode
+     */
+    updateViewMode: function(viewMode, oldViewMode){
+        this.refresh();
+    },
 	
 	/**
-	 * Sets the mode that the Calendar is displayed in. Possible values are 'month', 'week' or 'day'.
+	 * Applies the view mode change requested to the Calendar. Possible values are 'month', 'week' or 'day'.
 	 * @param {String} mode Either 'month', 'week' or 'day'
 	 */
 	applyViewMode: function(viewMode){
@@ -293,6 +303,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		this.setTpl(new Ext.XTemplate((viewModeFns.tpl || this.getBaseTpl()).join(''), this.commonTemplateFunctions));
 		
 		this.setScrollable(viewMode.toUpperCase() === 'DAY' ? 'vertical' : false);
+
+        //this.refresh();
 
         return viewMode;
 	},
