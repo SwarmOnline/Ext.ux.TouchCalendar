@@ -244,6 +244,11 @@ Ext.define('Ext.ux.TouchCalendarView', {
 			delegate: 'th'
 		});
 
+        this.on({
+            painted: this.syncHeight,
+            scope: this
+        });
+
         this.callParent();
 	},
 
@@ -303,8 +308,6 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		this.setTpl(new Ext.XTemplate((viewModeFns.tpl || this.getBaseTpl()).join(''), this.commonTemplateFunctions));
 		
 		this.setScrollable(viewMode.toUpperCase() === 'DAY' ? 'vertical' : false);
-
-        //this.refresh();
 
         return viewMode;
 	},
@@ -453,7 +456,18 @@ Ext.define('Ext.ux.TouchCalendarView', {
         var records = this.getStore().getRange();
 
         this.setData(this.collectData(records));
+
+        this.syncHeight();
 	},
+
+    /**
+   	 * Syncs the table's Ext.Element to the height of the Ext.DataView's component. (Only if it isn't in DAY mode)
+   	 */
+   	syncHeight: function(){
+   		if (this.getViewMode() !== 'DAY') {
+   			this.element.select('table').first().setHeight(this.element.getHeight());
+   		}
+   	},
 
 	/**
 	 * Selects the specified date in the DataView's selection model
