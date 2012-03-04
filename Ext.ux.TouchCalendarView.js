@@ -78,6 +78,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		 */
 		dayTimeSlotSize: 30,
 
+        value: null,
+
         store: null,
 		
 		baseTpl: [	
@@ -272,6 +274,12 @@ Ext.define('Ext.ux.TouchCalendarView', {
 			scope: this,
 			delegate: 'th'
 		});
+
+        this.element.on({
+            click: this.onTimeSlotTap,
+            scope: this,
+            delegate: this.getItemSelector()
+        });
 
         this.on({
             painted: this.syncHeight,
@@ -477,6 +485,14 @@ Ext.define('Ext.ux.TouchCalendarView', {
 			this.refreshDelta(el.hasCls(this.getPrevPeriodCls()) ? -1 : 1);
 		}
 	},
+
+    onTimeSlotTap: function(e){
+
+        var newDate = this.getCellDate(Ext.fly(e));
+        this.setValue(newDate);
+
+        this.fireEvent('selectionchange', this, newDate, this.getPreviousValue());
+    },
 	
 	/**
 	 * Override for the Ext.DataView's refresh method. Repopulates the store, calls parent then sync the height of the table
@@ -508,20 +524,23 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @param {Date} v Date to select.
 	 * @return {void}
 	 */
-	setValue: function(v) {
+	applyValue: function(v) {
 		if (!this.isSameDay(this.value, v)) {
-			this.previousValue = this.value;
+			this.setPreviousValue(this.getValue());
 			
 			if (Ext.isDate(v)) {
-				this.value = v;
+				this.setValue(v);
 			}
 			else {
-				this.value = null;
+				this.setValue(null);
 			}
 			
-			if (this.value) {
-				this.currentDate = this.value;
-				this.selectDate(this.value);
+			if (this.getValue()) {
+
+
+
+				this.setCurrentDate(this.getValue());
+				//this.selectDate(this.value); TODO
 			}
 		}
 	},
