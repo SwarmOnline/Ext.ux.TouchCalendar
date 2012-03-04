@@ -244,6 +244,12 @@ Ext.define('Ext.ux.TouchCalendarView', {
 			delegate: 'th'
 		});
 
+        this.element.on({
+            click: this.onTimeSlotTap,
+            scope: this,
+            delegate: this.getItemSelector()
+        });
+
         this.on({
             painted: this.syncHeight,
             scope: this
@@ -439,13 +445,17 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	},
 
     onTimeSlotTap: function(e){
-        var newDate = this.getCellDate(Ext.fly(e));
+        var target = Ext.fly(e.getTarget());
+
+        this.selectCell(target);
+
+        var newDate = this.getCellDate(target);
 
         this.setValue(newDate);
 
-        this.fireEvent('selectionchange', this, newDate, this.getPreviousValue());
+        this.fireEvent('selectionchange', this, newDate);
     },
-	
+
 	/**
 	 * Override for the Ext.DataView's refresh method. Repopulates the store, calls parent then sync the height of the table
 	 * @method
@@ -470,23 +480,20 @@ Ext.define('Ext.ux.TouchCalendarView', {
    	},
 
 	/**
-	 * Selects the specified date in the DataView's selection model
+	 * Selects the specified cell
 	 * @method
-	 * @param {Date} date
+	 * @param {Ext.Element} cell
 	 */
-	selectDate: function(date){
-		if (date) {
-			var recordToSelect = this.getDateRecord(date);
-			
-			if (recordToSelect < 0) {
-				this.refresh();
-				
-				recordToSelect = this.getDateRecord(date);
-			}
-			if (recordToSelect >= 0) {
-				//this.select(recordToSelect); TODO
-			}
-		}
+	selectCell: function(cell){
+        var selCls = this.getSelectedItemCls();
+
+        var selectedEl = this.element.select('td.' + selCls).first();
+
+        if(selectedEl){
+            selectedEl.removeCls(selCls);
+        }
+
+        cell.addCls(selCls);
 	},
 	
 	/**
@@ -597,7 +604,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @return {Date}
 	 */
 	stringToDate: function(dateString) {
-		return Date.parseDate(dateString, this.dateAttributeFormat);
+		return Ext.Date.parseDate(dateString, this.dateAttributeFormat);
 	},
 	
 	statics: {
