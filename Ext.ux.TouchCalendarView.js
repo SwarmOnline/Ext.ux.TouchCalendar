@@ -444,6 +444,14 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		}
 	},
 
+    /**
+     * Handler for taps on the Calendar's timeslot elements.
+     * Processes the tapped element and selects it visually then fires the selectionchange event
+     * @method
+     * @private
+     * @param {Ext.EventObject} e The taps event object
+     * @return {void}
+     */
     onTimeSlotTap: function(e){
         var target = Ext.fly(e.getTarget());
 
@@ -451,9 +459,11 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
         var newDate = this.getCellDate(target);
 
+        var previousValue = this.getValue();
+
         this.setValue(newDate);
 
-        this.fireEvent('selectionchange', this, newDate);
+        this.fireEvent('selectionchange', this, newDate, previousValue);
     },
 
 	/**
