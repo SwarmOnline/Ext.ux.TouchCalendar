@@ -199,6 +199,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	constructor: function(config){
 		
 		this.initModel();
+		
+        this.setStore(Ext.create('Ext.data.Store', {
+			model: 'TouchCalendarViewModel'
+		}));
 
 		Ext.apply(this, config || {
 		});
@@ -234,10 +238,6 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 */
 	initialize: function() {
 
-        this.setStore(Ext.create('Ext.data.Store', {
-			model: 'TouchCalendarViewModel'
-		}));
-
 		this.element.on({
 			click: this.onTableHeaderTap,
 			scope: this,
@@ -264,20 +264,22 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @private
 	 */
 	initModel: function(){
-		if(!Ext.ModelMgr.getModel('TouchCalendarViewModel'))
+		if(!Ext.ModelManager.isRegistered('TouchCalendarViewModel'))
 		{
 			Ext.define('TouchCalendarViewModel', {
 				extend: 'Ext.data.Model',
-				fields: [
-					{name: 'date', type: 'date'},
-					{name: 'today', type: 'boolean'},
-					{name: 'unselectable', type: 'boolean'},
-					{name: 'selected', type: 'boolean'},
-					{name: 'prevMonth', type: 'boolean'},
-					{name: 'nextMonth', type: 'boolean'},
-					{name: 'weekend', type: 'boolean'},
-					'timeSlots'
-				]
+                config: {
+                    fields: [
+                        {name: 'date', type: 'date'},
+                        {name: 'today', type: 'boolean'},
+                        {name: 'unselectable', type: 'boolean'},
+                        {name: 'selected', type: 'boolean'},
+                        {name: 'prevMonth', type: 'boolean'},
+                        {name: 'nextMonth', type: 'boolean'},
+                        {name: 'weekend', type: 'boolean'},
+                        'timeSlots'
+                    ]
+                }
 			});
 		}
 	},
@@ -344,7 +346,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		var unselectable = true, // variable used to indicate whether a day is allowed to be selected
 			baseDate = this.currentDate, // date to use as base
 			iterDate = this.getStartDate(baseDate), // date current mode will start at
-			totalDays = this.getTotalDays(baseDate); // total days to be rendered in current mode
+			totalDays = this.getTotalDays(baseDate), // total days to be rendered in current mode
+            record;
 				
 		this.getStore().suspendEvents();
 		this.getStore().data.clear();
@@ -356,16 +359,18 @@ Ext.define('Ext.ux.TouchCalendarView', {
 			iterDate = this.getNextIterationDate(iterDate, (i===0?0:1));
 			
 			unselectable = (this.minDate && iterDate < this.minDate) || (this.maxDate && iterDate > this.maxDate);
+
+            record = Ext.create('TouchCalendarViewModel', {
+                today: this.isSameDay(iterDate, new Date()),
+                unselectable: unselectable,
+                selected: this.isSameDay(iterDate, this.value) && !unselectable,
+                prevMonth: (iterDate.getMonth() < baseDate.getMonth()),
+                nextMonth: (iterDate.getMonth() > baseDate.getMonth()),
+                weekend: this.isWeekend(iterDate),
+                date: iterDate
+            });
 			
-			this.getStore().add({
-				today: this.isSameDay(iterDate, new Date()),
-				unselectable: unselectable,
-				selected: this.isSameDay(iterDate, this.value) && !unselectable,
-				prevMonth: (iterDate.getMonth() < baseDate.getMonth()),
-				nextMonth: (iterDate.getMonth() > baseDate.getMonth()),
-				weekend: this.isWeekend(iterDate),
-				date: iterDate
-			});
+			this.getStore().add(record);
 		}
 		
 		this.getStore().resumeEvents();
@@ -484,7 +489,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
    	 * Syncs the table's Ext.Element to the height of the Ext.DataView's component. (Only if it isn't in DAY mode)
    	 */
    	syncHeight: function(){
-   		if (this.getViewMode() !== 'DAY') {
+        if (this.getViewMode().toUpperCase() !== 'DAY') {
    			this.element.select('table').first().setHeight(this.element.getHeight());
    		}
    	},
