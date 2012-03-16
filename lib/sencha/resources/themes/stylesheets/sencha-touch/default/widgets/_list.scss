@@ -17,10 +17,17 @@ $list-color: #000 !default;
 $list-bg-color: #f7f7f7 !default;
 
 /**
- * @var {color} $list-pressed-color
- * Background-color for pressed list rows.
+ * @var {color} $include-list-highlights
+ * Optionally disable all list gradients, text-shadows, and box-shadows. Useful for CSS debugging,
+ * non-performant browsers, or minimalist designs.
  */
 $include-list-highlights: $include-highlights !default;
+
+/**
+ * @var {boolean} $list-zebrastripe
+ * Optionally zebra-stripe the list (alternating background colors).
+ */
+$list-zebrastripe: false !default;
 
 /**
  * @var {color} $list-pressed-color
@@ -61,20 +68,27 @@ $list-header-gradient: $base-gradient !default;
 $list-disclosure-size: 1.7em;
 
 /**
+ * @var {measurement} $list-disclosure-round-size
+ * Default size (width/height) for disclosure icons in a list with a 'round' ui.
+ */
+$list-disclosure-round-size: 1.5em;
+
+/**
  * Includes default list styles.
  */
 @mixin sencha-list {
   .x-list {
-    background-color: $list-bg-color;
-  }
-
-  .x-list {
     position: relative;
+    background-color: $list-bg-color;
+
+    .x-list-inner {
+      width: 100%;
+    }
 
     .x-list-disclosure {
       position: absolute;
-      bottom: 0.5em;
-      right: 0.8em;
+      bottom: 0.44em;
+      right: 0.44em;
     }
 
     .x-list-disclosure {
@@ -95,89 +109,204 @@ $list-disclosure-size: 1.7em;
     }
 
     .x-list-item {
-      overflow: hidden;
       position: relative;
       color: $list-color;
-      border-top: 1px solid darken($list-bg-color, 15%);
 
       .x-list-item-label {
         min-height: $global-row-height;
-        padding: 0.7em 0.8em;
-      }
-
-      &:first-child {
-        border-top: none;
-      }
-
-      &:last-child {
-        border-bottom: 1px solid darken($list-bg-color, 15%);
+        padding: 0.65em 0.8em;
       }
 
       &.x-item-pressed {
-        @if $include-list-highlights {
-          border-top-color: $list-pressed-color;
+        .x-list-item-label {
+          background: $list-pressed-color none;
         }
-
-        background: $list-pressed-color none;
       }
 
       &.x-item-selected {
-        @include background-gradient($list-active-color, $list-active-gradient);
-        @include color-by-background($list-active-color);
-        @include bevel-by-background($list-active-color);
-
-        @if $include-list-highlights {
-          border-top-color: lighten($list-active-color, 10%);
-          border-bottom-color: darken($list-active-color, 15%);
+        .x-list-item-label {
+          @include background-gradient($list-active-color, $list-active-gradient);
+          @include color-by-background($list-active-color);
+          @include bevel-by-background($list-active-color);
         }
       }
     }
   }
 
   .x-list-header {
-    @include background-gradient($list-header-bg-color, $list-header-gradient);
-    @include color-by-background($list-header-bg-color, 30%);
-    @include bevel-by-background($list-header-bg-color);
-    border-top: 1px solid $list-header-bg-color;
-    border-bottom: 1px solid darken($list-header-bg-color, 20%);
-    font-weight: bold;
-    font-size: 0.8em;
-    padding: 0.2em 1.02em;
-    @include bevel-by-background($list-header-bg-color);
-    @if $include-list-highlights {
-      -webkit-box-shadow: 0px .1em .3em rgba(0, 0, 0, 0.3);
-    }
+    position: relative;
   }
 
   .x-list-header-swap {
     position: absolute;
-    top: 0;
     left: 0;
     width: 100%;
+    z-index: 1;
   }
 
   .x-ios .x-list-header-swap {
-    -webkit-transform: translate3d(0, 0, 0);
+    @include transform(translate3d(0, 0, 0));
+  }
+
+  .x-list-normal {
+
+    .x-list-header {
+      @include background-gradient($list-header-bg-color, $list-header-gradient);
+      @include color-by-background($list-header-bg-color, 30%);
+      @include bevel-by-background($list-header-bg-color);
+      border-top: 1px solid $list-header-bg-color;
+      border-bottom: 1px solid darken($list-header-bg-color, 20%);
+      font-weight: bold;
+      font-size: 0.8em;
+      padding: 0.2em 1.02em;
+      @include bevel-by-background($list-header-bg-color);
+    }
+
+    .x-list-item {
+
+      @if $list-zebrastripe {
+        .x-list-item-label {
+          border-top: 1px solid transparent;
+        }
+        &:nth-child(even) .x-list-item-label {
+          background-color: darken($list-bg-color, 5%);
+        }
+        &:last-child:nth-child(odd) .x-list-item-label {
+          border-bottom: 1px solid darken($list-bg-color, 5%);
+        }
+      } @else {
+        .x-list-item-label {
+          border-top: 1px solid darken($list-bg-color, 10%);
+        }
+        &:last-child .x-list-item-label {
+          border-bottom: 1px solid darken($list-bg-color, 10%);
+        }
+      }
+
+      &:first-child .x-list-item-label {
+        border-top: 0;
+      }
+
+      @if $include-list-highlights {
+        &.x-item-pressed .x-list-item-label {
+          border-top-color: $list-pressed-color;
+          background-color: $list-pressed-color;
+        }
+
+        &.x-item-selected .x-list-item-label {
+          border-top-color: $list-active-color;
+          border-bottom-color: darken($list-active-color, 15%);
+        }
+      }
+    }
+
+
   }
 
   .x-list-round {
-    background-color: darken($list-bg-color, 5%);
-    .x-list-group-items > *,
-    &.x-list-flat .x-list-parent > * {
-      border-right: 1px solid darken($list-bg-color, 15%);
-      border-left: 1px solid darken($list-bg-color, 15%);
-      background-color: $list-bg-color;
-      margin: 0 1.2em;
-      &:first-child {
-        margin: 1.2em 1.2em 0;
-        border-top: 1px solid darken($list-bg-color, 15%);
-        @if $include-border-radius { @include border-top-radius(.4em); }
+    .x-scroll-view {
+      background-color: #EEEEEE !important; // @todo No !important plz
+    }
+
+    .x-list-disclosure {
+      overflow: hidden;
+      -webkit-mask: 0 0 theme_image($theme-name, "disclosure2.png") no-repeat;
+      -webkit-mask-size: $list-disclosure-round-size;
+      @include background-gradient(lighten(desaturate($base-color, 10), 10));
+      width: $list-disclosure-round-size;
+      height: $list-disclosure-round-size;
+      bottom: 0.5em;
+    }
+
+    .x-list-header {
+      color: #777;
+      font-size: 1em;
+      font-weight: bold;
+      padding-left: 26px;
+      line-height: 1.7em;
+//      background: rgba(238,238,238,.8);
+      @include background-image(linear-gradient(top, rgba(238,238,238,1), rgba(238,238,238,.9) 30%, rgba(238,238,238,.4)));
+    }
+
+    .x-list-container {
+      padding: 13px 13px 0 13px;
+
+      .x-list-header {
+        padding-left: 13px;
+        background-image: none;
       }
-      &:last-child {
-        margin: 0 1.2em 1.2em;
-        border-bottom: 1px solid darken($list-bg-color, 15%);
-        @include border-bottom-radius(.4em)
+    }
+
+    &.x-list-ungrouped,
+    &.x-list-grouped {
+      .x-list-item-label {
+        border: solid #DDDDDD;
+        border-width: 1px 1px 0 1px;
+        background: #fff;
       }
+    }
+
+    &.x-list-ungrouped {
+      .x-list-item {
+        &:first-child {
+          .x-list-item-label {
+            @if $include-border-radius { @include border-top-radius($form-fieldset-radius); }
+          }
+        }
+
+        &:last-child {
+          .x-list-item-label {
+            @if $include-border-radius { @include border-bottom-radius($form-fieldset-radius); }
+            border-width: 1px;
+          }
+
+          margin-bottom: 13px;
+        }
+      }
+    }
+
+    &.x-list-grouped {
+      .x-list-header-item {
+        .x-list-item-label {
+          @if $include-border-radius { @include border-top-radius($form-fieldset-radius); }
+        }
+      }
+
+      .x-list-footer-item {
+        margin-bottom: 13px;
+
+        .x-list-item-label {
+          border-width: 1px;
+          @if $include-border-radius { @include border-bottom-radius($form-fieldset-radius); }
+        }
+      }
+    }
+  }
+
+  .x-dataview-inlineblock {
+    .x-dataview-item {
+      display: inline-block !important;
+    }
+  }
+
+  .x-dataview-nowrap {
+    .x-dataview-container {
+      white-space: nowrap !important;
+    }
+  }
+
+  .x-list-inlineblock {
+    .x-list-item {
+      display: inline-block !important;
+    }
+  }
+
+  .x-list-nowrap {
+    .x-list-inner {
+      width: auto;
+    }
+    .x-list-container {
+      white-space: nowrap !important;
     }
   }
 }
@@ -230,16 +359,15 @@ $list-disclosure-size: 1.7em;
     width: 2.5em;
     height: 4.5em;
 
-    -webkit-mask: center center theme_image($theme-name, "pullarrow.png") no-repeat;
-    -webkit-mask-size: 2em 3em;
+    background: center center theme_image($theme-name, "pullarrow.png") no-repeat;
+    background-size: 2em 3em;
     /*-webkit-transition-property: -webkit-transform;*/
     /*-webkit-transition-duration: 200ms;*/
-    -webkit-transform: rotate(0deg);
-    background-color: #111;
+    @include rotate(0deg);
   }
 
   .x-list-pullrefresh-release .x-list-pullrefresh-arrow {
-    -webkit-transform: rotate(-180deg);
+    @include rotate(-180deg);
   }
 
   .x-list-pullrefresh-wrap {
@@ -262,12 +390,12 @@ $list-disclosure-size: 1.7em;
     /*position: relative;*/
     /*top: 0;*/
 
-    .x-loading-spinner {
+    /*.x-loading-spinner {
       display: block;
     }
 
     .x-list-pullrefresh-arrow {
       display: none;
-    }
+    }*/
   }
 }

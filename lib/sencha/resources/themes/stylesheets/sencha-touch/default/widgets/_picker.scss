@@ -47,14 +47,15 @@ $picker-bar-gradient: $base-gradient !default;
         border-right: 1px solid #ACACAC;
       }
 
-      &:first-child {
+      &.x-first {
         .x-body {
           border-left: 0;
         }
       }
 
-      &:last-child {
+      &.x-last {
         .x-body {
+          border-left: 0;
           border-right: 0;
         }
       }
@@ -97,7 +98,14 @@ $picker-bar-gradient: $base-gradient !default;
     }
   }
 
+  .x-use-titles {
+    .x-picker-bar {
+      margin-top: 1.5em;
+    }
+  }
+
   .x-picker-slot-title {
+    height: 1.5em;
     position:relative;
     z-index: 2;
     @include background-gradient($picker-title-bg-color, $picker-title-bg-gradient);

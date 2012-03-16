@@ -29,13 +29,13 @@ $include-bottom-tabs: true !default;
  * @var {color} $tabs-light
  * Base color for "light" UI tabs.
  */
-$tabs-light: lighten(desaturate($base-color, 10%), 5%) !default;
+$tabs-light: desaturate($base-color, 10%) !default;
 
 /**
  * @var {color} $tabs-light-active
  * Active color for "light" UI tabs.
  */
-$tabs-light-active: saturate($active-color, 20%) !default;
+$tabs-light-active: lighten(saturate($active-color, 20%), 20%) !default;
 
 /**
  * @var {color} $tabs-dark
@@ -75,7 +75,14 @@ $tabs-bottom-icon-size: 1.65em !default;
  * @var {string} $tabs-bottom-active-gradient
  * Background gradient style for active bottom tabs.
  */
-$tabs-bottom-active-gradient: 'glossy' !default;
+$tabs-bottom-active-gradient: $base-gradient !default;
+
+/**
+ * @var {boolean} $include-tab-highlights
+ * Optionally disable all gradients, text-shadows, and box-shadows. Useful for CSS debugging,
+ * non-performant browsers, or minimalist designs.
+ */
+$include-tab-highlights: $include-highlights !default;
 
 // Private
 
@@ -97,17 +104,19 @@ $tabs-top-height: $global-row-height - .8em;
   @if $include-tabbar-uis {
     @include sencha-tabbar-ui('light', $tabs-light, $tabs-bar-gradient, $tabs-light-active);
     @include sencha-tabbar-ui('dark', $tabs-dark, $tabs-bar-gradient, $tabs-dark-active-color);
+    @include sencha-tabbar-ui('neutral', $neutral-color, $tabs-bar-gradient, darken($neutral-color, 40));
   }
 
   // Rules for all tabs
   .x-tab.x-item-disabled span.x-button-label, .x-tab.x-item-disabled .x-button-icon {
-    opacity: .5;
+    @include opacity(.5);
   }
   .x-tab.x-draggable {
-    opacity: .7;
+    @include opacity(.7);
   }
 
   .x-tab {
+    -webkit-user-select: none;
     overflow: visible !important;
   }
 }
@@ -115,7 +124,8 @@ $tabs-top-height: $global-row-height - .8em;
 
 @mixin sencha-top-tabs {
   .x-tabbar.x-docked-top {
-    border-bottom: .1em solid;
+    border-bottom-width: .1em;
+    border-bottom-style: solid;
     height: $global-row-height;
     padding: 0 .8em;
 
@@ -123,12 +133,6 @@ $tabs-top-height: $global-row-height - .8em;
       padding: (($tabs-top-height - 1em) / 2) .8em;
       height: $tabs-top-height;
       @if $include-border-radius { @include border-radius($tabs-top-height / 2); }
-    }
-
-    @if ($include-highlights) {
-      .x-tab-active {
-        -webkit-box-shadow: rgba(#fff, .2) 0 .1em .1em, inset rgba(#000, .3) 0 .1em .2em;
-      }
     }
 
     .x-button-label {
@@ -143,7 +147,8 @@ $tabs-top-height: $global-row-height - .8em;
 
 @mixin sencha-bottom-tabs {
   .x-tabbar.x-docked-bottom {
-    border-top: .1em solid;
+    border-top-width: .1em;
+    border-top-style: solid;
     height: 3em;
     padding: 0;
 
@@ -162,16 +167,6 @@ $tabs-top-height: $global-row-height - .8em;
         position: relative;
       }
 
-      // Start of automatic tab icon shadows...
-      // &:before {
-      //   @include insertion;
-      //   background: red;
-      //   width: $tabs-bottom-icon-size;
-      //   height: $tabs-bottom-icon-size;
-      //   position: absolute;
-      //   top: -.1em;
-      // }
-
       .x-button-label {
         margin: 0;
         padding: .1em 0 .2em 0;
@@ -179,12 +174,6 @@ $tabs-top-height: $global-row-height - .8em;
         line-height: 12px;
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
-      }
-    }
-
-    @if ($include-highlights) {
-      .x-tab-active {
-        -webkit-box-shadow: inset rgba(#fff, .3) 0 0 .1em;
       }
     }
   }
@@ -228,7 +217,8 @@ $tabs-top-height: $global-row-height - .8em;
 @mixin sencha-tabbar-ui($ui-label, $bar-color, $bar-gradient, $tab-active-color) {
   .x-tabbar-#{$ui-label} {
     @include background-gradient($bar-color, $bar-gradient);
-    border-color: darken($bar-color, 5%);
+    border-top-color: darken($bar-color, 5%);
+    border-bottom-color: darken($bar-color, 15%);
 
     .x-tab {
       @include color-by-background($bar-color, 40%);
@@ -236,6 +226,7 @@ $tabs-top-height: $global-row-height - .8em;
 
     .x-tab-active {
       @include color-by-background($bar-color, 90%);
+      border-bottom: 1px solid lighten($bar-color, 3%);
     }
 
     .x-tab-pressed {
@@ -253,8 +244,12 @@ $tabs-top-height: $global-row-height - .8em;
       }
 
       .x-tab-active {
-        @include background-gradient(lighten($bar-color, 5%), $tabs-bar-gradient);
+        @include background-gradient(darken($bar-color, 5%), recessed);
         @include bevel-by-background(lighten($bar-color, 10%));
+
+        @if ($include-tab-highlights) {
+          @include box-shadow(darken($bar-color, 10%) 0 0 .25em inset);
+        }
 
         .x-button-icon {
           @include background-gradient($tab-active-color, $tabs-bottom-active-gradient);

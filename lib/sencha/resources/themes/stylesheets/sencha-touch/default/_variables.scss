@@ -36,8 +36,7 @@ $include-floating-panels: true !default;
 
 /**
  * @var {boolean} $include-default-uis
- * Decides whether or not to include floating panels (useful to disable for iPhone applications
- * which do not typically have floating menus).
+ * Decides whether or not to include the default UIs for all components.
  */
 $include-default-uis: true !default;
 
@@ -64,7 +63,7 @@ $basic-slider: false !default;
  * @var {color} $base-color
  * The primary color variable from which most elements derive their color scheme.
  */
-$base-color: #354F6E !default; // Graphite
+$base-color: #1985D0 !default; // Triton Blue
 
 /**
  * @var {string} $base-gradient
@@ -72,6 +71,13 @@ $base-color: #354F6E !default; // Graphite
  * @see background-gradient
  */
 $base-gradient: 'matte' !default;
+
+/**
+ * @var {font-family} $font-family
+ * The font-family to be used throughout the theme.
+ * @see background-gradient
+ */
+$font-family: "Helvetica Neue", HelveticaNeue, "Helvetica-Neue", Helvetica, "BBAlpha Sans", sans-serif !default;
 
 /**
  * @var {color} $alert-color
@@ -90,6 +96,12 @@ $confirm-color: #92cf00 !default; // Green
  * Color used for elements like selected rows, "action" UIs (eg. on buttons) and certain overlays like the picker mask.
  */
 $active-color: darken(saturate($base-color, 55%), 10%) !default;
+
+/**
+ * @var {color} $neutral-color
+ * Color used for the neautral `ui` for Toolbars and Tabbars.
+ */
+$neutral-color: #e0e0e0;
 
 /**
  * @var {color} $page-bg-color
