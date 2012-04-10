@@ -52,7 +52,6 @@ Ext.define('Ext.ux.TouchCalendar',{
     weekStart: 1,
     bubbleEvents: ['selectionchange']
   },
-  
   indicator: false,
   
   initialize: function(){
@@ -71,9 +70,24 @@ Ext.define('Ext.ux.TouchCalendar',{
       direction: 'horizontal'      
     });
         
-    Ext.ux.TouchCalendar.superclass.initComponent.call(this);
+    this.setIndicator(false); // for some reason, indicator: false is not being applied unless explicitly set.
+    this.setActiveItem(1); // for some reason, activeItem: 1 is not being applied unless explicitly set.
         
     this.on('selectionchange', this.onSelectionChange);
+    this.on('activeitemchange', this.onActiveItemChange);
+    
+    if (this.enableSwipeNavigate) {
+      // Bind the required listeners
+      this.on(this.element, {
+        drag: this.onDrag,
+        dragThreshold: 5,
+        dragend: this.onDragEnd,
+        direction: this.direction,
+        scope: this
+      });
+      
+      this.element.addCls(this.baseCls + '-' + this.direction);
+    }
   },
    
   /**
@@ -200,22 +214,11 @@ Ext.define('Ext.ux.TouchCalendar',{
   /**
    * Override of the Ext.Carousel's afterRender method to enable/disable the swipe navigation if the enableSwipeNavigate option is set to true/false.
    */
-  afterRender: function() {
+  /*afterRender: function() {
         Ext.Carousel.superclass.afterRender.call(this);
 
-    if (this.enableSwipeNavigate) {
-      // Bind the required listeners
-      this.mon(this.element, {
-        drag: this.onDrag,
-        dragThreshold: 5,
-        dragend: this.onDragEnd,
-        direction: 'forward',
-        scope: this
-      });
-      
-      this.element.addCls(this.baseCls + '-' + 'forward');
-    }
-    },
+    
+    },*/
   
     /**
      * Override of the onCardSwitch method which adds a new card to the end/beginning of the carousel depending on the direction configured with the next period's
@@ -223,34 +226,85 @@ Ext.define('Ext.ux.TouchCalendar',{
      * @method
      * @private
      */
-  onCardSwitch: function(newCard, oldCard, index, animated){
+  onActiveItemChange: function(container, newCard, oldCard){
     if (this.enableSwipeNavigate) {
-      var newIndex = this.getItems().indexOf(newCard), oldIndex = this.getItems.indexOf(oldCard), direction = (newIndex > oldIndex) ? 'forward' : 'backward';
+      var items = this.getItems();
+      var newIndex = items.indexOf(newCard), oldIndex = items.indexOf(oldCard), direction = (newIndex > oldIndex) ? 'forward' : 'backward';
       
       this.counter = (this.counter || 0) + 1;
       
       if (direction === 'forward') {
-        this.remove(this.getItems().get(0));
-        
-        this.add(new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], 1))));
+        this.remove(items.get(0));
+        var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], 1)));
+        this.add(newCalendar);
       }
       else {
-        this.remove(this.getItems().get(this.getItems().getCount() - 1));
-        
-        this.insert(0, new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], -1))));
+        this.remove(items.get(items.getCount() - 1));
+        var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], -1)));
+        this.insert(0, newCalendar);
       }
-      
-      this.doLayout();
       
       this.view = newCard;
     }
-    Ext.ux.TouchCalendar.superclass.onCardSwitch.apply(this, arguments);
   }
     
     
 });
 
 
+//TODO: Remove this Sencha Touch 1.0 code & start using Ext.Date?
+Ext.apply(Date, {
+  y2kYear: 50,
+
+  /**
+* Date interval constant
+* @static
+* @type String
+*/
+  MILLI: "ms",
+
+  /**
+* Date interval constant
+* @static
+* @type String
+*/
+  SECOND: "s",
+
+  /**
+* Date interval constant
+* @static
+* @type String
+*/
+  MINUTE: "mi",
+
+  /** Date interval constant
+* @static
+* @type String
+*/
+  HOUR: "h",
+
+  /**
+* Date interval constant
+* @static
+* @type String
+*/
+  DAY: "d",
+
+  /**
+* Date interval constant
+* @static
+* @type String
+*/
+  MONTH: "mo",
+
+  /**
+* Date interval constant
+* @static
+* @type String
+*/
+  YEAR: "y"
+
+});
 Ext.apply(Date.prototype, {
   
   dateFormat: function(format) {

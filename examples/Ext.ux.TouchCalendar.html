@@ -23,9 +23,11 @@
                 
                 var panel = new Ext.Panel({
                     fullscreen: true,
-                    dockedItems: [{
+                    layout: 'fit',
+                    items: [
+                      {
                         xtype: 'toolbar',
-                        dock: 'top',
+                        docked: 'top',
                         items: [{
                             xtype: 'button',
                             text: 'Month View',
@@ -45,9 +47,7 @@
                                 calendar.setMode('day');
                             }
                         }]
-                    }],
-                    layout: 'fit',
-                    items: [
+                      },
                       calendar
                     ]
             	});
