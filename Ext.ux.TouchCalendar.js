@@ -55,7 +55,7 @@ Ext.define('Ext.ux.TouchCalendar',{
   
   indicator: false,
   
-  initComponent: function(){
+  initialize: function(){
         
     this.viewConfig = Ext.applyIf(this.viewConfig || {}, this.defaultViewConfig);
     
@@ -64,7 +64,7 @@ Ext.define('Ext.ux.TouchCalendar',{
     this.mode = this.viewConfig.mode.toUpperCase();
   
     this.initViews();
-  
+    
     Ext.apply(this, {
       cls: 'touch-calendar',
       activeItem: (this.enableSwipeNavigate ? 1: 0),
@@ -115,7 +115,7 @@ Ext.define('Ext.ux.TouchCalendar',{
      * @return {void}
      */
   initViews: function(){
-    this.items = [];
+    var items = [];
     var origCurrentDate = this.viewConfig.currentDate.clone(),
       i = (this.enableSwipeNavigate ? -1 : 0),
       iMax = (this.enableSwipeNavigate ? 1 : 0),
@@ -123,26 +123,27 @@ Ext.define('Ext.ux.TouchCalendar',{
     
     // first out of view
     var viewValue = this.getViewDate(origCurrentDate, -1);
-    this.items.push(
+    items.push(
         new Ext.ux.TouchCalendarView(Ext.applyIf({
             currentDate: viewValue
           }, this.getViewConfig(viewValue)))
     );
     
     // active view
-    this.items.push(
+    items.push(
         new Ext.ux.TouchCalendarView(this.getViewConfig(origCurrentDate))
     );
     
     // second out of view (i.e. third)
     viewValue = this.getViewDate(origCurrentDate, 1);
-    this.items.push(
+    items.push(
         new Ext.ux.TouchCalendarView(Ext.applyIf({
             currentDate: viewValue
           }, this.getViewConfig(viewValue)))
     );
-
-    this.view = this.items[(this.enableSwipeNavigate ? 1: 0)];
+    
+    this.setItems(items);
+    this.view = items[(this.enableSwipeNavigate ? 1: 0)];
   },
   
   /**
@@ -166,7 +167,7 @@ Ext.define('Ext.ux.TouchCalendar',{
     this.mode = mode.toUpperCase();
     this.viewConfig.mode = this.mode;
     
-    this.items.each(function(view, index){
+    this.getItems().each(function(view, index){
       
       view.currentDate = this.getViewDate(this.view.currentDate.clone(), index-1);
       
@@ -223,19 +224,18 @@ Ext.define('Ext.ux.TouchCalendar',{
      * @private
      */
   onCardSwitch: function(newCard, oldCard, index, animated){
-    
     if (this.enableSwipeNavigate) {
-      var newIndex = this.items.indexOf(newCard), oldIndex = this.items.indexOf(oldCard), direction = (newIndex > oldIndex) ? 'forward' : 'backward';
+      var newIndex = this.getItems().indexOf(newCard), oldIndex = this.getItems.indexOf(oldCard), direction = (newIndex > oldIndex) ? 'forward' : 'backward';
       
       this.counter = (this.counter || 0) + 1;
       
       if (direction === 'forward') {
-        this.remove(this.items.get(0));
+        this.remove(this.getItems().get(0));
         
         this.add(new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], 1))));
       }
       else {
-        this.remove(this.items.get(this.items.getCount() - 1));
+        this.remove(this.getItems().get(this.getItems().getCount() - 1));
         
         this.insert(0, new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], -1))));
       }

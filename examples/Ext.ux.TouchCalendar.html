@@ -12,15 +12,14 @@
             
         Ext.setup({
             onReady: function(){
-            
-                var calendar = {
-                  xtype: 'cali',
+                var calendar = new Ext.ux.TouchCalendar({
+                  xtype: 'calendar',
                   viewConfig: {
                     mode: 'month',
                     weekStart: 1,
                     value: new Date()
                   }
-                };
+                });
                 
                 var panel = new Ext.Panel({
                     fullscreen: true,
@@ -48,7 +47,9 @@
                         }]
                     }],
                     layout: 'fit',
-                    items: [calendar]
+                    items: [
+                      calendar
+                    ]
             	});
             }
         });
