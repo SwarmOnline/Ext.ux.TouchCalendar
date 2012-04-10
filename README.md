@@ -1,4 +1,4 @@
-# Ext.ux.TouchCalendar
+...# Ext.ux.TouchCalendar
 
 Ext.ux.TouchCalendar is an extension, and set of related plugins, for the Sencha Touch framework that allows easy integration of a calendar component into 
 applications.

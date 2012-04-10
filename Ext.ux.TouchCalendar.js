@@ -18,7 +18,11 @@
  * [Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
  * 
  */
-Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
+//Ext.ux.TouchCalendar = Ext.extend(Ext.carousel.Carousel, {
+Ext.define('Ext.ux.TouchCalendar',{
+  extend: 'Ext.carousel.Carousel',
+  xtype: 'calendar',
+  
 	/**
 	 * @cfg {Boolean} enableSwipeNavigate True to allow the calendar's period to be change by swiping across it.
 	 */
@@ -112,7 +116,7 @@ Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
      */
 	initViews: function(){
 		this.items = [];
-		var origCurrentDate = this.viewConfig.currentDate.clone(),
+		var origCurrentDate = Ext.clone(this.viewConfig.currentDate.clone(),
 			i = (this.enableSwipeNavigate ? -1 : 0),
 			iMax = (this.enableSwipeNavigate ? 1 : 0),
 			plugins = [];
@@ -204,11 +208,11 @@ Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
 				drag: this.onDrag,
 				dragThreshold: 5,
 				dragend: this.onDragEnd,
-				direction: this.direction,
+				direction: 'forward',
 				scope: this
 			});
 			
-			this.el.addCls(this.baseCls + '-' + this.direction);
+			this.el.addCls(this.baseCls + '-' + 'forward');
 		}
     },
 	
