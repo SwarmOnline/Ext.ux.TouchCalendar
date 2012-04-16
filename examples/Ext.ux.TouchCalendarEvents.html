@@ -17,8 +17,9 @@
         </script>
         <script type="text/javascript">
             
-            Ext.setup({
-                onReady: function(){
+            Ext.application({
+                name: 'Ext.ux.TouchCalendarEvents',
+                launch: function(){
                 
                     calendarView = new Ext.ux.TouchCalendarView({
                         //minDate: (new Date()).add(Date.DAY, -40),

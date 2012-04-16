@@ -167,49 +167,50 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     /**
      * @property {Ext.util.Droppable} droppable Contains the Ext.util.Droppable instance on the Calendar's body element
      */
-    this.droppable = new Ext.util.Droppable(this.calendar.getEl(), {
-      /**
-       * Override for Droppable's onDrag function to add hover class to active date cell
-       * @method       
-       * @private
-       * @param {Object} draggable
-       * @param {Object} e
-       */
-            onDrag: function(draggable, e){
-        if (draggable.el.hasCls(me.eventBarCls)) {
-          this.setCanDrop(this.isDragOver(draggable), draggable, e);
-          onDragCount++;
-
-          if (onDragCount % 15 === 0) {
-            var currentDateCell, currentDate, eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
-            
-            me.calendar.all.removeCls(me.cellHoverCls);
-            
-            me.calendar.all.each(function(cell, index){
-              var cellRegion = cell.getPageBox(true);
-              var eventBarRegion = draggable.el.getPageBox(true);
-              
-              if (cellRegion.partial(eventBarRegion)) {
-                currentDateCell = cell;
-                currentDate = this.calendar.getCellDate(cell);
-                
-                cell.addCls(me.cellHoverCls);
-                return;
-              }
-            }, me);
-            
-            me.calendar.fireEvent('eventdrag', draggable, eventRecord, currentDate, currentDateCell, e);
-            onDragCount = 0;
-          }
-        }
-      }
-        });
-    
-    this.droppable.on({
-      drop: this.onEventDrop,
-            dropdeactivate: this.onEventDropDeactivate,
-            scope: this
-    });
+    //TODO: Re-implement when droppable is supported in ST2 again
+//    this.droppable = new Ext.util.Droppable(this.calendar.getEl(), {
+//      /**
+//       * Override for Droppable's onDrag function to add hover class to active date cell
+//       * @method       
+//       * @private
+//       * @param {Object} draggable
+//       * @param {Object} e
+//       */
+//            onDrag: function(draggable, e){
+//        if (draggable.el.hasCls(me.eventBarCls)) {
+//          this.setCanDrop(this.isDragOver(draggable), draggable, e);
+//          onDragCount++;
+//
+//          if (onDragCount % 15 === 0) {
+//            var currentDateCell, currentDate, eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
+//            
+//            me.calendar.all.removeCls(me.cellHoverCls);
+//            
+//            me.calendar.all.each(function(cell, index){
+//              var cellRegion = cell.getPageBox(true);
+//              var eventBarRegion = draggable.el.getPageBox(true);
+//              
+//              if (cellRegion.partial(eventBarRegion)) {
+//                currentDateCell = cell;
+//                currentDate = this.calendar.getCellDate(cell);
+//                
+//                cell.addCls(me.cellHoverCls);
+//                return;
+//              }
+//            }, me);
+//            
+//            me.calendar.fireEvent('eventdrag', draggable, eventRecord, currentDate, currentDateCell, e);
+//            onDragCount = 0;
+//          }
+//        }
+//      }
+//        });
+//    
+//    this.droppable.on({
+//      drop: this.onEventDrop,
+//            dropdeactivate: this.onEventDropDeactivate,
+//            scope: this
+//    });
   },
   
   /**
