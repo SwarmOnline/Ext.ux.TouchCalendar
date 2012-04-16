@@ -264,8 +264,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @private
 	 */
 	initModel: function(){
-		//if(!Ext.ModelManager.isRegistered('TouchCalendarViewModel')) // TODO: Re-implement the check to see if this model is implemented. 
-		//{
+		if(!Ext.ModelManager.isRegistered('TouchCalendarViewModel')) // TODO: Throws an error in opening Ext.ux.TouchCalendar.html example?? 
+		{
 			Ext.define('TouchCalendarViewModel', {
 				extend: 'Ext.data.Model',
                 config: {
@@ -281,7 +281,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
                     ]
                 }
 			});
-		//}
+		}
 	},
 
     /**
