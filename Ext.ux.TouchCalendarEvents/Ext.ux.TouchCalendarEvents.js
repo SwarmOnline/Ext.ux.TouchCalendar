@@ -76,7 +76,6 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
   eventBarTpl: '{title}',
     
     init: function(calendar){
-    
         this.calendar = calendar; // cache the parent calendar
         this.calendar.eventsPlugin = this; // cache the plugin instance on the calendar itself  
         
@@ -290,7 +289,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * with the Ext.ux.CalendarEventBarModel model.
      * @private
      */
-        this.eventBarStore = new Ext.data.Store({
+        this.eventBarStore = Ext.create('Ext.data.Store', {
             model: 'Ext.ux.CalendarEventBarModel',
             data: []
         });
