@@ -667,28 +667,28 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
  * bound data store
  * @private
  */
-Ext.regModel('Ext.ux.CalendarEventBarModel', {
-    fields: [{
-        name: 'EventID',
-        type: 'string'
-    }, {
-        name: 'Date',
-        type: 'date'
-    }, {
-        name: 'BarLength',
-        type: 'int'
-    }, {
-        name: 'BarPosition',
-        type: 'int'
-    }, {
+Ext.define("Ext.ux.CalendarEventBarModel", {
+  extend: "Ext.data.Model",
+  fields: [{
+    name: 'EventID',
+    type: 'string'
+  }, {
+    name: 'Date',
+    type: 'date'
+  }, {
+    name: 'BarLength',
+    type: 'int'
+  }, {
+    name: 'BarPosition',
+    type: 'int'
+  }, {
     name: 'Colour',
     type: 'string'
   }, 'Record'],
-    
-    hasMany: [{
-        model: 'Ext.ux.CalendarEventBarModel',
-        name: 'linked'
-    }]
+  hasMany: [{
+      model: 'Ext.ux.CalendarEventBarModel',
+      name: 'linked'
+  }]
 });
 
 /**

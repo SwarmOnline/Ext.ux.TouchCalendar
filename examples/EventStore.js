@@ -1,22 +1,24 @@
-Ext.regModel('Event', {
-    fields: [{
-        name: 'event',
-        type: 'string'
-    }, {
-        name: 'location',
-        type: 'string'
-    }, {
-        name: 'start',
-        type: 'date',
-        dateFormat: 'c'
-    }, {
-        name: 'end',
-        type: 'date',
-        dateFormat: 'c'
-    }]
+Ext.define("Event", {
+  extend: "Ext.data.Model",
+  fields: [{
+      name: 'event',
+      type: 'string'
+  }, {
+      name: 'location',
+      type: 'string'
+  }, {
+      name: 'start',
+      type: 'date',
+      dateFormat: 'c'
+  }, {
+      name: 'end',
+      type: 'date',
+      dateFormat: 'c'
+  }]
 });
 
-var eventStore = new Ext.data.Store({
+
+var eventStore = Ext.create('Ext.data.Store', {
     model: 'Event',
     data: [{
         event: 'Breaking Development 2011',
