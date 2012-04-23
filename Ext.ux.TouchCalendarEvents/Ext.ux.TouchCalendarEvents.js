@@ -145,11 +145,10 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     refreshEvents: function(){
         this.removeEvents();
         
-        this.generateEventBars();
+        this.generateEventBars(); // in turn calls this.renderEventBars(this.eventBarStore);
         
         this.createEventWrapper();
         
-        this.renderEventBars(this.eventBarStore);
         
     if (this.allowEventDragAndDrop) {
       this.createDroppableRegion();
@@ -540,6 +539,9 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
             this.calendar.mon(this.eventWrapperEl, 'click', this.onEventWrapperTap, this, {
                 delegate: 'div.' + this.eventBarCls
             });
+            this.renderEventBars(this.eventBarStore);
+        }else{
+          this.calendar.on('painted', this.createEventWrapper, this);
         }
     },
     
@@ -691,10 +693,15 @@ Ext.define("Ext.ux.CalendarEventBarModel", {
   }]
 });
 
-/**
- * @class Ext.util.Region
- */
-Ext.override(Ext.util.Region, {
+///**
+// * @class Ext.util.Region
+// */
+//Ext.override(Ext.util.Region, {
+//  
+//});
+
+Ext.define('Ext.util.Region.partial', {
+  extend: 'Ext.util.Region',
   /**
    * Figures out if the Event Bar passed in is within the boundaries of the current Date Cell (this)
    * @method
