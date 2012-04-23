@@ -24,15 +24,15 @@
 						var mod = Ext.ModelMgr.create({
 					        event: 'Breaking Development 2011',
 					        location: 'Nashville',
-					        start: new Date(2011, 8, 12),
-					        end: new Date(2011, 8, 14)
+					        start: new Date(2012, 4, 12),
+					        end: new Date(2012, 4, 14)
 					    }, 'Event');
 						
 						eventStore.add(mod);
 					}
                     
                     var calendarView = new Ext.ux.TouchCalendarView({
-                        mode: 'month',
+                        viewMode: 'month',
 						weekStart: 0,
 						eventStore: eventStore,
 						plugins: [new Ext.ux.TouchCalendarSimpleEvents()]
@@ -47,19 +47,19 @@
 	                            xtype: 'button',
 	                            text: 'Month View',
 	                            handler: function(){
-	                                calendarView.setMode('month');
+	                                calendarView.setViewMode('month');
 	                            }
 	                        }, {
 	                            xtype: 'button',
 	                            text: 'Week View',
 	                            handler: function(){
-	                                calendarView.setMode('week');
+	                                calendarView.setViewMode('week');
 	                            }
 	                        }, {
 	                            xtype: 'button',
 	                            text: 'Day View',
 	                            handler: function(){
-	                                calendarView.setMode('day');
+	                                calendarView.setViewMode('day');
 	                            }
 	                        }]
                         }],

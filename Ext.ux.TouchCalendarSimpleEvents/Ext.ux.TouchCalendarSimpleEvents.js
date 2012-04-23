@@ -112,6 +112,9 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	 * @param {Object} currentDate - date we are currently dealing while looping Calendar's dateCollection property
 	 */
 	filterFn: function(record, id, currentDate){
+	  if (arguments.length===2){
+	    currentDate = id;
+	  }
 		var startDate = record.get(this.startEventField).clearTime(true).getTime(),
 			endDate = record.get(this.endEventField).clearTime(true).getTime(),
 			currentDate = currentDate.clearTime(true).getTime();
@@ -161,7 +164,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 					
 					if (cell) {
 						store.clearFilter();
-
+						
 						// if we only want to show a single dot per day then use findBy for better performance
 						var matchIndex = store[this.multiEventDots ? 'filterBy' : 'findBy'](Ext.bind(this.filterFn, this, [date], true));
 						var eventCount = store.getRange().length;
