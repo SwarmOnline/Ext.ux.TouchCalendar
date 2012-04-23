@@ -29,8 +29,8 @@
                         value: new Date(),
                         eventStore: eventStore,
                         
-                        plugins: [new Ext.ux.TouchCalendarEvents({
-                            eventBarTpl: new Ext.XTemplate('{event} - {location}')
+                        plugins: [Ext.create('Ext.ux.TouchCalendarEvents', {
+                            eventBarTpl: '{event} - {location}'
                         })]
                     });
                     

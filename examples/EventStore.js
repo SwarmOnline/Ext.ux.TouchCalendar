@@ -27,6 +27,7 @@ var eventStore = Ext.create('Ext.data.Store', {
     data: [{
         event: 'Breaking Development 2012',
         location: 'Nashville',
+        title: 'test',
         start: new Date(2012, 4, 12),
         end: new Date(2012, 4, 14)
     }, {

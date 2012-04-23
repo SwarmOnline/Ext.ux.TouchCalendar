@@ -18,6 +18,12 @@
  */
 Ext.define('Ext.ux.TouchCalendarEvents', {
   extend: 'Ext.mixin.Observable',
+  config: {
+    /**
+     * @cfg {String} eventBarTpl Template that will be used to fill the Event Bar
+     */
+    eventBarTpl : '{title}' // make this an internal set-able property
+  },
   /**
    * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
    */
@@ -69,11 +75,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * @cfg {Number} eventBarSpacing Space (in pixels) between EventBars
      */
     eventBarSpacing: 1,
-  
-  /**
-   * @cfg {String} eventBarTpl Template that will be used to fill the Event Bar
-   */
-  eventBarTpl: '{title}',
+ 
     
     init: function(calendar){
         this.calendar = calendar; // cache the parent calendar
@@ -409,7 +411,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
         style: {
           'background-color': eventRecord.get(this.colourField)
         },
-                html: new Ext.XTemplate(this.eventBarTpl).apply(eventRecord.data),
+                html: new Ext.XTemplate(this.getEventBarTpl()).apply(eventRecord.data),
                 eventID: record.get('EventID'),
                 cls: this.eventBarCls + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
             }, true);
