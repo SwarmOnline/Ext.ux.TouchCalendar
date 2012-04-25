@@ -5,11 +5,13 @@
         <link rel="stylesheet" type="text/css" href="../lib/sencha/resources/css/sencha-touch.css" media="all"/>
         <script src="../lib/sencha/sencha-touch-debug.js" type="text/javascript">
         </script>
+        <script src="../Ext.ux.Date.js" type="text/javascript">
+        </script>
         <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendarView.css" media="all"/>
         <script src="../Ext.ux.TouchCalendar.js" type="text/javascript"></script>
 		<script src="../Ext.ux.TouchCalendarView.js" type="text/javascript"></script>
 		
-		<script src="../Ext.ux.SimpleCalendarSimpleEvents/Ext.ux.TouchCalendarSimpleEvents.js" type="text/javascript"></script>
+		<script src="../Ext.ux.TouchCalendarSimpleEvents/Ext.ux.TouchCalendarSimpleEvents.js" type="text/javascript"></script>
 		<link rel="stylesheet" type="text/css" href="../Ext.ux.SimpleCalendarSimpleEvents/resources/css/Ext.ux.TouchCalendarSimpleEvents.css" media="all"/>
 		
 		<script src="EventStore.js" type="text/javascript"></script>
@@ -21,10 +23,10 @@
 					
 					for(var i = 0; i < 200; i ++){
 						var mod = Ext.ModelMgr.create({
-					        event: 'Breaking Development 2011',
+					        event: 'Breaking Development 2012',
 					        location: 'Nashville',
-					        start: new Date(2011, 8, 12),
-					        end: new Date(2011, 8, 14)
+					        start: new Date(2012, 4, 23),
+					        end: new Date(2012, 4, 24)
 					    }, 'Event');
 						
 						eventStore.add(mod);
@@ -32,23 +34,26 @@
                     
                     var calendar = new Ext.ux.TouchCalendar({
                         fullscreen: true,
-                        dockedItems: [{
-                            xtype: 'toolbar',
-                            dock: 'top',
-                            items: [{
-                                xtype: 'button',
-                                text: 'Month View',
-                                handler: function(){
-                                    calendar.setMode('month');
-                                }
-                            }, {
-                                xtype: 'button',
-                                text: 'Week View',
-                                handler: function(){
-                                    calendar.setMode('week');
-                                }
-                            }]
-                        }],
+                        mode: 'month',
+                        items: [
+                            {
+                                xtype: 'toolbar',
+                                dock: 'top',
+                                items: [{
+                                    xtype: 'button',
+                                    text: 'Month View',
+                                    handler: function(){
+                                        calendar.setMode('month');
+                                    }
+                                }, {
+                                    xtype: 'button',
+                                    text: 'Week View',
+                                    handler: function(){
+                                        calendar.setMode('week');
+                                    }
+                                }]
+                            }
+                        ],
                         mode: 'month',
                         
                         enableSwipeNavigate: true,

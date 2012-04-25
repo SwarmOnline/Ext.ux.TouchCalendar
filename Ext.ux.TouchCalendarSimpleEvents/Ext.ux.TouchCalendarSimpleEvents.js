@@ -56,7 +56,8 @@
  * # Demo
  * [Ext.ux.CalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.CalendarSimpleEvents.html)
  */
-Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
+Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
+  extend: 'Ext.mixin.Observable',
 	
     /**
      * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
@@ -92,16 +93,15 @@ Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	dotWidth: 6,
 	
 	/**
-	 * @cfg {Ext.XTemplate} eventTpl Template used to create the Event markup. Template is merged with the records left
+	 * @cfg {String} eventTpl Template used to create the Event markup. Template is merged with the records left
 	 * following the filter
 	 * 
 	 */
-	eventTpl: new Ext.XTemplate(
-	'<span class="{wrapperCls}">',
+	eventTpl:	['<span class="{wrapperCls}">',
 		'<tpl for="events">',
 			'<span class="{[parent.eventDotCls]}"></span>',
 		'</tpl>',
-	'</span>'),
+	'</span>'].join(''),
 	
 	/**
 	 * Function used to filter the store for each of the displayed dates
@@ -112,6 +112,9 @@ Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 	 * @param {Object} currentDate - date we are currently dealing while looping Calendar's dateCollection property
 	 */
 	filterFn: function(record, id, currentDate){
+	  if (arguments.length===2){
+	    currentDate = id;
+	  }
 		var startDate = record.get(this.startEventField).clearTime(true).getTime(),
 			endDate = record.get(this.endEventField).clearTime(true).getTime(),
 			currentDate = currentDate.clearTime(true).getTime();
@@ -132,7 +135,7 @@ Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 		this.calendar.removeEvents = this.removeEvents;
 		
 		// After the calendar's height is synced with it's container we must refresh the events
-		this.calendar.syncHeight = Ext.createSequence(this.calendar.syncHeight, this.refreshEvents, this);
+		this.calendar.syncHeight = Ext.Function.createSequence(this.calendar.syncHeight, this.refreshEvents, this);
 	},
 
 	
@@ -148,7 +151,7 @@ Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 		if (!this.disabled) {
 			var datesStore = this.calendar.store;
 
-			if (datesStore && this.calendar.isVisible()) {
+			if (datesStore) {
 				
 				this.removeEvents(); // remove the event dots already existing
 				
@@ -161,9 +164,9 @@ Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 					
 					if (cell) {
 						store.clearFilter();
-
+						
 						// if we only want to show a single dot per day then use findBy for better performance
-						var matchIndex = store[this.multiEventDots ? 'filterBy' : 'findBy'](Ext.createDelegate(this.filterFn, this, [date], true));
+						var matchIndex = store[this.multiEventDots ? 'filterBy' : 'findBy'](Ext.bind(this.filterFn, this, [date], true));
 						var eventCount = store.getRange().length;
 						
 						if ((!this.multiEventDots && matchIndex > -1) || (this.multiEventDots && eventCount > 0)) {
@@ -171,7 +174,7 @@ Ext.ux.TouchCalendarSimpleEvents = Ext.extend(Ext.util.Observable, {
 							var maxDots = Math.min((cell.getWidth()/this.dotWidth), eventCount);
 							
 							// append the event markup
-							var t = this.eventTpl.append(cell, {
+							var t =  new Ext.XTemplate(this.eventTpl).append(cell, {
 								events: (this.multiEventDots ? store.getRange().slice(0, maxDots) : ['event']),
 								wrapperCls: this.wrapperCls,
 								eventDotCls: this.eventDotCls
