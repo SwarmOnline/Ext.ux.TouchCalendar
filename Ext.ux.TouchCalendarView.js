@@ -200,9 +200,11 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		
 		this.initModel();
 		
-        this.setStore(Ext.create('Ext.data.Store', {
-			model: 'TouchCalendarViewModel'
-		}));
+		var store = Ext.create('Ext.data.Store', {
+      model: 'TouchCalendarViewModel'
+    });
+		this.store = store;
+    this.setStore(store);
 
 		Ext.apply(this, config || {
 		});
@@ -264,7 +266,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @private
 	 */
 	initModel: function(){
-		if(!Ext.ModelManager.isRegistered('TouchCalendarViewModel'))
+		if(!Ext.ModelManager.isRegistered('TouchCalendarViewModel')) // TODO: Throws an error in opening Ext.ux.TouchCalendar.html example?? 
 		{
 			Ext.define('TouchCalendarViewModel', {
 				extend: 'Ext.data.Model',
