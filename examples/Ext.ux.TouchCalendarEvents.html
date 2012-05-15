@@ -36,9 +36,10 @@
                     
                     var calendarPanel = new Ext.Panel({
                     	fullscreen: true,
-                        dockedItems: [{
+                        layout: 'fit',
+                        items: [calendarView, {
                             xtype: 'toolbar',
-                            dock: 'top',
+                            docked: 'top',
                             items: [{
                                 xtype: 'button',
                                 text: 'Month View',
@@ -58,9 +59,7 @@
                                     calendarView.setViewMode('day');
                                 }
                             }]
-                        }],
-                        layout: 'fit',
-                        items: [calendarView]
+                        }]
                     })
                     
                     calendarView.on('eventtap', function(event){

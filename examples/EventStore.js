@@ -33,88 +33,88 @@ var eventStore = Ext.create('Ext.data.Store', {
     }, {
         event: 'TechCrunch Disrupt SF',
         location: 'San Francisco',
-        start: new Date(2012, 8, 12),
-        end: new Date(2012, 8, 14)
+        start: new Date(2012, 5, 12),
+        end: new Date(2012, 5, 14)
     }, {
         event: 'ATypl Reykjavik 2012',
         location: 'Reykjavik',
-        start: new Date(2012, 8, 14),
-        end: new Date(2012, 8, 18)
+        start: new Date(2012, 5, 14),
+        end: new Date(2012, 5, 18)
     }, {
         event: 'Do Wales 2012',
         location: 'Cardigan',
-        start: new Date(2012, 8, 14),
-        end: new Date(2012, 8, 18)
+        start: new Date(2012, 5, 14),
+        end: new Date(2012, 5, 18)
     }, {
         event: 'Future of Mobile',
         location: 'London',
-        start: new Date(2012, 8, 16),
-        end: new Date(2012, 8, 16)
+        start: new Date(2012, 5, 16),
+        end: new Date(2012, 5, 16)
     }, {
         event: 'WindyCityRails 2012',
         location: 'Chicago',
-        start: new Date(2012, 8, 17),
-        end: new Date(2012, 8, 17)
+        start: new Date(2012, 5, 17),
+        end: new Date(2012, 5, 17)
     }, {
         event: 'CapitoUS',
         location: 'Washington DC',
-        start: new Date(2012, 8, 18),
-        end: new Date(2012, 8, 18)
+        start: new Date(2012, 5, 18),
+        end: new Date(2012, 5, 18)
     }, {
         event: 'Strange Loop 2012',
         location: 'St Louis',
-        start: new Date(2012, 8, 18),
-        end: new Date(2012, 8, 20)
+        start: new Date(2012, 5, 18),
+        end: new Date(2012, 5, 20)
     }, {
         event: 'Frozen Rails 2012',
         location: 'Helsinki',
-        start: new Date(2012, 8, 20),
-        end: new Date(2012, 8, 21)
+        start: new Date(2012, 5, 20),
+        end: new Date(2012, 5, 21)
     }, {
         event: 'Web Accessibility',
         location: 'London',
-        start: new Date(2012, 8, 21),
-        end: new Date(2012, 8, 21)
+        start: new Date(2012, 5, 21),
+        end: new Date(2012, 5, 21)
     }, {
         event: 'onGameStart',
         location: 'Warsaw',
-        start: new Date(2012, 8, 22),
-        end: new Date(2012, 8, 23)
+        start: new Date(2012, 5, 22),
+        end: new Date(2012, 5, 23)
     }, {
         event: 'Improving Reality',
         location: 'Brighton',
-        start: new Date(2012, 8, 23),
-        end: new Date(2012, 8, 23)
+        start: new Date(2012, 5, 23),
+        end: new Date(2012, 5, 23)
     }, {
         event: 'Android Homecoming',
         location: 'Mountain View',
-        start: new Date(2012, 8, 23),
-        end: new Date(2012, 8, 25)
+        start: new Date(2012, 5, 23),
+        end: new Date(2012, 5, 25)
     }, {
         event: 'Mobilize',
         location: 'San Francisco',
-        start: new Date(2012, 8, 26),
-        end: new Date(2012, 8, 27)
+        start: new Date(2012, 5, 26),
+        end: new Date(2012, 5, 27)
     }, {
         event: 'Accessibility Summit',
         location: 'Online',
-        start: new Date(2012, 8, 27),
-        end: new Date(2012, 8, 27)
+        start: new Date(2012, 5, 27),
+        end: new Date(2012, 5, 27)
     }, {
         event: 'UX Web Summit',
         location: 'Online',
-        start: new Date(2012, 8, 28),
-        end: new Date(2012, 8, 28)
+        start: new Date(2012, 5, 28),
+        end: new Date(2012, 5, 28)
     }, {
         event: 'Modernizer with Faruk Ates',
         location: 'San Francisco',
-        start: new Date(2012, 8, 29),
-        end: new Date(2012, 8, 29)
+        start: new Date(2012, 5, 29),
+        end: new Date(2012, 5, 29)
     }, {
         event: 'Creative JavaScript and HTML5',
         location: 'Brighton',
-        start: new Date(2012, 8, 29),
-        end: new Date(2012, 8, 30)
+        start: new Date(2012, 5, 29),
+        end: new Date(2012, 5, 30)
     }, {
         event: 'UX Camp Brighton',
         location: 'Brighton',

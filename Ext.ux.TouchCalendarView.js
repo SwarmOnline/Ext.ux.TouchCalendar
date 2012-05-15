@@ -201,10 +201,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		this.initModel();
 		
 		var store = Ext.create('Ext.data.Store', {
-      model: 'TouchCalendarViewModel'
-    });
-		this.store = store;
-    this.setStore(store);
+	        model: 'TouchCalendarViewModel'
+	    });
+
+	    this.setStore(store);
 
 		Ext.apply(this, config || {
 		});
