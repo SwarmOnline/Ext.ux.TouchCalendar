@@ -28,13 +28,13 @@ var eventStore = Ext.create('Ext.data.Store', {
         event: 'Breaking Development 2012',
         location: 'Nashville',
         title: 'test',
-        start: new Date(2012, 4, 12),
-        end: new Date(2012, 4, 14)
+        start: new Date(2012, 4, 5),
+        end: new Date(2012, 4, 7)
     }, {
         event: 'TechCrunch Disrupt SF',
         location: 'San Francisco',
-        start: new Date(2012, 5, 12),
-        end: new Date(2012, 5, 14)
+        start: new Date(2012, 4, 12),
+        end: new Date(2012, 4, 14)
     }, {
         event: 'ATypl Reykjavik 2012',
         location: 'Reykjavik',

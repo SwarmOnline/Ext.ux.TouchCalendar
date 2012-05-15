@@ -69,7 +69,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
   /**
    * @cfg {Boolean} allowEventDragAndDrop Decides whether the Event Bars can be dragged and dropped
    */
-  allowEventDragAndDrop: true,
+  allowEventDragAndDrop: false,
   
     /**
      * @cfg {Number} eventBarSpacing Space (in pixels) between EventBars
@@ -394,9 +394,9 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     
         store.each(function(record){
             var eventRecord = this.getEventRecord(record.get('EventID')),
-        dayEl = this.calendar.getDateCell(record.get('Date')),
-        doesWrap = this.eventBarDoesWrap(record),
-        hasWrapped = this.eventBarHasWrapped(record);
+		        dayEl = this.calendar.getDateCell(record.get('Date')),
+		        doesWrap = this.eventBarDoesWrap(record),
+		        hasWrapped = this.eventBarHasWrapped(record);
             
             // create the event bar
             var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
@@ -409,55 +409,67 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
                 cls: this.eventBarCls + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
             }, true);
       
-      if (this.allowEventDragAndDrop) {
-      
-        new Ext.util.Draggable(eventBar, {
-          revert: true,
-          
-          /**
-           * Override for Ext.util.Draggable's onStart method to process the Event Bar's element before dragging
-           * and raise the 'eventdragstart' event
-           * @method
-           * @private
-           * @param {Event} e
-           */
-          onStart: function(e){
-          
-            var draggable = this, eventID = draggable.el.getAttribute('eventID'), eventRecord = me.getEventRecord(eventID), eventBarRecord = me.getEventBarRecord(eventID);
-            
-            // Resize dragged Event Bar so it is 1 cell wide
-            draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
-            // Reposition dragged Event Bar so it is in the middle of the User's finger.
-            draggable.el.setLeft(e.startX - (draggable.el.getWidth() / 2));
-            
-            // hide all linked Event Bars
-            me.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
-              if (eventBar.dom !== draggable.el.dom) {
-                eventBar.hide();
-              }
-            }, this);
-            
-            Ext.util.Draggable.prototype.onStart.apply(this, arguments);
-            
-            me.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
-            
-            return true;
-          }
-        });
-      }
-            
+			if (this.allowEventDragAndDrop) {
+
+				new Ext.util.Draggable(eventBar, {
+					revert: true,
+
+					/**
+					* Override for Ext.util.Draggable's onStart method to process the Event Bar's element before dragging
+					* and raise the 'eventdragstart' event
+					* @method
+					* @private
+					* @param {Event} e
+					*/
+					onStart: function(e){
+
+						var draggable = this, eventID = draggable.el.getAttribute('eventID'), eventRecord = me.getEventRecord(eventID), eventBarRecord = me.getEventBarRecord(eventID);
+
+						// Resize dragged Event Bar so it is 1 cell wide
+						draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
+						// Reposition dragged Event Bar so it is in the middle of the User's finger.
+						draggable.el.setLeft(e.startX - (draggable.el.getWidth() / 2));
+
+						// hide all linked Event Bars
+						me.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
+						if (eventBar.dom !== draggable.el.dom) {
+						eventBar.hide();
+						}
+						}, this);
+
+						Ext.util.Draggable.prototype.onStart.apply(this, arguments);
+
+						me.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
+
+						return true;
+					}
+				});
+			}
+
+
+	        var headerHeight = this.calendar.element.select('thead').first().getHeight();
+	        var bodyHeight = this.calendar.element.select('tbody').first().getHeight();
+	        var rowCount = this.calendar.element.select('tbody tr').getCount();
+	        var rowHeight = bodyHeight/rowCount;
+
+	        var dateIndex = this.calendar.getStore().findBy(function(dateRec){
+		        return dateRec.get('date').getTime() === Ext.Date.clearTime(record.get('Date'), true).getTime();
+	        }, this);
+
+	        var rowIndex = Math.floor(dateIndex / 7) + 1;
+
+	        var eventY = headerHeight + (rowHeight * rowIndex);
+
             var barPosition = record.get('BarPosition'),
-        barLength = record.get('BarLength'),
-        dayCellX = dayEl.getX(),
-        dayCellY = dayEl.getY(),
-        dayCellHeight = dayEl.getHeight(),
-        dayCellWidth = dayEl.getWidth(),
-              eventBarHeight = eventBar.getHeight(),            
-              spacing = this.eventBarSpacing;
+		        barLength = record.get('BarLength'),
+		        dayCellX = (this.calendar.element.getWidth() / 7) * dayEl.dom.cellIndex,
+		        dayCellWidth = dayEl.getWidth(),
+				eventBarHeight = eventBar.getHeight(),
+				spacing = this.eventBarSpacing;
 
             // set sizes and positions
             eventBar.setLeft(dayCellX + (hasWrapped ? 0 : spacing));
-            eventBar.setTop((((dayCellY - this.calendar.element.getY()) + dayCellHeight) - eventBarHeight) - ((barPosition * eventBarHeight + (barPosition * spacing) + spacing)));
+            eventBar.setTop(eventY - eventBarHeight - (barPosition * eventBarHeight + (barPosition * spacing) + spacing));
             eventBar.setWidth((dayCellWidth * barLength) - (spacing * (doesWrap ? (doesWrap && hasWrapped ? 0 : 1) : 2)));
             
             if (record.linked().getCount() > 0) {
