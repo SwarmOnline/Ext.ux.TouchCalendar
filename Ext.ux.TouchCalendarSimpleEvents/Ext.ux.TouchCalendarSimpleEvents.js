@@ -224,7 +224,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	 */
 	removeEvents: function(){
 		if(this.calendar.element){
-			this.calendar.element.select('span.' + this.wrapperCls).destroy();
+			this.calendar.element.select('span.' + this.wrapperCls).remove();
 		}
 	}	
 });
