@@ -20,16 +20,7 @@
             Ext.setup({
                 onReady: function(){
 					
-					for(var i = 0; i < 200; i ++){
-						var mod = Ext.ModelMgr.create({
-					        event: 'Breaking Development 2011',
-					        location: 'Nashville',
-					        start: new Date(2012, 4, 12),
-					        end: new Date(2012, 4, 14)
-					    }, 'Event');
-						
-						eventStore.add(mod);
-					}
+
                     
                     var calendarView = new Ext.ux.TouchCalendarView({
                         viewMode: 'month',
@@ -40,31 +31,30 @@
                     
                     var calendarPanel = new Ext.Panel({
                         fullscreen: true,
-                        dockedItems: [{
-                            xtype: 'toolbar',
-                            dock: 'top',
-                            items: [{
-	                            xtype: 'button',
-	                            text: 'Month View',
-	                            handler: function(){
-	                                calendarView.setViewMode('month');
-	                            }
-	                        }, {
-	                            xtype: 'button',
-	                            text: 'Week View',
-	                            handler: function(){
-	                                calendarView.setViewMode('week');
-	                            }
-	                        }, {
-	                            xtype: 'button',
-	                            text: 'Day View',
-	                            handler: function(){
-	                                calendarView.setViewMode('day');
-	                            }
-	                        }]
-                        }],
                         layout: 'fit',
-                        items: [calendarView]
+                        items: [calendarView, {
+                            xtype: 'toolbar',
+                            docked: 'top',
+                            items: [{
+                                xtype: 'button',
+                                text: 'Month View',
+                                handler: function(){
+                                    calendarView.setViewMode('month');
+                                }
+                            }, {
+                                xtype: 'button',
+                                text: 'Week View',
+                                handler: function(){
+                                    calendarView.setViewMode('week');
+                                }
+                            }, {
+                                xtype: 'button',
+                                text: 'Day View',
+                                handler: function(){
+                                    calendarView.setViewMode('day');
+                                }
+                            }]
+                        }]
                 	});
 					
                 }

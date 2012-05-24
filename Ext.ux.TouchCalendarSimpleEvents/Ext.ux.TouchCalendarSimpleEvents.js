@@ -134,7 +134,8 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 		this.calendar.hideEvents = this.hideEvents;
 		this.calendar.removeEvents = this.removeEvents;
 		
-		// After the calendar's height is synced with it's container we must refresh the events
+		// After the calendar's refreshed we must refresh the events
+		this.calendar.refresh = Ext.Function.createSequence(this.calendar.refresh, this.refreshEvents, this);
 		this.calendar.syncHeight = Ext.Function.createSequence(this.calendar.syncHeight, this.refreshEvents, this);
 	},
 
@@ -149,7 +150,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	 */
 	refreshEvents: function(){
 		if (!this.disabled) {
-			var datesStore = this.calendar.store;
+			var datesStore = this.calendar.getStore();
 
 			if (datesStore) {
 				
@@ -200,7 +201,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	hideEvents: function(){
 		this.simpleEventsPlugin.disabled = true;
 		
-		this.calendar.el.select('span.' + this.wrapperCls).hide();
+		this.calendar.element.select('span.' + this.wrapperCls).hide();
 	},
 	
 	/**
@@ -212,7 +213,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	showEvents: function(){
 		this.simpleEventsPlugin.disabled = false;
 		
-		this.calendar.el.select('span.' + this.wrapperCls).show();
+		this.calendar.element.select('span.' + this.wrapperCls).show();
 	},
 	
 	/**
@@ -222,8 +223,8 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	 * @return {void}
 	 */
 	removeEvents: function(){
-		if(this.calendar.el){
-			this.calendar.el.select('span.' + this.wrapperCls).remove();
+		if(this.calendar.element){
+			this.calendar.element.select('span.' + this.wrapperCls).destroy();
 		}
 	}	
 });
