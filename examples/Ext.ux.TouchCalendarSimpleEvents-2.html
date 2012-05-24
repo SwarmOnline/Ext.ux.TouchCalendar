@@ -20,17 +20,7 @@
             
             Ext.setup({
                 onReady: function(){
-					
-					for(var i = 0; i < 200; i ++){
-						var mod = Ext.ModelMgr.create({
-					        event: 'Breaking Development 2012',
-					        location: 'Nashville',
-					        start: new Date(2012, 4, 23),
-					        end: new Date(2012, 4, 24)
-					    }, 'Event');
-						
-						eventStore.add(mod);
-					}
+
                     
                     var calendar = new Ext.ux.TouchCalendar({
                         fullscreen: true,
@@ -38,7 +28,7 @@
                         items: [
                             {
                                 xtype: 'toolbar',
-                                dock: 'top',
+                                docked: 'top',
                                 items: [{
                                     xtype: 'button',
                                     text: 'Month View',
