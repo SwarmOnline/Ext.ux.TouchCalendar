@@ -241,13 +241,13 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	initialize: function() {
 
 		this.element.on({
-			click: this.onTableHeaderTap,
+			tap: this.onTableHeaderTap,
 			scope: this,
 			delegate: 'th'
 		});
 
         this.element.on({
-            click: this.onTimeSlotTap,
+            tap: this.onTimeSlotTap,
             scope: this,
             delegate: this.getItemSelector()
         });

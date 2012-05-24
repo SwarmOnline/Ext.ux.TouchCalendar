@@ -543,7 +543,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
                 cls: this.eventWrapperCls
             }, true);
             
-            this.calendar.on(this.eventWrapperEl, 'click', this.onEventWrapperTap, this, {
+            this.eventWrapperEl.on('tap', this.onEventWrapperTap, this, {
                 delegate: 'div.' + this.eventBarCls
             });
             this.renderEventBars(this.eventBarStore);
@@ -567,16 +567,16 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
             var eventRecord = this.getEventRecord(node.attributes['eventID'].value);
             
             this.deselectEvents();
-            
+
             this.eventWrapperEl.select('div.' + eventRecord.internalId).addCls(this.eventBarSelectedCls);
             
             this.calendar.fireEvent('eventtap', eventRecord, e);
         }
     },
   
-  getEventsWrapperContainer: function(){
-    return this.calendar.element.select('thead th').first() || this.calendar.element.select('tr td').first();
-  },
+	getEventsWrapperContainer: function(){
+		return this.calendar.element.select('thead th').first() || this.calendar.element.select('tr td').first();
+	},
     
     /**
      * Returns the first index number that isn't in the specified array
@@ -651,7 +651,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     removeEvents: function(){
         if (this.eventWrapperEl) {
             this.eventWrapperEl.dom.innerHTML = '';
-            this.eventWrapperEl.remove();
+            this.eventWrapperEl.destroy();
             this.eventWrapperEl = null;
         }
         
