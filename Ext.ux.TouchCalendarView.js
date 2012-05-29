@@ -492,7 +492,11 @@ Ext.define('Ext.ux.TouchCalendarView', {
    	 */
    	syncHeight: function(){
         if (this.getViewMode().toUpperCase() !== 'DAY') {
-   			this.element.select('table').first().setHeight(this.element.getHeight());
+   			var tableEl = this.element.select('table').first();
+
+            if(tableEl){
+                tableEl.setHeight(this.element.getHeight());
+            }
    		}
    	},
 

@@ -120,7 +120,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 		var scale = (this.mode === 'WEEK' ? 'DAY' : this.mode.toUpperCase()),
 		  number = (this.mode === 'WEEK' ? (8 * i) : i);
 
-		return date.add(Date[scale], number)
+		return Ext.Date.add(date, Ext.Date[scale], number)
 	},
 
 	/**
@@ -131,7 +131,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 	 */
 	initViews: function(){
 		var items = [];
-		var origCurrentDate = this.viewConfig.currentDate.clone(),
+		var origCurrentDate = Ext.Date.clone(this.viewConfig.currentDate),
 		  i = (this.enableSwipeNavigate ? -1 : 0),
 		  iMax = (this.enableSwipeNavigate ? 1 : 0),
 		  plugins = [];
@@ -213,15 +213,6 @@ Ext.define('Ext.ux.TouchCalendar',{
 	},
 
 	/**
-	* Override of the Ext.Carousel's afterRender method to enable/disable the swipe navigation if the enableSwipeNavigate option is set to true/false.
-	*/
-	/*afterRender: function() {
-	    Ext.Carousel.superclass.afterRender.call(this);
-
-
-	},*/
-
-	/**
 	 * Override of the onCardSwitch method which adds a new card to the end/beginning of the carousel depending on the direction configured with the next period's
 	 * dates.
 	 * @method
@@ -236,12 +227,12 @@ Ext.define('Ext.ux.TouchCalendar',{
 
 			if (direction === 'forward') {
 				this.remove(items.get(0));
-				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], 1)));
+				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(Ext.Date.add(newCard.currentDate, Ext.Date[this.mode], 1)));
 				this.add(newCalendar);
 			}
 			else {
 				this.remove(items.get(items.getCount() - 1));
-				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], -1)));
+				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(Ext.Date.add(newCard.currentDate, Ext.Date[this.mode], -1)));
 				this.insert(0, newCalendar);
 			}
 
