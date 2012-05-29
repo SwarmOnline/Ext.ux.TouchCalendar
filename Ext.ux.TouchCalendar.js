@@ -1,6 +1,6 @@
 /**
- * @copyright     (c) 2011, by SwarmOnline.com
- * @date          2nd November 2011
+ * @copyright     (c) 2012, by SwarmOnline.com
+ * @date          29th May 2012
  * @version       0.1
  * @documentation  
  * @website        http://www.swarmonline.com
@@ -8,6 +8,8 @@
 /**
  * @class Ext.ux.TouchCalendar
  * @author Stuart Ashworth
+ *
+ * For use with Sencha Touch 2
  * 
  * This extension wraps the Ext.ux.TouchCalendarView in a Ext.Carousel component and allows the calendar to respond to swipe
  * gestures to switch the displayed period. It works by creating 3 Ext.ux.TouchCalendarViews and dynamically creating/removing
@@ -18,7 +20,6 @@
  * [Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
  * 
  */
-//Ext.ux.TouchCalendar = Ext.extend(Ext.carousel.Carousel, {
 Ext.define('Ext.ux.TouchCalendar',{
 	extend: 'Ext.carousel.Carousel',
 

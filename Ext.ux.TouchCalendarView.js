@@ -1,4 +1,17 @@
-
+/**
+ * @copyright     (c) 2012, by SwarmOnline.com
+ * @date          29th May 2012
+ * @version       0.1
+ * @documentation
+ * @website        http://www.swarmonline.com
+ */
+/**
+ * @class Ext.ux.TouchCalendarView
+ * @author Stuart Ashworth
+ *
+ * For use with Sencha Touch 2
+ *
+ */
 Ext.define('Ext.ux.TouchCalendarView', {
 	
 	extend: 'Ext.Container',

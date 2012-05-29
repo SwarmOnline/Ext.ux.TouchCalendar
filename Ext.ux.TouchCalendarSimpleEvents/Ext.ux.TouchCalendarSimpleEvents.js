@@ -1,13 +1,15 @@
 /**
- * @copyright 		(c) 2011, by SwarmOnline.com
- * @date      		2nd November 2011
- * @version   		0.1
- * @documentation	
- * @website	  		http://www.swarmonline.com
+ * @copyright     (c) 2012, by SwarmOnline.com
+ * @date          29th May 2012
+ * @version       0.1
+ * @documentation
+ * @website        http://www.swarmonline.com
  */
 /**
  * @class Ext.ux.TouchCalendarSimpleEvents
  * @author Stuart Ashworth
+ *
+ * For use with Sencha Touch 2
  *
  * This plugin can be added to an Ext.ux.TouchCalendarView instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
  * does with a dot added to each day to represent the presence of an event.

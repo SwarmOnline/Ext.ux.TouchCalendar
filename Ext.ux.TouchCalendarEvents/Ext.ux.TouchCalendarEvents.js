@@ -1,6 +1,6 @@
 /**
- * @copyright     (c) 2011, by SwarmOnline.com
- * @date          2nd November 2011
+ * @copyright     (c) 2012, by SwarmOnline.com
+ * @date          29th May 2012
  * @version       0.1
  * @documentation  
  * @website        http://www.swarmonline.com
@@ -8,6 +8,8 @@
 /**
  * @class Ext.ux.TouchCalendarEvents
  * @author Stuart Ashworth
+ *
+ * For use with Sencha Touch 2
  * 
  * This plugin also allows a store to be bound to the Ext.ux.TouchCalendar and will display the store's events as bars spanning its relevant days. 
  * 
