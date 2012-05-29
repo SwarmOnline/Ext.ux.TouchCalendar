@@ -225,7 +225,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
         /**
          * @event selectionchange Fires when the Calendar's selected date is changed
          * @param {Ext.ux.TouchCalendarView} this
-         * @param {Array[Ext.ux.TouchCalendarViewModel]} selectedDates An array of the selected date records
+         * @param {Date} newDate The new selected date
+         * @param {Date} oldDate The previously selected date
          */
 
         /**
