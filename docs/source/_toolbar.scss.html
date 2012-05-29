@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">@import '../global';
+
+<span id='Ext-Toolbar'>/**
+</span> * @class Ext.Toolbar
+ */
+
+<span id='Ext-Toolbar-css_var-S-toolbar-base-color'>/**
+</span> * @var {color} $toolbar-base-color
+ * The primary color variable from which toolbars derive their light and dark UIs.
+ */
+$toolbar-base-color: $base-color !default;
+
+<span id='Ext-Toolbar-css_var-S-toolbar-spacing'>/**
+</span> * @var {measurement} $toolbar-spacing
+ * Space between items in a toolbar (like buttons and fields)
+ */
+$toolbar-spacing: .2em !default;
+
+<span id='Ext-Toolbar-css_var-S-toolbar-gradient'>/**
+</span> * @var {string} $toolbar-gradient
+ * Background gradient style for toolbars.
+ */
+$toolbar-gradient: $base-gradient !default;
+
+<span id='Ext-Toolbar-css_var-S-include-toolbar-uis'>/**
+</span> * @var {boolean} $include-toolbar-uis
+ * Optionally disable separate toolbar UIs (light and dark).
+ */
+$include-toolbar-uis: $include-default-uis !default;
+
+<span id='Ext-Toolbar-css_mixin-sencha-toolbar'>/**
+</span> * Includes default toolbar styles.
+ */
+@mixin sencha-toolbar {
+
+  .x-toolbar {
+    padding: 0 $toolbar-spacing;
+    overflow: hidden;
+    position: relative;
+    height: $global-row-height;
+
+    &amp; &gt; * {
+      z-index: 1;
+    }
+
+    &amp;.x-docked-top {
+      border-bottom: .1em solid;
+    }
+
+    &amp;.x-docked-bottom {
+      border-top: .1em solid;
+    }
+
+    &amp;.x-docked-left {
+      width: 7em;
+      height: auto;
+      padding: $toolbar-spacing;
+      border-right: .1em solid;
+    }
+
+    &amp;.x-docked-right {
+      width: 7em;
+      height: auto;
+      padding: $toolbar-spacing;
+      border-left: .1em solid;
+    }
+  }
+
+  .x-title {
+    line-height: $global-row-height - .5em;
+    font-size: 1.2em;
+    text-align: center;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 0.3em;
+    max-width: 100%;
+
+    .x-innerhtml {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 .3em;
+    }
+  }
+
+  @if $include-toolbar-uis {
+    @include sencha-toolbar-ui('dark', darken($toolbar-base-color, 10%));
+    @include sencha-toolbar-ui('light', $toolbar-base-color);
+    @include sencha-toolbar-ui('neutral', $neutral-color);
+  }
+
+  .x-navigation-bar {
+    .x-container {
+      overflow: visible;
+    }
+  }
+}
+
+<span id='Ext-Toolbar-css_mixin-sencha-toolbar-ui'>/**
+</span> * Creates a theme UI for toolbars.
+ *
+ *     // SCSS
+ *     @include sencha-toolbar-ui('sub', #58710D, 'glossy');
+ *
+ *     // JS
+ *     var myTb = new Ext.Toolbar({title: 'My Green Glossy Toolbar', ui: 'sub'})
+ *
+ * @param {string} $ui-label The name of the UI being created.
+ *   Can not included spaces or special punctuation (used in class names)
+ * @param {color} $color Base color for the UI.
+ * @param {string} $gradient: $toolbar-gradien Background gradient style for the UI.
+ */
+@mixin sencha-toolbar-ui($ui-label, $color, $gradient: $toolbar-gradient) {
+
+  $toolbar-border-color: darken($color, 50%);
+  $toolbar-button-color: darken($color, 5%);
+
+  .x-toolbar-#{$ui-label} {
+    @include background-gradient($color, $gradient);
+    border-color: $toolbar-border-color;
+
+    .x-title {
+      @include color-by-background($color);
+      @include bevel-by-background($color);
+    }
+
+    &amp;.x-docked-top {
+      border-bottom-color: $toolbar-border-color;
+    }
+
+    &amp;.x-docked-bottom {
+      border-top-color: $toolbar-border-color;
+    }
+
+    &amp;.x-docked-left {
+      border-right-color: $toolbar-border-color;
+    }
+
+    &amp;.x-docked-right {
+      border-left-color: $toolbar-border-color;
+    }
+
+    .x-button,
+    .x-field-select .x-component-outer,
+    .x-field-select .x-component-outer:before {
+      @include toolbar-button($toolbar-button-color, $gradient);
+    }
+
+    .x-form-label {
+      @include color-by-background($color);
+      @include bevel-by-background($color);
+    }
+  }
+}
+</pre>
+</body>
+</html>

@@ -19,15 +19,17 @@
  * Ext.ux.TouchCalendarEvents
  */
 <span id='global-property-'>/**
-</span> * @copyright 		(c) 2011, by SwarmOnline.com
- * @date      		2nd November 2011
- * @version   		0.1
- * @documentation	
- * @website	  		http://www.swarmonline.com
+</span> * @copyright     (c) 2012, by SwarmOnline.com
+ * @date          29th May 2012
+ * @version       0.1
+ * @documentation  
+ * @website        http://www.swarmonline.com
  */
 <span id='Ext-ux-TouchCalendar'>/**
 </span> * @class Ext.ux.TouchCalendar
  * @author Stuart Ashworth
+ *
+ * For use with Sencha Touch 2
  * 
  * This extension wraps the Ext.ux.TouchCalendarView in a Ext.Carousel component and allows the calendar to respond to swipe
  * gestures to switch the displayed period. It works by creating 3 Ext.ux.TouchCalendarViews and dynamically creating/removing
@@ -38,243 +40,241 @@
  * [Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
  * 
  */
-Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
+Ext.define('Ext.ux.TouchCalendar',{
+	extend: 'Ext.carousel.Carousel',
+
+	xtype: 'calendar',
+
 <span id='Ext-ux-TouchCalendar-cfg-enableSwipeNavigate'>	/**
-</span>	 * @cfg {Boolean} enableSwipeNavigate True to allow the calendar's period to be change by swiping across it.
-	 */
+</span>	* @cfg {Boolean} enableSwipeNavigate True to allow the calendar's period to be change by swiping across it.
+	*/
 	enableSwipeNavigate: true,
-	
+
 <span id='Ext-ux-TouchCalendar-cfg-enableSimpleEvents'>	/**
-</span>	 * @cfg {Boolean} enableSimpleEvents True to enable the Ext.ux.TouchCalendarSimpleEvents plugin. When true the Ext.ux.TouchCalendarSimpleEvents JS and CSS files
-	 * must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
-	 */
+</span>	* @cfg {Boolean} enableSimpleEvents True to enable the Ext.ux.TouchCalendarSimpleEvents plugin. When true the Ext.ux.TouchCalendarSimpleEvents JS and CSS files
+	* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
+	*/
 	enableSimpleEvents: false,
-	
+
 <span id='Ext-ux-TouchCalendar-cfg-enableEventBars'>	/**
-</span>	 * @cfg {Boolean} enableEventBars True to enable the Ext.ux.TouchCalendarEvents plugin. When true the Ext.ux.TouchCalendarEvents JS and CSS files
-	 * must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
-	 */
+</span>	* @cfg {Boolean} enableEventBars True to enable the Ext.ux.TouchCalendarEvents plugin. When true the Ext.ux.TouchCalendarEvents JS and CSS files
+	* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
+	*/
 	enableEventBars: false,
-	
+
 <span id='Ext-ux-TouchCalendar-cfg-viewConfig'>	/**
-</span>	 * @cfg {Object} viewConfig A set of configuration options that will be applied to the TouchCalendarView component 
-	 */
+</span>	* @cfg {Object} viewConfig A set of configuration options that will be applied to the TouchCalendarView component
+	*/
 	viewConfig: {
-		
+
 	},
-	
+
 	defaultViewConfig: {
-		mode: 'MONTH',
-        weekStart: 1,
-        bubbleEvents: ['selectionchange']
+		viewMode: 'MONTH',
+		weekStart: 1,
+		bubbleEvents: ['selectionchange']
 	},
-	
 	indicator: false,
-	
-    initComponent: function(){
-				
+
+	initialize: function(){
+
 		this.viewConfig = Ext.applyIf(this.viewConfig || {}, this.defaultViewConfig);
-		
+
 		this.viewConfig.currentDate = this.viewConfig.currentDate || this.viewConfig.value || new Date();
-		
-		this.mode = this.viewConfig.mode.toUpperCase();
-	
+
+		this.viewMode = this.viewConfig.viewMode.toUpperCase();
+
 		this.initViews();
-	
-        Ext.apply(this, {
+
+		Ext.apply(this, {
 			cls: 'touch-calendar',
-            activeItem: (this.enableSwipeNavigate ? 1: 0),
-            direction: 'horizontal'      
-        });
-        
-        Ext.ux.TouchCalendar.superclass.initComponent.call(this);
-        
-        this.on('selectionchange', this.onSelectionChange);
-    },
-    
-<span id='Ext-ux-TouchCalendar-method-getViewConfig'>    /**
-</span>     * Builds the necessary configuration object for the creation of the TouchCalendarView.
-     * @param {Date} viewValue The date Value that the new TouchCalendarView will have
-     * @method
-     * @private 
-     * @return {Object} The new config object for the view
-     */
-    getViewConfig: function(viewValue){
-		var plugins = [];
-		
-		if(this.enableSimpleEvents){
-			plugins.push(new Ext.ux.TouchCalendarSimpleEvents());				
-		} else if (this.enableEventBars){
-			plugins.push(new Ext.ux.TouchCalendarEvents());				
-		}
-
-    	Ext.apply(this.viewConfig, {
-			plugins: plugins,
-			currentDate: viewValue,
-			onTableHeaderTap: Ext.createDelegate(this.onTableHeaderTap, this)
+			activeItem: (this.enableSwipeNavigate ? 1: 0),
+			direction: 'horizontal'
 		});
-    	
-    	return this.viewConfig;    	
-    },
-    
-    getViewDate: function(date, i){
-    	var scale = (this.mode === 'WEEK' ? 'DAY' : this.mode.toUpperCase()),
-    		number = (this.mode === 'WEEK' ? (8 * i) : i);
-    	
-    	return date.add(Date[scale], number)
-    },
-	
-<span id='Ext-ux-TouchCalendar-method-initViews'>    /**
-</span>     * Creates all the TouchCalendarView instances needed for the Calendar
-     * @method
-     * @private
-     * @return {void}
-     */
-	initViews: function(){
-		this.items = [];
-		var origCurrentDate = this.viewConfig.currentDate.clone(),
-			i = (this.enableSwipeNavigate ? -1 : 0),
-			iMax = (this.enableSwipeNavigate ? 1 : 0),
-			plugins = [];
-		
-		// first out of view
-		var viewValue = this.getViewDate(origCurrentDate, -1);
-		this.items.push(
-				new Ext.ux.TouchCalendarView(Ext.applyIf({
-						currentDate: viewValue
-					}, this.getViewConfig(viewValue)))
-		);
-		
-		// active view
-		this.items.push(
-				new Ext.ux.TouchCalendarView(this.getViewConfig(origCurrentDate))
-		);
-		
-		// second out of view (i.e. third)
-		viewValue = this.getViewDate(origCurrentDate, 1);
-		this.items.push(
-				new Ext.ux.TouchCalendarView(Ext.applyIf({
-						currentDate: viewValue
-					}, this.getViewConfig(viewValue)))
-		);
 
-		this.view = this.items[(this.enableSwipeNavigate ? 1: 0)];
-	},
-	
-<span id='Ext-ux-TouchCalendar-method-onTableHeaderTap'>	/**
-</span>	 * Override for the TouchCalendarView's onTableHeaderTap method which is executed when the view's header (specificly the arrows) is tapped.
-	 * When using the TouchCalendar wrapper we must intercept it and use the carousel's prev/next methods to do the switching.
-	 */
-	onTableHeaderTap: function(e, el){
-		el = Ext.fly(el);		
+		this.setIndicator(false); // for some reason, indicator: false is not being applied unless explicitly set.
+		this.setActiveItem(1); // for some reason, activeItem: 1 is not being applied unless explicitly set.
 
-		if (el.hasCls(this.view.prevPeriodCls) || el.hasCls(this.view.nextPeriodCls)) {
-			this[(el.hasCls(this.view.prevPeriodCls) ? 'prev' : 'next')]();
-		}
-	},
-	
-<span id='Ext-ux-TouchCalendar-method-setMode'>	/**
-</span>	 * Changes the mode of the calendar to the specified string's value. Possible values are 'month', 'week' and 'day'.
-	 * @method
-	 * @returns {void}
-	 */
-	setMode: function(mode){
-		this.mode = mode.toUpperCase();
-		this.viewConfig.mode = this.mode;
-		
-		this.items.each(function(view, index){
-			
-			view.currentDate = this.getViewDate(this.view.currentDate.clone(), index-1);
-			
-			view.setMode(mode, true);
-			view.refresh();
-		}, this);
-	},
-	
-<span id='Ext-ux-TouchCalendar-method-getValue'>	/**
-</span>	 * Returns the Date that is selected.
-	 * @method
-	 * @returns {Date} The selected date
-	 */
-	getValue: function(){
-		var selectedDates = this.view.getSelectionModel().selected;
-
-		return (selectedDates.getCount() &gt; 0) ? selectedDates.first().get('date') : null;
-	},
-	
-<span id='Ext-ux-TouchCalendar-method-setValue'>	/**
-</span>	 * Set selected date.
-	 * @method
-	 * @param {Date} v Date to select.
-	 * @return {void}
-	 */
-	setValue: function(v) {
-		this.view.setValue(v)
-	},
-	
-<span id='Ext-ux-TouchCalendar-method-afterRender'>	/**
-</span>	 * Override of the Ext.Carousel's afterRender method to enable/disable the swipe navigation if the enableSwipeNavigate option is set to true/false.
-	 */
-	afterRender: function() {
-        Ext.Carousel.superclass.afterRender.call(this);
+		this.on('selectionchange', this.onSelectionChange);
+		this.on('activeitemchange', this.onActiveItemChange);
 
 		if (this.enableSwipeNavigate) {
 			// Bind the required listeners
-			this.mon(this.body, {
+			this.on(this.element, {
 				drag: this.onDrag,
 				dragThreshold: 5,
 				dragend: this.onDragEnd,
 				direction: this.direction,
 				scope: this
 			});
-			
-			this.el.addCls(this.baseCls + '-' + this.direction);
+
+			this.element.addCls(this.baseCls + '-' + this.direction);
 		}
-    },
-	
-<span id='Ext-ux-TouchCalendar-method-onCardSwitch'>    /**
-</span>     * Override of the onCardSwitch method which adds a new card to the end/beginning of the carousel depending on the direction configured with the next period's
-     * dates.
-     * @method
-     * @private
-     */
-	onCardSwitch: function(newCard, oldCard, index, animated){
-		
+	},
+
+<span id='Ext-ux-TouchCalendar-method-getViewConfig'>	/**
+</span>	* Builds the necessary configuration object for the creation of the TouchCalendarView.
+	* @param {Date} viewValue The date Value that the new TouchCalendarView will have
+	* @method
+	* @private
+	* @return {Object} The new config object for the view
+	*/
+	getViewConfig: function(viewValue){
+		var plugins = [];
+
+		if(this.enableSimpleEvents){
+			plugins.push(new Ext.ux.TouchCalendarSimpleEvents());
+		} else if (this.enableEventBars){
+			plugins.push(new Ext.ux.TouchCalendarEvents());
+		}
+
+		Ext.apply(this.viewConfig, {
+			plugins: plugins,
+			currentDate: viewValue,
+			onTableHeaderTap: Ext.bind(this.onTableHeaderTap, this)
+		});
+
+		return this.viewConfig;
+	},
+
+	getViewDate: function(date, i){
+		var scale = (this.viewMode === 'WEEK' ? 'DAY' : this.viewMode.toUpperCase()),
+		  number = (this.viewMode === 'WEEK' ? (8 * i) : i);
+
+		return Ext.Date.add(date, Ext.Date[scale], number)
+	},
+
+<span id='Ext-ux-TouchCalendar-method-initViews'>	/**
+</span>	 * Creates all the TouchCalendarView instances needed for the Calendar
+	 * @method
+	 * @private
+	 * @return {void}
+	 */
+	initViews: function(){
+		var items = [];
+		var origCurrentDate = Ext.Date.clone(this.viewConfig.currentDate),
+		  i = (this.enableSwipeNavigate ? -1 : 0),
+		  iMax = (this.enableSwipeNavigate ? 1 : 0),
+		  plugins = [];
+
+		// first out of view
+		var viewValue = this.getViewDate(origCurrentDate, -1);
+		items.push(
+		    new Ext.ux.TouchCalendarView(Ext.applyIf({
+		        currentDate: viewValue
+		      }, this.getViewConfig(viewValue)))
+		);
+
+		// active view
+		items.push(
+		    new Ext.ux.TouchCalendarView(this.getViewConfig(origCurrentDate))
+		);
+
+		// second out of view (i.e. third)
+		viewValue = this.getViewDate(origCurrentDate, 1);
+		items.push(
+		    new Ext.ux.TouchCalendarView(Ext.applyIf({
+		        currentDate: viewValue
+		    }, this.getViewConfig(viewValue)))
+		);
+
+		this.setItems(items);
+		this.view = items[(this.enableSwipeNavigate ? 1: 0)];
+	},
+
+<span id='Ext-ux-TouchCalendar-method-onTableHeaderTap'>	/**
+</span>	* Override for the TouchCalendarView's onTableHeaderTap method which is executed when the view's header (specificly the arrows) is tapped.
+	* When using the TouchCalendar wrapper we must intercept it and use the carousel's prev/next methods to do the switching.
+	*/
+	onTableHeaderTap: function(e, el){
+		el = Ext.fly(el);
+
+		if (el.hasCls(this.view.prevPeriodCls) || el.hasCls(this.view.nextPeriodCls)) {
+			this[(el.hasCls(this.view.prevPeriodCls) ? 'prev' : 'next')]();
+		}
+	},
+
+<span id='Ext-ux-TouchCalendar-method-setMode'>	/**
+</span>	* Changes the mode of the calendar to the specified string's value. Possible values are 'month', 'week' and 'day'.
+	* @method
+	* @returns {void}
+	*/
+	setMode: function(mode){
+		this.viewMode = mode.toUpperCase();
+		this.viewConfig.viewMode = this.viewMode;
+
+		this.getItems().each(function(view, index){
+
+			view.currentDate = this.getViewDate(Ext.Date.clone(this.view.currentDate), index-1);
+
+			view.setViewMode(mode, true);
+			view.refresh();
+		}, this);
+	},
+
+<span id='Ext-ux-TouchCalendar-method-getValue'>	/**
+</span>	* Returns the Date that is selected.
+	* @method
+	* @returns {Date} The selected date
+	*/
+	getValue: function(){
+		var selectedDates = this.view.getSelectionModel().selected;
+
+		return (selectedDates.getCount() &gt; 0) ? selectedDates.first().get('date') : null;
+	},
+
+<span id='Ext-ux-TouchCalendar-method-setValue'>	/**
+</span>	* Set selected date.
+	* @method
+	* @param {Date} v Date to select.
+	* @return {void}
+	*/
+	setValue: function(v) {
+		this.view.setValue(v)
+	},
+
+<span id='Ext-ux-TouchCalendar-method-onActiveItemChange'>	/**
+</span>	 * Override of the onCardSwitch method which adds a new card to the end/beginning of the carousel depending on the direction configured with the next period's
+	 * dates.
+	 * @method
+	 * @private
+	 */
+	onActiveItemChange: function(container, newCard, oldCard){
 		if (this.enableSwipeNavigate) {
-			var newIndex = this.items.indexOf(newCard), oldIndex = this.items.indexOf(oldCard), direction = (newIndex &gt; oldIndex) ? 'forward' : 'backward';
-			
+			var items = this.getItems();
+			var newIndex = items.indexOf(newCard), oldIndex = items.indexOf(oldCard), direction = (newIndex &gt; oldIndex) ? 'forward' : 'backward';
+
 			this.counter = (this.counter || 0) + 1;
-			
+
 			if (direction === 'forward') {
-				this.remove(this.items.get(0));
-				
-				this.add(new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], 1))));
+				this.remove(items.get(0));
+				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(Ext.Date.add(newCard.currentDate, Ext.Date[this.viewMode], 1)));
+				this.add(newCalendar);
 			}
 			else {
-				this.remove(this.items.get(this.items.getCount() - 1));
-				
-				this.insert(0, new Ext.ux.TouchCalendarView(this.getViewConfig(newCard.currentDate.add(Date[this.mode], -1))));
+				this.remove(items.get(items.getCount() - 1));
+				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(Ext.Date.add(newCard.currentDate, Ext.Date[this.viewMode], -1)));
+				this.insert(0, newCalendar);
 			}
-			
-			this.doLayout();
-			
+
 			this.view = newCard;
 		}
-		Ext.ux.TouchCalendar.superclass.onCardSwitch.apply(this, arguments);
 	}
     
     
 });
 <span id='Ext-ux-TouchCalendar-property-'>/**
-</span> * @copyright 		(c) 2011, by SwarmOnline.com
- * @date      		2nd November 2011
- * @version   		0.1
- * @documentation	
- * @website	  		http://www.swarmonline.com
+</span> * @copyright     (c) 2012, by SwarmOnline.com
+ * @date          29th May 2012
+ * @version       0.1
+ * @documentation  
+ * @website        http://www.swarmonline.com
  */
 <span id='Ext-ux-TouchCalendarEvents'>/**
 </span> * @class Ext.ux.TouchCalendarEvents
  * @author Stuart Ashworth
+ *
+ * For use with Sencha Touch 2
  * 
  * This plugin also allows a store to be bound to the Ext.ux.TouchCalendar and will display the store's events as bars spanning its relevant days. 
  * 
@@ -283,126 +283,120 @@ Ext.ux.TouchCalendar = Ext.extend(Ext.Carousel, {
  * [Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
  * 
  */
-Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
-
-<span id='Ext-ux-TouchCalendarEvents-cfg-startEventField'>    /**
-</span>     * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
+Ext.define('Ext.ux.TouchCalendarEvents', {
+  extend: 'Ext.mixin.Observable',
+  config: {
+<span id='Ext-ux-TouchCalendarEvents-cfg-eventBarTpl'>    /**
+</span>     * @cfg {String} eventBarTpl Template that will be used to fill the Event Bar
      */
-    startEventField: 'start',
+    eventBarTpl : '{title}' // make this an internal set-able property
+  },
+<span id='Ext-ux-TouchCalendarEvents-cfg-startEventField'>  /**
+</span>   * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
+   */
+  startEventField: 'start',
+  
+<span id='Ext-ux-TouchCalendarEvents-cfg-endEventField'>  /**
+</span>   * @cfg {Stirng} endEventField Name of the Model field which contains the Event's End date
+   */
+  endEventField: 'end',
+  
+<span id='Ext-ux-TouchCalendarEvents-cfg-colourField'>  /**
+</span>   * @cfg {String} colourField Name of the Model field which contains a colour to be applied to the 
+   * event bar
+   */
+  colourField: 'colour',
+  
+<span id='Ext-ux-TouchCalendarEvents-cfg-eventBarCls'>  /**
+</span>   * @cfg {String} eventBarCls Base CSS class given to each EventBar
+   */
+  eventBarCls: 'event-bar',
+  
+<span id='Ext-ux-TouchCalendarEvents-cfg-eventWrapperCls'>  /**
+</span>   * @cfg {String} eventWrapperCls CSS class given to the EventBars' wrapping element
+   */
+  eventWrapperCls: 'event-wrapper',
+  
+<span id='Ext-ux-TouchCalendarEvents-cfg-eventBarSelectedCls'>  /**
+</span>   * @cfg {String} eventBarSelectedCls CSS class given to the EventBar after it has been selected
+   */
+  eventBarSelectedCls: 'event-bar-selected',
+  
+<span id='Ext-ux-TouchCalendarEvents-cfg-cellHoverCls'>  /**
+</span>   * @cfg {String} cellHoverCls CSS class given to date cells when an event is dragged over
+   */
+  cellHoverCls: 'date-cell-hover',
     
-<span id='Ext-ux-TouchCalendarEvents-cfg-endEventField'>    /**
-</span>     * @cfg {Stirng} endEventField Name of the Model field which contains the Event's End date
-     */
-    endEventField: 'end',
-	
-<span id='Ext-ux-TouchCalendarEvents-cfg-colourField'>	/**
-</span>	 * @cfg {String} colourField Name of the Model field which contains a colour to be applied to the 
-	 * event bar
-	 */
-	colourField: 'colour',
-    
-<span id='Ext-ux-TouchCalendarEvents-cfg-eventBarCls'>    /**
-</span>     * @cfg {String} eventBarCls Base CSS class given to each EventBar
-     */
-    eventBarCls: 'event-bar',
-    
-<span id='Ext-ux-TouchCalendarEvents-cfg-eventWrapperCls'>    /**
-</span>     * @cfg {String} eventWrapperCls CSS class given to the EventBars' wrapping element
-     */
-    eventWrapperCls: 'event-wrapper',
-    
-<span id='Ext-ux-TouchCalendarEvents-cfg-eventBarSelectedCls'>    /**
-</span>     * @cfg {String} eventBarSelectedCls CSS class given to the EventBar after it has been selected
-     */
-    eventBarSelectedCls: 'event-bar-selected',
-    
-<span id='Ext-ux-TouchCalendarEvents-cfg-cellHoverCls'>	/**
-</span>	 * @cfg {String} cellHoverCls CSS class given to date cells when an event is dragged over
-	 */
-    cellHoverCls: 'date-cell-hover',
-    
-<span id='Ext-ux-TouchCalendarEvents-cfg-autoUpdateEvent'>	/**
-</span>	 * @cfg {Boolean} autoUpdateEvent Decides whether the configured startEventField and endEventField 
-	 * dates are updated after an event is dragged and dropped
-	 */
-	autoUpdateEvent: true,
-	
-<span id='Ext-ux-TouchCalendarEvents-cfg-allowEventDragAndDrop'>	/**
-</span>	 * @cfg {Boolean} allowEventDragAndDrop Decides whether the Event Bars can be dragged and dropped
-	 */
-	allowEventDragAndDrop: true,
-	
+<span id='Ext-ux-TouchCalendarEvents-cfg-autoUpdateEvent'>  /**
+</span>   * @cfg {Boolean} autoUpdateEvent Decides whether the configured startEventField and endEventField 
+   * dates are updated after an event is dragged and dropped
+   */
+  autoUpdateEvent: true,
+  
+<span id='Ext-ux-TouchCalendarEvents-cfg-allowEventDragAndDrop'>  /**
+</span>   * @cfg {Boolean} allowEventDragAndDrop Decides whether the Event Bars can be dragged and dropped
+   */
+  allowEventDragAndDrop: false,
+  
 <span id='Ext-ux-TouchCalendarEvents-cfg-eventBarSpacing'>    /**
 </span>     * @cfg {Number} eventBarSpacing Space (in pixels) between EventBars
      */
     eventBarSpacing: 1,
-	
-<span id='Ext-ux-TouchCalendarEvents-cfg-eventBarTpl'>	/**
-</span>	 * @cfg {Ext.XTemplate} eventBarTpl Template that will be used to fill the Event Bar
-	 */
-	eventBarTpl: new Ext.XTemplate('{title}'),
+ 
     
     init: function(calendar){
-    
         this.calendar = calendar; // cache the parent calendar
         this.calendar.eventsPlugin = this; // cache the plugin instance on the calendar itself  
         
-		this.calendar.addEvents(
-		
-<span id='Ext-ux-TouchCalendarEvents-event-eventtap'>			/**
-</span>			 * @event eventtap
-			 * Fires when an Event Bar is tapped
-			 * @param {Ext.data.Model} eventRecord The model that the dragged Event Bar represents
-			 * @param {Event} e The event object for the tap operation 
-			 */
-			'eventtap',
-			
-<span id='Ext-ux-TouchCalendarEvents-event-eventdragstart'>			/**
-</span>			 * @event eventdragstart
-			 * Fires when an Event Bar is initially dragged.
-			 * @param {Ext.util.Draggable} draggable The Event Bar's Ext.util.Draggable instance
-			 * @param {Ext.data.Model} eventRecord The model that the dragged Event Bar represents
-			 * @param {Event} e The event object for the drag operation
-			 */
-			'eventdragstart',
-			
-<span id='Ext-ux-TouchCalendarEvents-event-beforeeventdrop'>			/**
-</span>			 * @event beforeeventdrop
-			 * Fires before an Event Bar drop is accepted. Return false to prevent the drop from 
-			 * happening. This event can be used to add additional validation for Event moves
-			 * @param {Ext.util.Draggable} draggable The Event Bar's Ext.util.Draggable instance
-			 * @param {Ext.util.Droppable} droppable The Calendar's Ext.util.Droppable instance
-			 * @param {Ext.data.Model} eventRecord The model that the dragged Event Bar represents
-			 * @param {Event} e The event object for the drag operation
-			 */
-			'beforeeventdrop',
-			
-<span id='Ext-ux-TouchCalendarEvents-event-eventdrop'>			/**
-</span>			 * @event eventdrop
-			 * Fires when an Event Bar is dragged and dropped on a date
-			 * @param {Ext.util.Draggable} draggable The Event Bar's Ext.util.Draggable instance
-			 * @param {Ext.util.Droppable} droppable The Calendar's Ext.util.Droppable instance
-			 * @param {Ext.data.Model} eventRecord The model that the dragged Event Bar represents
-			 * @param {Event} e The event object for the drag operation
-			 */
-			'eventdrop',
-			
-<span id='Ext-ux-TouchCalendarEvents-event-eventdrag'>			/**
-</span>			 * @event eventdrag
-			 * Fires while an Event Bar is being dragged.
-			 * @param {Ext.util.Draggable} draggable The Event Bar's Ext.util.Draggable instance
-			 * @param {Ext.data.Model} eventRecord The model that the dragged Event Bar represents
-			 * @param {Date} currentDate The date that the Event Bar is currently over
-			 * @param {Ext.Element} currentDateCell The Ext.Element representing the table cell of the current date
-			 * @param {Event} e The event object for the drag operation
-			 */
-			'eventdrag'
-			
-		);
-        
-		// create a sequence to refresh the Event Bars when the calendar either refreshes or has a component layout happen
-		this.calendar.refresh = Ext.createSequence(this.calendar.refresh, this.refreshEvents, this);		
-		this.calendar.afterComponentLayout = Ext.createSequence(this.calendar.afterComponentLayout, this.refreshEvents, this);
+
+<span id='Ext-ux-TouchCalendarEvents-event-eventtap'>	      /**
+</span>	       * @event eventtap
+	       * Fires when an Event Bar is tapped
+	       * @param {Ext.data.Model} eventRecord The model that the dragged Event Bar represents
+	       * @param {Event} e The event object for the tap operation
+	       */
+
+<span id='Ext-ux-TouchCalendarEvents-event-eventdragstart'>	      /**
+</span>	       * @event eventdragstart
+	       * Fires when an Event Bar is initially dragged.
+	       * @param {Ext.util.Draggable} draggable The Event Bar's Ext.util.Draggable instance
+	       * @param {Ext.data.Model} eventRecord The model that the dragged Event Bar represents
+	       * @param {Event} e The event object for the drag operation
+	       */
+
+<span id='Ext-ux-TouchCalendarEvents-event-beforeeventdrop'>	      /**
+</span>	       * @event beforeeventdrop
+	       * Fires before an Event Bar drop is accepted. Return false to prevent the drop from
+	       * happening. This event can be used to add additional validation for Event moves
+	       * @param {Ext.util.Draggable} draggable The Event Bar's Ext.util.Draggable instance
+	       * @param {Ext.util.Droppable} droppable The Calendar's Ext.util.Droppable instance
+	       * @param {Ext.data.Model} eventRecord The model that the dragged Event Bar represents
+	       * @param {Event} e The event object for the drag operation
+	       */
+
+<span id='Ext-ux-TouchCalendarEvents-event-eventdrop'>	      /**
+</span>	       * @event eventdrop
+	       * Fires when an Event Bar is dragged and dropped on a date
+	       * @param {Ext.util.Draggable} draggable The Event Bar's Ext.util.Draggable instance
+	       * @param {Ext.util.Droppable} droppable The Calendar's Ext.util.Droppable instance
+	       * @param {Ext.data.Model} eventRecord The model that the dragged Event Bar represents
+	       * @param {Event} e The event object for the drag operation
+	       */
+
+<span id='Ext-ux-TouchCalendarEvents-event-eventdrag'>	      /**
+</span>	       * @event eventdrag
+	       * Fires while an Event Bar is being dragged.
+	       * @param {Ext.util.Draggable} draggable The Event Bar's Ext.util.Draggable instance
+	       * @param {Ext.data.Model} eventRecord The model that the dragged Event Bar represents
+	       * @param {Date} currentDate The date that the Event Bar is currently over
+	       * @param {Ext.Element} currentDateCell The Ext.Element representing the table cell of the current date
+	       * @param {Event} e The event object for the drag operation
+	       */
+
+
+	    // create a sequence to refresh the Event Bars when the calendar either refreshes or has a component layout happen
+	    this.calendar.refresh = Ext.Function.createSequence(this.calendar.refresh, this.refreshEvents, this);
+	    this.calendar.afterComponentLayout = Ext.Function.createSequence(this.calendar.afterComponentLayout, this.refreshEvents, this);
     },
     
 <span id='Ext-ux-TouchCalendarEvents-method-refreshEvents'>    /**
@@ -413,133 +407,136 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
     refreshEvents: function(){
         this.removeEvents();
         
-        this.generateEventBars();
+        this.generateEventBars(); // in turn calls this.renderEventBars(this.eventBarStore);
         
         this.createEventWrapper();
         
-        this.renderEventBars(this.eventBarStore);
         
-		if (this.allowEventDragAndDrop) {
-			this.createDroppableRegion();
-		}
+    if (this.allowEventDragAndDrop) {
+      this.createDroppableRegion();
+    }
     },
-	
-<span id='Ext-ux-TouchCalendarEvents-method-createDroppableRegion'>	/**
-</span>	 * Creates a Ext.util.Droppable region for the Calendar's body element
-	 * @method
-	 * @private
-	 */
-	createDroppableRegion: function(){
-		var me = this;
-		var onDragCount = 0;
-<span id='Ext-ux-TouchCalendarEvents-property-droppable'>		/**
-</span>		 * @property {Ext.util.Droppable} droppable Contains the Ext.util.Droppable instance on the Calendar's body element
-		 */
-		this.droppable = new Ext.util.Droppable(this.calendar.getEl(), {
-<span id='Ext-ux-TouchCalendarEvents-method-onDrag'>			/**
-</span>			 * Override for Droppable's onDrag function to add hover class to active date cell
-			 * @method			 
-			 * @private
-			 * @param {Object} draggable
-			 * @param {Object} e
-			 */
-            onDrag: function(draggable, e){
-				if (draggable.el.hasCls(me.eventBarCls)) {
-					this.setCanDrop(this.isDragOver(draggable), draggable, e);
-					onDragCount++;
-
-					if (onDragCount % 15 === 0) {
-						var currentDateCell, currentDate, eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
-						
-						me.calendar.all.removeCls(me.cellHoverCls);
-						
-						me.calendar.all.each(function(cell, index){
-							var cellRegion = cell.getPageBox(true);
-							var eventBarRegion = draggable.el.getPageBox(true);
-							
-							if (cellRegion.partial(eventBarRegion)) {
-								currentDateCell = cell;
-								currentDate = this.calendar.getCellDate(cell);
-								
-								cell.addCls(me.cellHoverCls);
-								return;
-							}
-						}, me);
-						
-						me.calendar.fireEvent('eventdrag', draggable, eventRecord, currentDate, currentDateCell, e);
-						onDragCount = 0;
-					}
-				}
-			}
-        });
-		
-		this.droppable.on({
-			drop: this.onEventDrop,
-            dropdeactivate: this.onEventDropDeactivate,
-            scope: this
-		});
-	},
-	
-<span id='Ext-ux-TouchCalendarEvents-method-onEventDropDeactivate'>	/**
-</span>	 * Handler for when an Event's drag is invalid and must be reset
-	 * @method
-	 * @private
-	 * @param {Ext.util.Droppable} droppable
-	 * @param {Ext.util.Draggable} draggable
-	 * @param {Event} e
-	 * @param {Object} opts
-	 */
-	onEventDropDeactivate: function(droppable, draggable, e, opts){
-		if (draggable.el.hasCls(this.eventBarCls)) {
-			var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID'));
-			
-			// reshow all the hidden linked Event Bars
-			this.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
-				eventBar.show();
-			}, this);
-		}
+  
+<span id='Ext-ux-TouchCalendarEvents-method-createDroppableRegion'>  /**
+</span>   * Creates a Ext.util.Droppable region for the Calendar's body element
+   * @method
+   * @private
+   */
+  createDroppableRegion: function(){
+    var me = this;
+    var onDragCount = 0;
+<span id='Ext-ux-TouchCalendarEvents-property-droppable'>    /**
+</span>     * @property {Ext.util.Droppable} droppable Contains the Ext.util.Droppable instance on the Calendar's body element
+     */
+    //TODO: Re-implement when droppable is supported in ST2 again
+//    this.droppable = new Ext.util.Droppable(this.calendar.getEl(), {
+//      /**
+//       * Override for Droppable's onDrag function to add hover class to active date cell
+//       * @method       
+//       * @private
+//       * @param {Object} draggable
+//       * @param {Object} e
+//       */
+//            onDrag: function(draggable, e){
+//        if (draggable.el.hasCls(me.eventBarCls)) {
+//          this.setCanDrop(this.isDragOver(draggable), draggable, e);
+//          onDragCount++;
+//
+//          if (onDragCount % 15 === 0) {
+//            var currentDateCell, currentDate, eventRecord = me.getEventRecord(draggable.el.getAttribute('eventID'));
+//            
+//            me.calendar.all.removeCls(me.cellHoverCls);
+//            
+//            me.calendar.all.each(function(cell, index){
+//              var cellRegion = cell.getPageBox(true);
+//              var eventBarRegion = draggable.el.getPageBox(true);
+//              
+//              if (cellRegion.partial(eventBarRegion)) {
+//                currentDateCell = cell;
+//                currentDate = this.calendar.getCellDate(cell);
+//                
+//                cell.addCls(me.cellHoverCls);
+//                return;
+//              }
+//            }, me);
+//            
+//            me.calendar.fireEvent('eventdrag', draggable, eventRecord, currentDate, currentDateCell, e);
+//            onDragCount = 0;
+//          }
+//        }
+//      }
+//        });
+//    
+//    this.droppable.on({
+//      drop: this.onEventDrop,
+//            dropdeactivate: this.onEventDropDeactivate,
+//            scope: this
+//    });
+  },
+  
+<span id='Ext-ux-TouchCalendarEvents-method-onEventDropDeactivate'>  /**
+</span>   * Handler for when an Event's drag is invalid and must be reset
+   * @method
+   * @private
+   * @param {Ext.util.Droppable} droppable
+   * @param {Ext.util.Draggable} draggable
+   * @param {Event} e
+   * @param {Object} opts
+   */
+  onEventDropDeactivate: function(droppable, draggable, e, opts){
+    if (draggable.el.hasCls(this.eventBarCls)) {
+      var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID'));
+      
+      // reshow all the hidden linked Event Bars
+      this.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
+        eventBar.show();
+      }, this);
+    }
     },
-	
-<span id='Ext-ux-TouchCalendarEvents-method-onEventDrop'>	/**
-</span>	 * Function to handle the dropping of an event onto the calendar.
-	 * Figures out what date is was dropped on and updates its store with the new details.
-	 * @method
-	 * @private
-	 * @param {Ext.util.Droppable} droppable
-	 * @param {Ext.util.Draggable} draggable
-	 * @param {Event} e
-	 * @param {Object} opts
-	 */
-	onEventDrop: function(droppable, draggable, e, opts){
+  
+<span id='Ext-ux-TouchCalendarEvents-method-onEventDrop'>  /**
+</span>   * Function to handle the dropping of an event onto the calendar.
+   * Figures out what date is was dropped on and updates its store with the new details.
+   * @method
+   * @private
+   * @param {Ext.util.Droppable} droppable
+   * @param {Ext.util.Draggable} draggable
+   * @param {Event} e
+   * @param {Object} opts
+   */
+  onEventDrop: function(droppable, draggable, e, opts){
         var validDrop = false;
+
+        if(draggable.el.hasCls(this.eventBarCls)){
         
-		this.calendar.all.each(function(cell){
-            var cellRegion = cell.getPageBox(true);
-            var eventBarRegion = draggable.el.getPageBox(true);
-            
-            if (cellRegion.partial(eventBarRegion) &amp;&amp; this.calendar.fireEvent('beforeeventdrop', draggable, droppable, eventRecord, e)) {
-                validDrop = true;                       
-                var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID')),
-					droppedDate = this.calendar.getCellDate(cell),
-					daysDifference = this.getDaysDifference(eventRecord.get(this.startEventField), droppedDate);
-                
-				if (this.autoUpdateEvent) {
-					eventRecord.set(this.startEventField, droppedDate);
-					eventRecord.set(this.endEventField, eventRecord.get(this.endEventField).add(Date.DAY, daysDifference));
-				}
-                
-                this.refreshEvents();
-				
-				this.calendar.fireEvent('eventdrop', draggable, droppable, eventRecord, e)
-                
-                return;
-            }  
-        }, this);
-		
-		this.calendar.all.removeCls(this.cellHoverCls);
-        
-        if (!validDrop) { // if it wasn't a valid drop then move the Event Bar back to its original location
-			draggable.setOffset(draggable.startOffset, true);
+            this.calendar.all.each(function(cell){
+                var cellRegion = cell.getPageBox(true);
+                var eventBarRegion = draggable.el.getPageBox(true);
+
+                if (cellRegion.partial(eventBarRegion) &amp;&amp; this.calendar.fireEvent('beforeeventdrop', draggable, droppable, eventRecord, e)) {
+                    validDrop = true;
+                    var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID')),
+                        droppedDate = this.calendar.getCellDate(cell),
+                        daysDifference = this.getDaysDifference(eventRecord.get(this.startEventField), droppedDate);
+
+                    if (this.autoUpdateEvent) {
+                        eventRecord.set(this.startEventField, droppedDate);
+                        eventRecord.set(this.endEventField, eventRecord.get(this.endEventField).add(Date.DAY, daysDifference));
+                    }
+
+                    this.refreshEvents();
+
+                    this.calendar.fireEvent('eventdrop', draggable, droppable, eventRecord, e)
+
+                    return;
+                }
+            }, this);
+
+            this.calendar.all.removeCls(this.cellHoverCls);
+
+            if (!validDrop) { // if it wasn't a valid drop then move the Event Bar back to its original location
+                draggable.setOffset(draggable.startOffset, true);
+            }
         }
     },
     
@@ -549,30 +546,30 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
      * @private
      */
     generateEventBars: function(){
-<span id='Ext-ux-TouchCalendarEvents-property-eventBarStore'>		/**
-</span>		 * @property {Ext.data.Store} eventBarStore Store to store the Event Bar definitions. It is defined 
-		 * with the Ext.ux.CalendarEventBarModel model.
-		 * @private
-		 */
-        this.eventBarStore = new Ext.data.Store({
+<span id='Ext-ux-TouchCalendarEvents-property-eventBarStore'>    /**
+</span>     * @property {Ext.data.Store} eventBarStore Store to store the Event Bar definitions. It is defined 
+     * with the Ext.ux.CalendarEventBarModel model.
+     * @private
+     */
+        this.eventBarStore = Ext.create('Ext.data.Store', {
             model: 'Ext.ux.CalendarEventBarModel',
             data: []
         });
         
-        var dates = this.calendar.store;
+        var dates = this.calendar.getStore();
         var store = this.calendar.eventStore;
         var eventBarRecord;
         
         // Loop through Calendar's date collection of visible dates
         dates.each(function(dateObj){
             var currentDate = dateObj.get('date'),
-				currentDateTime = currentDate.clearTime(true).getTime(),
-				takenDatePositions = []; // stores 'row positions' that are taken on current date
-				
+        currentDateTime = currentDate.clearTime(true).getTime(),
+        takenDatePositions = []; // stores 'row positions' that are taken on current date
+        
             // Filter the Events Store for events that are happening on the currentDate
             store.filterBy(function(record){
                 var startDate = record.get(this.startEventField).clearTime(true).getTime(),
-					endDate = record.get(this.endEventField).clearTime(true).getTime();
+          endDate = record.get(this.endEventField).clearTime(true).getTime();
                 
                 return (startDate &lt;= currentDateTime) &amp;&amp; (endDate &gt;= currentDateTime);
             }, this);
@@ -610,7 +607,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
                             Date: currentDate,
                             BarLength: 1,
                             BarPosition: eventBarRecord.get('BarPosition'),
-							Colour: eventBarRecord.get('Colour'),
+				              Colour: eventBarRecord.get('Colour'),
                             Record: event
                         }, 'Ext.ux.CalendarEventBarModel');
                         
@@ -638,7 +635,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
                         Date: currentDate,
                         BarLength: 1,
                         BarPosition: barPos,
-						Colour: this.getRandomColour(),
+                        Colour: this.getRandomColour(),
                         Record: event
                     }, 'Ext.ux.CalendarEventBarModel');
                     
@@ -660,74 +657,86 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
      * @param {Ext.data.Store} store The store to process - used to then recurse into
      */
     renderEventBars: function(store){
-    	var me = this;
-		
+      var me = this;
+    
         store.each(function(record){
             var eventRecord = this.getEventRecord(record.get('EventID')),
-				dayEl = this.calendar.getDateCell(record.get('Date')),
-				doesWrap = this.eventBarDoesWrap(record),
-				hasWrapped = this.eventBarHasWrapped(record);
+		        dayEl = this.calendar.getDateCell(record.get('Date')),
+		        doesWrap = this.eventBarDoesWrap(record),
+		        hasWrapped = this.eventBarHasWrapped(record);
             
             // create the event bar
             var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
                 tag: 'div',
-				style: {
-					'background-color': eventRecord.get(this.colourField)
-				},
-                html: this.eventBarTpl.apply(eventRecord.data),
+		        style: {
+		          'background-color': eventRecord.get(this.colourField)
+		        },
+                html: new Ext.XTemplate(this.getEventBarTpl()).apply(eventRecord.data),
                 eventID: record.get('EventID'),
                 cls: this.eventBarCls + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
             }, true);
-			
+      
 			if (this.allowEventDragAndDrop) {
-			
+
 				new Ext.util.Draggable(eventBar, {
 					revert: true,
-					
+
 <span id='Ext-ux-TouchCalendarEvents-method-onStart'>					/**
-</span>					 * Override for Ext.util.Draggable's onStart method to process the Event Bar's element before dragging
-					 * and raise the 'eventdragstart' event
-					 * @method
-					 * @private
-					 * @param {Event} e
-					 */
+</span>					* Override for Ext.util.Draggable's onStart method to process the Event Bar's element before dragging
+					* and raise the 'eventdragstart' event
+					* @method
+					* @private
+					* @param {Event} e
+					*/
 					onStart: function(e){
-					
+
 						var draggable = this, eventID = draggable.el.getAttribute('eventID'), eventRecord = me.getEventRecord(eventID), eventBarRecord = me.getEventBarRecord(eventID);
-						
+
 						// Resize dragged Event Bar so it is 1 cell wide
 						draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
 						// Reposition dragged Event Bar so it is in the middle of the User's finger.
 						draggable.el.setLeft(e.startX - (draggable.el.getWidth() / 2));
-						
+
 						// hide all linked Event Bars
-						me.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
-							if (eventBar.dom !== draggable.el.dom) {
-								eventBar.hide();
-							}
+						me.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
+						if (eventBar.dom !== draggable.el.dom) {
+						eventBar.hide();
+						}
 						}, this);
-						
+
 						Ext.util.Draggable.prototype.onStart.apply(this, arguments);
-						
+
 						me.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
-						
+
 						return true;
 					}
 				});
 			}
-            
+
+
+	        var headerHeight = this.calendar.element.select('thead').first().getHeight();
+	        var bodyHeight = this.calendar.element.select('tbody').first().getHeight();
+	        var rowCount = this.calendar.element.select('tbody tr').getCount();
+	        var rowHeight = bodyHeight/rowCount;
+
+	        var dateIndex = this.calendar.getStore().findBy(function(dateRec){
+		        return dateRec.get('date').getTime() === Ext.Date.clearTime(record.get('Date'), true).getTime();
+	        }, this);
+
+	        var rowIndex = Math.floor(dateIndex / 7) + 1;
+
+	        var eventY = headerHeight + (rowHeight * rowIndex);
+
             var barPosition = record.get('BarPosition'),
-				barLength = record.get('BarLength'),
-				dayCellX = dayEl.getX(),
-				dayCellY = dayEl.getY(),
-				dayCellHeight = dayEl.getHeight(),
-				dayCellWidth = dayEl.getWidth(),
-            	eventBarHeight = eventBar.getHeight(),            
-            	spacing = this.eventBarSpacing;
+		        barLength = record.get('BarLength'),
+		        dayCellX = (this.calendar.element.getWidth() / 7) * dayEl.dom.cellIndex,
+		        dayCellWidth = dayEl.getWidth(),
+				eventBarHeight = eventBar.getHeight(),
+				spacing = this.eventBarSpacing;
 
             // set sizes and positions
             eventBar.setLeft(dayCellX + (hasWrapped ? 0 : spacing));
-            eventBar.setTop((((dayCellY - this.calendar.getEl().getY()) + dayCellHeight) - eventBarHeight) - ((barPosition * eventBarHeight + (barPosition * spacing) + spacing)));
+            eventBar.setTop(eventY - eventBarHeight - (barPosition * eventBarHeight + (barPosition * spacing) + spacing));
             eventBar.setWidth((dayCellWidth * barLength) - (spacing * (doesWrap ? (doesWrap &amp;&amp; hasWrapped ? 0 : 1) : 2)));
             
             if (record.linked().getCount() &gt; 0) {
@@ -735,35 +744,35 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
             }
         }, this);
     },
-	
-<span id='Ext-ux-TouchCalendarEvents-method-onEventDragStart'>	/**
-</span>	 * Handler function for the Event Bars' 'dragstart' event
-	 * @method
-	 * @private
-	 * @param {Ext.util.Draggable} draggable
-	 * @param {Event} e
-	 */
-	onEventDragStart: function(draggable, e){
+  
+<span id='Ext-ux-TouchCalendarEvents-method-onEventDragStart'>  /**
+</span>   * Handler function for the Event Bars' 'dragstart' event
+   * @method
+   * @private
+   * @param {Ext.util.Draggable} draggable
+   * @param {Event} e
+   */
+  onEventDragStart: function(draggable, e){
         var eventID = draggable.el.getAttribute('eventID'),
-			eventRecord = this.getEventRecord(eventID),
-			eventBarRecord = this.getEventBarRecord(eventID);
+      eventRecord = this.getEventRecord(eventID),
+      eventBarRecord = this.getEventBarRecord(eventID);
         
-		//TODO Reposition dragged Event Bar so it is in the middle of the User's finger.
-		
-		// Resize dragged Event Bar so it is 1 cell wide
+    //TODO Reposition dragged Event Bar so it is in the middle of the User's finger.
+    
+    // Resize dragged Event Bar so it is 1 cell wide
         draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
-		
-		// Update the draggables boundary so the resized bar can be dragged right to the edge.
-		draggable.updateBoundary(true);
+    
+    // Update the draggables boundary so the resized bar can be dragged right to the edge.
+    draggable.updateBoundary(true);
 
-		// hide all linked Event Bars
-        this.calendar.getEl().select('div.' + eventRecord.internalId).each(function(eventBar){
+    // hide all linked Event Bars
+        this.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
             if (eventBar.dom !== draggable.el.dom) {
                 eventBar.hide();
             }
         }, this);
-		
-		this.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
+    
+    this.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
     },
     
 <span id='Ext-ux-TouchCalendarEvents-method-eventBarDoesWrap'>    /**
@@ -801,9 +810,12 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
                 cls: this.eventWrapperCls
             }, true);
             
-            this.calendar.mon(this.eventWrapperEl, 'click', this.onEventWrapperTap, this, {
+            this.eventWrapperEl.on('tap', this.onEventWrapperTap, this, {
                 delegate: 'div.' + this.eventBarCls
             });
+            this.renderEventBars(this.eventBarStore);
+        }else{
+          this.calendar.on('painted', this.createEventWrapper, this);
         }
     },
     
@@ -815,20 +827,22 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
      * @param {Object} node
      */
     onEventWrapperTap: function(e, node){
+        e.stopPropagation(); // stop event bubbling up
+        
         var eventID = node.attributes['eventID'];
         if (eventID) {
             var eventRecord = this.getEventRecord(node.attributes['eventID'].value);
             
             this.deselectEvents();
-            
+
             this.eventWrapperEl.select('div.' + eventRecord.internalId).addCls(this.eventBarSelectedCls);
             
             this.calendar.fireEvent('eventtap', eventRecord, e);
         }
     },
-	
+  
 	getEventsWrapperContainer: function(){
-		return this.calendar.getEl().select('thead th').first() || this.calendar.getEl().select('tr td').first();
+		return this.calendar.element.select('thead th').first() || this.calendar.element.select('tr td').first();
 	},
     
 <span id='Ext-ux-TouchCalendarEvents-method-getNextFreePosition'>    /**
@@ -879,7 +893,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
      * @return {void}
      */
     deselectEvents: function(){
-        this.calendar.getEl().select('.' + this.eventBarSelectedCls).removeCls(this.eventBarSelectedCls);
+        this.calendar.element.select('.' + this.eventBarSelectedCls).removeCls(this.eventBarSelectedCls);
     },
     
 <span id='Ext-ux-TouchCalendarEvents-method-getDaysDifference'>    /**
@@ -904,7 +918,7 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
     removeEvents: function(){
         if (this.eventWrapperEl) {
             this.eventWrapperEl.dom.innerHTML = '';
-            this.eventWrapperEl.remove();
+            this.eventWrapperEl.destroy();
             this.eventWrapperEl = null;
         }
         
@@ -912,66 +926,73 @@ Ext.ux.TouchCalendarEvents = Ext.extend(Ext.util.Observable, {
             this.eventBarStore.remove(this.eventBarStore.getRange());
             this.eventBarStore = null;
         }
-		
-		if(this.droppable){
-			this.droppable = null;
-		}
+    
+    if(this.droppable){
+      this.droppable = null;
+    }
     },
-	
-	getRandomColour: function(){
-		return '#'+(Math.random()*0xFFFFFF&lt;&lt;0).toString(16);
-	}
+  
+  getRandomColour: function(){
+    return '#'+(Math.random()*0xFFFFFF&lt;&lt;0).toString(16);
+  }
 });
 
 
-<span id='Ext-ux-TouchCalendarEvents-property-regModel'>/**
+<span id='Ext-ux-CalendarEventBarModel'>/**
 </span> * Ext.data.Model to store information about the EventBars to be generated from the 
  * bound data store
  * @private
  */
-Ext.regModel('Ext.ux.CalendarEventBarModel', {
-    fields: [{
-        name: 'EventID',
-        type: 'string'
-    }, {
-        name: 'Date',
-        type: 'date'
-    }, {
-        name: 'BarLength',
-        type: 'int'
-    }, {
-        name: 'BarPosition',
-        type: 'int'
-    }, {
-		name: 'Colour',
-		type: 'string'
-	}, 'Record'],
-    
-    hasMany: [{
-        model: 'Ext.ux.CalendarEventBarModel',
-        name: 'linked'
-    }]
+Ext.define(&quot;Ext.ux.CalendarEventBarModel&quot;, {
+  extend: &quot;Ext.data.Model&quot;,
+	config: {
+	  fields: [{
+	    name: 'EventID',
+	    type: 'string'
+	  }, {
+	    name: 'Date',
+	    type: 'date'
+	  }, {
+	    name: 'BarLength',
+	    type: 'int'
+	  }, {
+	    name: 'BarPosition',
+	    type: 'int'
+	  }, {
+	    name: 'Colour',
+	    type: 'string'
+	  }, 'Record'],
+	  hasMany: [{
+	      model: 'Ext.ux.CalendarEventBarModel',
+	      name: 'linked'
+	  }]
+	}
 });
 
-<span id='Ext-util-Region'>/**
-</span> * @class Ext.util.Region
- */
-Ext.override(Ext.util.Region, {
-<span id='Ext-util-Region-method-partial'>	/**
-</span>	 * Figures out if the Event Bar passed in is within the boundaries of the current Date Cell (this)
-	 * @method
-	 * @param {Object} region
-	 */
+///**
+// * @class Ext.util.Region
+// */
+//Ext.override(Ext.util.Region, {
+//  
+//});
+
+Ext.define('Ext.util.Region.partial', {
+  extend: 'Ext.util.Region',
+<span id='Ext-ux-CalendarEventBarModel-method-partial'>  /**
+</span>   * Figures out if the Event Bar passed in is within the boundaries of the current Date Cell (this)
+   * @method
+   * @param {Object} region
+   */
     partial: function(region){
         var me = this, // cell
-			dragWidth = region.right - region.left,
-			dragHeight = region.bottom - region.top,
-			dropWidth = me.right - me.left,
-			dropHeight = me.bottom - me.top,
-			 
-			verticalValid = region.top &gt; me.top &amp;&amp; region.top &lt; me.bottom;
-			        
-        	horizontalValid = region.left &gt; me.left &amp;&amp; region.left &lt; me.right;
+      dragWidth = region.right - region.left,
+      dragHeight = region.bottom - region.top,
+      dropWidth = me.right - me.left,
+      dropHeight = me.bottom - me.top,
+       
+      verticalValid = region.top &gt; me.top &amp;&amp; region.top &lt; me.bottom;
+              
+          horizontalValid = region.left &gt; me.left &amp;&amp; region.left &lt; me.right;
         
         return horizontalValid &amp;&amp; verticalValid;
     }

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">@import '../global';
+
+<span id='Ext-dataview-IndexBar'>/**
+</span> * @class Ext.dataview.IndexBar
+ */
+
+<span id='Ext-dataview-IndexBar-css_var-S-index-bar-width'>/**
+</span> * @var {measurement} $index-bar-width
+ * Width of the index bar.
+ */
+$index-bar-width: 1.1em !default;
+
+<span id='Ext-dataview-IndexBar-css_var-S-index-bar-bg-color'>/**
+</span> * @var {color} $index-bar-bg-color
+ * Background-color of the index bar.
+ */
+$index-bar-bg-color: hsla(hue($base-color), 10%, 60%, .8) !default;
+
+<span id='Ext-dataview-IndexBar-css_var-S-index-bar-color'>/**
+</span> * @var {color} $index-bar-color
+ * Text color of the index bar.
+ */
+$index-bar-color: darken(desaturate($base-color, 5%), 15%) !default;
+
+<span id='Ext-dataview-IndexBar-css_mixin-sencha-indexbar'>/**
+</span> * Includes default index bar styles.
+ */
+@mixin sencha-indexbar {
+  .x-indexbar-wrapper {
+    -webkit-box-pack: end !important;
+    box-pack: end !important;
+    pointer-events: none;
+  }
+
+  .x-indexbar-vertical {
+    width: $index-bar-width;
+    @include box-orient(vertical);
+    margin-right: 8px;
+  }
+
+  .x-indexbar-horizontal {
+    height: $index-bar-width;
+    @include box-orient(horizontal);
+    margin-bottom: 8px;
+  }
+
+  .x-indexbar {
+    pointer-events: auto;
+    z-index: 2;
+    padding: .3em 0;
+    min-height: 0 !important;
+    height: auto !important;
+    -webkit-box-flex: 0 !important;
+
+    &gt; div {
+      color: $index-bar-color;
+      font-size: 0.6em;
+      text-align: center;
+      line-height: 1.1em;
+      font-weight: bold;
+      display: block;
+    }
+  }
+
+  .x-phone.x-landscape .x-indexbar {
+    &gt; div {
+        font-size: 0.38em;
+        line-height: 1em;
+    }
+  }
+
+  .x-indexbar-pressed {
+    @include border-radius(($index-bar-width)/2);
+    background-color: $index-bar-bg-color;
+  }
+}
+</pre>
+</body>
+</html>

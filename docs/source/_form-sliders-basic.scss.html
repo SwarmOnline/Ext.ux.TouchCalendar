@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">@import '../global';
+
+/*
+ * Includes basic form slider styles.
+ */
+@mixin sencha-form-sliders {
+
+  .x-slider {
+    position: relative;
+    height: $form-thumb-size;
+    margin: $form-spacing;
+    min-height: 0;
+  }
+
+  .x-thumb {
+    position: absolute;
+    height: $form-thumb-size;
+    width: $form-thumb-size;
+    border: 1px solid red;
+
+    &amp;.x-dragging {
+      background-color: red;
+    }
+  }
+
+  .x-input-slider {
+    width: auto;
+    background-color: #000;
+  }
+
+  .x-field-toggle, .x-field-slider {
+    background-color: #fff;
+//    @extend .x-input-el;
+  }
+
+  .x-field-toggle .x-slider {
+    width: $form-thumb-size * 2;
+    @if $include-border-radius { @include border-radius($form-thumb-size/2); }
+    overflow: hidden;
+    border: .1em solid darken($form-light, 15%);
+    // -webkit-transform: translate3d(0px, 0px, 0px);
+    @include background-gradient($form-light, 'recessed');
+    z-index: 2;
+
+    // Masking the slider doesn't work in iOS 3, so we're fake-masking the outer area
+    // UPDATED: Doesnt fly on Android...
+    // &amp;:after {
+    //   @include insertion($form-thumb-size*2, $form-thumb-size, 0, 0);
+    //   -webkit-mask: theme_image($theme-name, &quot;trackmask_outer.png&quot;);
+    //   background-color: white;
+    //   -webkit-mask-size: $form-thumb-size*2 $form-thumb-size;
+    //   pointer-events: none;
+    //   z-index: 4;
+    // }
+
+    .x-thumb {
+
+      .x-toggle-thumb-off, .x-toggle-thumb-on {
+        display: none;
+      }
+
+      &amp;.x-dragging {
+        opacity: 1;
+      }
+
+      &amp;:before {
+        top: ($form-thumb-size - $form-toggle-size) / 2;
+      }
+
+      // Actual thumb
+      // &amp;:after {
+      //   @include insertion($form-thumb-size, $form-thumb-size, 0, 0);
+      //   -webkit-box-shadow: rgba(0,0,0,.5) 0 0 .15em;
+      //   @if $include-border-radius { @include border-radius($form-thumb-size/2); }
+      //   -webkit-transform: scale(.65);
+      //   @include background-gradient($complement_light, 'glossy');
+      //   border: 1px solid $complement;
+      //   overflow: visible;
+      //   z-index: 2;
+      // }
+
+      // &amp;.x-dragging {
+      //   &amp;:after {
+      //     -webkit-transform: scale(.75);
+      //   }
+      // }
+      //
+      // Used to animate the thumb. class added/removed by javascript when needed.
+      // &amp;.x-animate {
+      //   -webkit-transition: left .2s ease-in-out;
+      // }
+    }
+
+    &amp;.x-toggle-on {
+      @include background-gradient($confirm-color, 'recessed');
+    }
+  }
+
+  .x-android .x-field-toggle .x-slider {
+    //-webkit-transform: translate(0px, 0px);
+  }
+}
+</pre>
+</body>
+</html>
