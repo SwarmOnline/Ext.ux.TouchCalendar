@@ -184,7 +184,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 							// position the dot wrapper based on the cell dimensions and dot count
 							t.setWidth(Math.min((this.multiEventDots ? store.getRange().length : 1) * this.dotWidth, cell.getWidth()));
 							t.setY((cell.getY() + cell.getHeight()) - (t.getHeight() + (cell.getHeight()*0.1)) );
-							t.setX((cell.getX() + (cell.getWidth()/2)) - (t.getWidth()/2) );
+							t.setX((cell.getX() + (cell.getWidth()/2)) - (t.getWidth()/2) + 2 ); // add 2 for margin value
 						}
 					}
 				}, this);

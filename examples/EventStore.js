@@ -33,7 +33,7 @@ var eventStore = Ext.create('Ext.data.Store', {
     }, {
         event: 'TechCrunch Disrupt SF',
         location: 'San Francisco',
-        start: new Date(2012, 4, 12),
+        start: new Date(2012, 4, 5),
         end: new Date(2012, 4, 14)
     }, {
         event: 'ATypl Reykjavik 2012',
