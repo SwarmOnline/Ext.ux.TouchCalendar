@@ -115,9 +115,9 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	  if (arguments.length===2){
 	    currentDate = id;
 	  }
-		var startDate = record.get(this.startEventField).clearTime(true).getTime(),
-			endDate = record.get(this.endEventField).clearTime(true).getTime(),
-			currentDate = currentDate.clearTime(true).getTime();
+		var startDate = Ext.Date.clearTime(record.get(this.startEventField), true).getTime(),
+			endDate = Ext.Date.clearTime(record.get(this.endEventField), true).getTime(),
+			currentDate = Ext.Date.clearTime(currentDate, true).getTime();
 	                            
 	    return (startDate <= currentDate) && (endDate >= currentDate);
 	},
