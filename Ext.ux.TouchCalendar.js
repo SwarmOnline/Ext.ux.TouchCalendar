@@ -49,7 +49,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 	},
 
 	defaultViewConfig: {
-		mode: 'MONTH',
+		viewMode: 'MONTH',
 		weekStart: 1,
 		bubbleEvents: ['selectionchange']
 	},
@@ -61,7 +61,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 
 		this.viewConfig.currentDate = this.viewConfig.currentDate || this.viewConfig.value || new Date();
 
-		this.mode = this.viewConfig.mode.toUpperCase();
+		this.viewMode = this.viewConfig.viewMode.toUpperCase();
 
 		this.initViews();
 
@@ -117,8 +117,8 @@ Ext.define('Ext.ux.TouchCalendar',{
 	},
 
 	getViewDate: function(date, i){
-		var scale = (this.mode === 'WEEK' ? 'DAY' : this.mode.toUpperCase()),
-		  number = (this.mode === 'WEEK' ? (8 * i) : i);
+		var scale = (this.viewMode === 'WEEK' ? 'DAY' : this.viewMode.toUpperCase()),
+		  number = (this.viewMode === 'WEEK' ? (8 * i) : i);
 
 		return Ext.Date.add(date, Ext.Date[scale], number)
 	},
@@ -179,14 +179,14 @@ Ext.define('Ext.ux.TouchCalendar',{
 	* @returns {void}
 	*/
 	setMode: function(mode){
-		this.mode = mode.toUpperCase();
-		this.viewConfig.mode = this.mode;
+		this.viewMode = mode.toUpperCase();
+		this.viewConfig.viewMode = this.viewMode;
 
 		this.getItems().each(function(view, index){
 
-			view.currentDate = this.getViewDate(this.view.currentDate.clone(), index-1);
+			view.currentDate = this.getViewDate(Ext.Date.clone(this.view.currentDate), index-1);
 
-			view.setMode(mode, true);
+			view.setViewMode(mode, true);
 			view.refresh();
 		}, this);
 	},
@@ -227,12 +227,12 @@ Ext.define('Ext.ux.TouchCalendar',{
 
 			if (direction === 'forward') {
 				this.remove(items.get(0));
-				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(Ext.Date.add(newCard.currentDate, Ext.Date[this.mode], 1)));
+				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(Ext.Date.add(newCard.currentDate, Ext.Date[this.viewMode], 1)));
 				this.add(newCalendar);
 			}
 			else {
 				this.remove(items.get(items.getCount() - 1));
-				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(Ext.Date.add(newCard.currentDate, Ext.Date[this.mode], -1)));
+				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(Ext.Date.add(newCard.currentDate, Ext.Date[this.viewMode], -1)));
 				this.insert(0, newCalendar);
 			}
 
