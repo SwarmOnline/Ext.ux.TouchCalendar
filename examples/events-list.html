@@ -20,30 +20,31 @@
                 
                 
                 
-                    var calendar = new Ext.ux.TouchCalendarView({
-                        minDate: (new Date()).add(Date.DAY, -40),
-                        maxDate: (new Date()).add(Date.DAY, 55),
+                    var calendar = Ext.create('Ext.ux.TouchCalendarView', {
+                        minDate: Ext.Date.add((new Date()), Ext.Date.DAY, -40),
+                        maxDate: Ext.Date.add((new Date()), Ext.Date.DAY, 55),
                         mode: 'month',
                         weekStart: 0,
-                        value: new Date(2011, 8, 1),
+                        value: new Date(),
                         eventStore: eventStore,
                         
-                        plugins: [new Ext.ux.TouchCalendarEvents({
+                        plugins: [Ext.create('Ext.ux.TouchCalendarEvents', {
                             eventBarTpl: new Ext.XTemplate('{event} - {location}')
                         })]
                     });
                     
-                    var calendarPanel = new Ext.Panel({
+                    var calendarPanel = Ext.create('Ext.Panel', {
                     	fullscreen: true,
-                        dockedItems: [{
+                        layout: 'fit',
+                        items: [calendar, {
                             xtype: 'toolbar',
-                            dock: 'top',
+                            docked: 'top',
                             items: [{
                                 xtype: 'segmentedbutton',
-								allowMultiple: false,
+                                allowMultiple: false,
                                 items: [{
                                     text: 'Month',
-									pressed: true,
+                                    pressed: true,
                                     handler: function(){
                                         calendar.setMode('month');
                                     }
@@ -55,17 +56,15 @@
                                 }]
                             }]
                         }, {
-                            dock: 'bottom',
+                            docked: 'bottom',
                             xtype: 'list',
                             height: 110,
                             itemTpl: '{event} {location}',
-                            store: new Ext.data.Store({
+                            store: Ext.create('Ext.data.Store', {
                                 model: 'Event',
                                 data: []
                             })
-                        }],
-                        layout: 'fit',
-                        items: [calendar]
+                        }]
                     });
                     
                     calendar.on('selectionchange', function(selModel, records){

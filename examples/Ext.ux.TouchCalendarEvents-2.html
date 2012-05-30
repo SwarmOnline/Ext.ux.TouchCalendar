@@ -21,11 +21,21 @@
             Ext.setup({
                 onReady: function(){
                 
-                    calendar = new Ext.ux.TouchCalendar({
+                    calendar = Ext.create('Ext.ux.TouchCalendar', {
                         fullscreen: true,
-                        dockedItems: [{
+                        mode: 'month',
+                        
+                        value: new Date(),
+                        viewConfig: {
+							weekStart: 0,
+							eventStore: eventStore,
+							plugins: [Ext.create('Ext.ux.TouchCalendarEvents', {
+								eventBarTpl: new Ext.XTemplate('{event} - {location}')
+							})]
+						},
+                        items: [{
                             xtype: 'toolbar',
-                            dock: 'top',
+                            docked: 'top',
                             items: [{
                                 xtype: 'button',
                                 text: 'Month View',
@@ -45,17 +55,7 @@
                                     calendar.view.setViewMode('day');
                                 }
                             }]
-                        }],
-                        mode: 'month',
-                        
-                        value: new Date(),
-                        viewConfig: {
-							weekStart: 0,
-							eventStore: eventStore,
-							plugins: [new Ext.ux.TouchCalendarEvents({
-								eventBarTpl: new Ext.XTemplate('{event} - {location}')
-							})]
-						}
+                        }]
                     });
                     
                     calendar.on('eventtap', function(event){
