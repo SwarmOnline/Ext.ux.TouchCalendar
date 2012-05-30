@@ -1,24 +1,22 @@
 Ext.define("Event", {
-  extend: "Ext.data.Model",
-  config: {
-    fields: [
-      {
-        name: 'event',
-        type: 'string'
-      }, {
-        name: 'location',
-        type: 'string'
-      }, {
-        name: 'start',
-        type: 'date',
-        dateFormat: 'c'
-      }, {
-        name: 'end',
-        type: 'date',
-        dateFormat: 'c'
-      }
-   ]
-  }
+	extend: "Ext.data.Model",
+	config: {
+		fields: [{
+			name: 'event',
+			type: 'string'
+		}, {
+			name: 'location',
+			type: 'string'
+		}, {
+			name: 'start',
+			type: 'date',
+			dateFormat: 'c'
+		}, {
+			name: 'end',
+			type: 'date',
+			dateFormat: 'c'
+		}]
+	}
 });
 
 

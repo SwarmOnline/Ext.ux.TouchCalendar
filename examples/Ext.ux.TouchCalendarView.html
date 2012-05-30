@@ -15,13 +15,13 @@
         Ext.setup({
             onReady: function(){
             
-                calendarView = new Ext.ux.TouchCalendarView({
+                calendarView = Ext.create('Ext.ux.TouchCalendarView', {
 					viewMode: 'day',
 					weekStart: 1,
 					value: new Date()
                 });
                 
-                var panel = new Ext.Panel({
+                var panel = Ext.create('Ext.Panel', {
                     fullscreen: true,
                     layout: 'fit',
                     items: [calendarView, {

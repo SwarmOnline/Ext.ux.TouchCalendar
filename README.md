@@ -1,30 +1,32 @@
-...# Ext.ux.TouchCalendar
+# Ext.ux.TouchCalendar
+
+### This is the Sencha Touch 2 compatible version of the component. For the Sencha Touch 1.1 version please see the [master](https://github.com/SwarmOnline/Ext.ux.TouchCalendar) branch.
 
 Ext.ux.TouchCalendar is an extension, and set of related plugins, for the Sencha Touch framework that allows easy integration of a calendar component into 
 applications.
 
 ## Demos
 
-[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
+[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendar.html)
 
-[Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarView.html)
+[Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendarView.html)
 
-[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarSimpleEvents.html)
+[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendarSimpleEvents.html)
 
-[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
+[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendarEvents.html)
 
-[Calendar with Linked List Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/simple-events-list.html)
+[Calendar with Linked List Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/simple-events-list.html)
 
 ## Ext.ux.TouchCalendarView
 
 The main extension is contained in the root folder of the repository and can be included in your project (along with its CSS file located within 
 the resources/css folder) and will give you a basic calendar view (either showing a month, week or day) that can be configured with various options.
 
-![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-month-ss.png)
-![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-week-ss.png)
-![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-day-ss.png)
+![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendarView-month-ss.png)
+![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendarView-week-ss.png)
+![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendarView-day-ss.png)
 
-[Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
+[Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendar.html)
 
 ## Ext.ux.TouchCalendar
 
@@ -32,9 +34,9 @@ This extension wraps the Ext.ux.TouchCalendarView in a Ext.Carousel component an
 gestures to switch the displayed period. It works by creating 3 Ext.ux.TouchCalendarViews and dynamically creating/removing
 views as the user moves back/forward through time. 
 
-![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendar-month-ss.png)
+![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendar-month-ss.png)
 
-[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
+[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendar.html)
 
 
 ## Ext.ux.TouchCalendarSimpleEvents
@@ -42,17 +44,17 @@ views as the user moves back/forward through time.
 This plugin can be added to an Ext.ux.TouchCalendar instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
 does with a dot added to each day to represent the presence of an event.
 
-![Ext.ux.TouchCalendarSimpleEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarSimpleEvents-month-ss.png)
+![Ext.ux.TouchCalendarSimpleEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendarSimpleEvents-month-ss.png)
 
-[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarSimpleEvents.html)
+[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendarSimpleEvents.html)
 
 ## Ext.ux.TouchCalendarEvents
 
 This plugin also allows a store to be bound to the Ext.ux.TouchCalendar and will display the store's events as bars spanning its relevant days. 
 
-![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarEvents-month-ss.png)
+![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendarEvents-month-ss.png)
 
-[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
+[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendarEvents.html)
 
 ## Usage
 
@@ -69,12 +71,13 @@ have.
     Ext.setup({
         onReady: function(){
   	                    
-            var calendarView = new Ext.ux.TouchCalendarView({
-                mode: 'month',
+            var calendarView = Ext.create('Ext.ux.TouchCalendarView', {
+                viewMode: 'day',
+                weekStart: 1,
                 value: new Date()
             });
             
-            var panel = new Ext.Panel({
+            var panel = Ext.create('Ext.Panel', {
                 fullscreen: true,
                 layout: 'fit',
                 items: [calendarView]
@@ -117,25 +120,28 @@ as the main extension's code.
     
 The next step is to create an ``Ext.data.Store`` with event data that we can bind to the calendar.
 
-    Ext.regModel('Event', {
-        fields: [{
-            name: 'event',
-            type: 'string'
-        }, {
-            name: 'location',
-            type: 'string'
-        }, {
-            name: 'start',
-            type: 'date',
-            dateFormat: 'c'
-        }, {
-            name: 'end',
-            type: 'date',
-            dateFormat: 'c'
-        }]
+    Ext.define("Event", {
+        extend: "Ext.data.Model",
+        config: {
+            fields: [{
+                name: 'event',
+                type: 'string'
+            }, {
+                name: 'location',
+                type: 'string'
+            }, {
+                name: 'start',
+                type: 'date',
+                dateFormat: 'c'
+            }, {
+                name: 'end',
+                type: 'date',
+                dateFormat: 'c'
+            }]
+        }
     });
 
-    var eventStore = new Ext.data.Store({
+    var eventStore = Ext.create('Ext.data.Store', {
         model: 'Event',
         data: [{
             event: 'Sencha Con',
@@ -148,11 +154,11 @@ The next step is to create an ``Ext.data.Store`` with event data that we can bin
 We can now instantiate the Ext.ux.TouchCalendarSimpleEvents plugin within the main calendar's ``plugins`` configuration. We
 also pass a ``store`` config option to the Ext.ux.TouchCalendar.
 
-    var calendar = new Ext.ux.TouchCalendarView({
+    var calendarView = Ext.create('Ext.ux.TouchCalendarView', {
         value: new Date(),
         
         store: eventStore,        
-        plugins: [new Ext.ux.TouchCalendarSimpleEvents()]
+        plugins: [Ext.create('Ext.ux.TouchCalendarSimpleEvents')]
     });
 
 ### Ext.ux.TouchCalendarEvents
@@ -163,11 +169,11 @@ above.
 We can then instantiate the Ext.ux.TouchCalendarEvents plugin and supply it with a simple ``Ext.XTemplate`` which will be 
 used to render the contents of each Event's bar.
 
-    var calendar = new Ext.ux.TouchCalendarView({
+    var calendarView = Ext.create('Ext.ux.TouchCalendarView', {
        value: new Date(),
        store: eventStore,
 	
-       plugins: [new Ext.ux.TouchCalendarEvents({
+       plugins: [Ext.create('Ext.ux.TouchCalendarEvents', {
            eventBarTpl: new Ext.XTemplate('{event} - {location}')
        })]
     });
@@ -261,6 +267,7 @@ The overrides you will require look something like the code below:
 
 There are a few known issues that will be ironed out after the first release, namely:
 
+* At this point in the upgrade there are a few issues with the Ext.ux.TouchCalendar (the carousel extension allowing swipe navigation) part of the calendar. The TouchCalendarView should be fully functional.
 * When using the Ext.ux.TouchCalendar the setValue logic isn't complete for dealing with selections across the 3 views.
 * The Ext.ux.TouchCalendarEvents/Ext.ux.TouchCalendarSimpleEvents plugins aren't compatible with the Day mode.
 
@@ -268,3 +275,4 @@ There are a few known issues that will be ironed out after the first release, na
 
 I'd like to thank @megous for his [sencha-touch-ux-datepicker](https://github.com/megous/sencha-touch-ux-datepicker) extension which this extension originally grew from.
 
+I'd also like to thank [Cian Clarke](https://github.com/cianclarke) for his contributions to the Sencha Touch 2 upgrade - great work!

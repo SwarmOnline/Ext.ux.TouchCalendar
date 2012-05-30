@@ -20,7 +20,7 @@
                 name: 'Ext.ux.TouchCalendarEvents',
                 launch: function(){
                 
-                    calendarView = new Ext.ux.TouchCalendarView({
+                    calendarView = Ext.create('Ext.ux.TouchCalendarView', {
                         //minDate: (new Date()).add(Date.DAY, -40),
                         //maxDate: (new Date()).add(Date.DAY, 55),
                         mode: 'month',

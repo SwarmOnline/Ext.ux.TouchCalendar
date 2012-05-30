@@ -399,14 +399,14 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 		        dayEl = this.calendar.getDateCell(record.get('Date')),
 		        doesWrap = this.eventBarDoesWrap(record),
 		        hasWrapped = this.eventBarHasWrapped(record);
-            debugger;
+
             // create the event bar
             var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
                 tag: 'div',
 		        style: {
 		          'background-color': eventRecord.get(this.colourField)
 		        },
-                html: this.getEventBarTpl().apply(eventRecord.data),
+                html: new Ext.XTemplate(this.getEventBarTpl()).apply(eventRecord.data),
                 eventID: record.get('EventID'),
                 cls: this.eventBarCls + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
             }, true);
