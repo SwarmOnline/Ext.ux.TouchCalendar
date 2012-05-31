@@ -301,13 +301,13 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
         // Loop through Calendar's date collection of visible dates
         dates.each(function(dateObj){
             var currentDate = dateObj.get('date'),
-        currentDateTime = currentDate.clearTime(true).getTime(),
+        currentDateTime = Ext.Date.clearTime(currentDate, true).getTime(),
         takenDatePositions = []; // stores 'row positions' that are taken on current date
         
             // Filter the Events Store for events that are happening on the currentDate
             store.filterBy(function(record){
-                var startDate = record.get(this.startEventField).clearTime(true).getTime(),
-          endDate = record.get(this.endEventField).clearTime(true).getTime();
+                var startDate = Ext.Date.clearTime(record.get(this.startEventField), true).getTime(),
+                    endDate = Ext.Date.clearTime(record.get(this.endEventField), true).getTime();
                 
                 return (startDate <= currentDateTime) && (endDate >= currentDateTime);
             }, this);
@@ -402,7 +402,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 		        dayEl = this.calendar.getDateCell(record.get('Date')),
 		        doesWrap = this.eventBarDoesWrap(record),
 		        hasWrapped = this.eventBarHasWrapped(record);
-            
+
             // create the event bar
             var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
                 tag: 'div',
@@ -522,8 +522,8 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * @param {Ext.ux.CalendarEventBarModel} r The EventBar model instance to figure out if it wraps to the next row of dates
      */
     eventBarDoesWrap: function(r){
-        var barEndDate = r.get('Date').add(Date.DAY, (r.get('BarLength') - 1));
-        return barEndDate.clearTime(true).getTime() !== r.get('Record').get(this.endEventField).clearTime(true).getTime();
+        var barEndDate = Ext.Date.add(r.get('Date'), Ext.Date.DAY, (r.get('BarLength') - 1));
+        return Ext.Date.clearTime(barEndDate, true).getTime() !== Ext.Date.clearTime(r.get('Record').get(this.endEventField), true).getTime();
     },
     /**
      * Returns true if the specified EventBar record has been wrapped from the row before.
@@ -532,7 +532,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * @param {Ext.ux.CalendarEventBarModel} r The EventBar model instance to figure out if it has wrapped from the previous row of dates
      */
     eventBarHasWrapped: function(r){
-        return r.get('Date').clearTime(true).getTime() !== r.get('Record').get(this.startEventField).clearTime(true).getTime();
+        return Ext.Date.clearTime(r.get('Date'), true).getTime() !== Ext.Date.clearTime(r.get('Record').get(this.startEventField), true).getTime();
     },
     
     /**
