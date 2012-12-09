@@ -389,6 +389,25 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
             store.clearFilter();
         }, this);
     },
+
+	renderEventBars: function(store){
+		var mode = this.calendar.getViewMode();
+
+		switch(mode.toLowerCase()){
+
+			case 'month':
+				this.renderMonthEventBars(store);
+				break;
+
+			case 'week':
+				this.renderMonthEventBars(store);
+				break;
+
+			case 'day':
+				this.renderDayEventBars(store);
+				break;
+		}
+	},
     
     /**
      * After the Event store has been processed, this method recursively creates and positions the Event Bars
@@ -396,7 +415,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * @private
      * @param {Ext.data.Store} store The store to process - used to then recurse into
      */
-    renderEventBars: function(store){
+    renderMonthEventBars: function(store){
       var me = this;
     
         store.each(function(record){
@@ -411,9 +430,9 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 		        style: {
 		          'background-color': eventRecord.get(this.colourField)
 		        },
-                html: new Ext.XTemplate(this.getEventBarTpl()).apply(eventRecord.data),
+                html: this.getEventBarTpl().apply(eventRecord.data),
                 eventID: record.get('EventID'),
-                cls: this.eventBarCls + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
+                cls: this.getEventBarCls() + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
             }, true);
       
 			if (this.allowEventDragAndDrop) {
@@ -642,7 +661,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
             this.eventWrapperEl.on('tap', this.onEventWrapperTap, this, {
                 delegate: 'div.' + this.eventBarCls
             });
-            this.renderDayEventBars(this.eventBarStore);
+            this.renderEventBars(this.eventBarStore);
         }else{
           this.calendar.on('painted', this.createEventWrapper, this);
         }
