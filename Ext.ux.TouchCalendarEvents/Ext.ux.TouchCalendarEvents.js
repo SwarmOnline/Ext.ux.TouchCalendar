@@ -21,32 +21,37 @@
 Ext.define('Ext.ux.TouchCalendarEvents', {
   extend: 'Ext.mixin.Observable',
   config: {
-    /**
-     * @cfg {String} eventBarTpl Template that will be used to fill the Event Bar
-     */
-    eventBarTpl : '{title}' // make this an internal set-able property
+		/**
+		 * @cfg {String} eventBarTpl Template that will be used to fill the Event Bar
+		 */
+		eventBarTpl : '{title}', // make this an internal set-able property
+
+	  /**
+	   * @cfg {String} eventBarCls Base CSS class given to each EventBar
+	   */
+	  eventBarCls: 'event-bar',
+
+	  /**
+	   * @cfg {String} colourField Name of the Model field which contains a colour to be applied to the
+	   * event bar
+	   */
+	  colourField: 'colour',
+
+	  cssClassField: 'css'
+
   },
   /**
    * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
    */
   startEventField: 'start',
-  
+
   /**
    * @cfg {Stirng} endEventField Name of the Model field which contains the Event's End date
    */
   endEventField: 'end',
-  
-  /**
-   * @cfg {String} colourField Name of the Model field which contains a colour to be applied to the 
-   * event bar
-   */
-  colourField: 'colour',
-  
-  /**
-   * @cfg {String} eventBarCls Base CSS class given to each EventBar
-   */
-  eventBarCls: 'event-bar',
-  
+
+
+
   /**
    * @cfg {String} eventWrapperCls CSS class given to the EventBars' wrapping element
    */
@@ -147,9 +152,9 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
         this.createEventWrapper();
         
         
-    if (this.allowEventDragAndDrop) {
-      this.createDroppableRegion();
-    }
+        if (this.allowEventDragAndDrop) {
+            this.createDroppableRegion();
+        }
     },
   
   /**
@@ -294,24 +299,24 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
         var dates = this.calendar.getStore();
         var store = this.calendar.eventStore;
         var eventBarRecord;
-        
+
         // Loop through Calendar's date collection of visible dates
         dates.each(function(dateObj){
             var currentDate = dateObj.get('date'),
-        currentDateTime = Ext.Date.clearTime(currentDate, true).getTime(),
-        takenDatePositions = []; // stores 'row positions' that are taken on current date
-        
+		        currentDateTime = Ext.Date.clearTime(currentDate, true).getTime(),
+		        takenDatePositions = []; // stores 'row positions' that are taken on current date
+
             // Filter the Events Store for events that are happening on the currentDate
             store.filterBy(function(record){
                 var startDate = Ext.Date.clearTime(record.get(this.startEventField), true).getTime(),
                     endDate = Ext.Date.clearTime(record.get(this.endEventField), true).getTime();
-                
+
                 return (startDate <= currentDateTime) && (endDate >= currentDateTime);
             }, this);
             
             // sort the Events Store so we have a consistent ordering to ensure no overlaps
             store.sort(this.startEventField, 'ASC');
-            
+
             // Loop through currentDate's Events
             store.each(function(event){
                 // Find any Event Bar record in the EventBarStore for the current Event's record (using internalID)
@@ -479,6 +484,95 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
             }
         }, this);
     },
+
+	renderDayEventBars: function(store){
+		var me = this,
+			l = store.getCount(),
+			i = 0,
+			rec;
+
+		for(; i < l; i++){
+			rec = store.getAt(i);
+
+			var eventRecord     = rec.data.Record,
+				eventBar        = this.createEventBar(rec, eventRecord),
+
+				verticalPos     = this.getVerticalDayPosition(rec),
+				horizontalPos   = this.getHorizontalDayPosition(rec);
+
+			eventBar.setLeft(horizontalPos);
+			eventBar.setTop(verticalPos - this.calendar.element.getY());
+
+			eventBar.addCls(eventRecord.get(this.getCssClassField()));
+		}
+
+	},
+
+	getVerticalDayPosition: function(event){
+		var startDate           = event.data.Record.get(this.startEventField),
+			roundedStartDate    = this.getRoundedTime(startDate),
+			minutesDiff         = (startDate.getTime() - roundedStartDate.getTime()) / 1000 / 60,
+			timeSlotEl          = this.calendar.getDateCell(roundedStartDate),
+			timeSlotRowEl       = timeSlotEl.parent('tr', false),
+			verticalPosition    = 0;
+
+		if(timeSlotRowEl){
+			var timeSlotHeight  = timeSlotEl.getHeight(),
+				timeSlotY       = timeSlotRowEl.getY(),
+				minutesPerPixel = timeSlotHeight / 30,
+				extraMinutesY   = minutesDiff * minutesPerPixel;
+
+			verticalPosition = timeSlotY + extraMinutesY;
+		}
+
+		return verticalPosition;
+	},
+
+	getHorizontalDayPosition: function(event){
+		return 50;
+	},
+
+	/**
+	 * Returns the specified date rounded to the nearest 30 minute block.
+	 * @method
+	 * @private
+	 * @param {Date} date
+	 * @return {Date}
+	 */
+	getRoundedTime: function(date){
+		date = Ext.Date.clone(date);
+
+		var minutes = date.getMinutes();
+
+		date.setMinutes(minutes - (minutes % 30));
+
+		return date;
+	},
+
+	createEventBar: function(record, eventRecord){
+		var doesWrap    = this.eventBarDoesWrap(record),
+			hasWrapped  = this.eventBarHasWrapped(record),
+			cssClasses  = [
+				this.getEventBarCls(),
+				'e-' + record.get('EventID'),
+				(doesWrap ? ' wrap-end' : ''),
+				(hasWrapped ? ' wrap-start' : '')
+			];
+
+
+		// create the event bar
+		var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
+			tag: 'div',
+			style: {
+				height: '50px'
+			},
+			html: this.getEventBarTpl().apply(eventRecord.data),
+			eventID: record.get('EventID'),
+			cls: cssClasses.join(' ')
+		}, true);
+
+		return eventBar;
+	},
   
   /**
    * Handler function for the Event Bars' 'dragstart' event
@@ -548,7 +642,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
             this.eventWrapperEl.on('tap', this.onEventWrapperTap, this, {
                 delegate: 'div.' + this.eventBarCls
             });
-            this.renderEventBars(this.eventBarStore);
+            this.renderDayEventBars(this.eventBarStore);
         }else{
           this.calendar.on('painted', this.createEventWrapper, this);
         }
@@ -667,9 +761,17 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     }
     },
   
-  getRandomColour: function(){
-    return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
-  }
+	getRandomColour: function(){
+		return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+	},
+
+	applyEventBarTpl: function(tpl){
+		if(Ext.isString(tpl) || Ext.isArray(tpl)){
+			tpl = Ext.create('Ext.XTemplate', tpl);
+		}
+
+		return tpl;
+	}
 });
 
 
