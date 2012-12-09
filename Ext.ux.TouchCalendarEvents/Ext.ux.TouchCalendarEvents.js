@@ -19,27 +19,36 @@
  * 
  */
 Ext.define('Ext.ux.TouchCalendarEvents', {
-  extend: 'Ext.mixin.Observable',
-  config: {
+	extend: 'Ext.mixin.Observable',
+	config: {
 		/**
 		 * @cfg {String} eventBarTpl Template that will be used to fill the Event Bar
 		 */
 		eventBarTpl : '{title}', // make this an internal set-able property
 
-	  /**
-	   * @cfg {String} eventBarCls Base CSS class given to each EventBar
-	   */
-	  eventBarCls: 'event-bar',
+		/**
+		 * @cfg {String} eventBarCls Base CSS class given to each EventBar
+		 */
+		eventBarCls: 'event-bar',
 
-	  /**
-	   * @cfg {String} colourField Name of the Model field which contains a colour to be applied to the
-	   * event bar
-	   */
-	  colourField: 'colour',
+		/**
+		 * @cfg {String} colourField Name of the Model field which contains a colour to be applied to the
+		 * event bar
+		 */
+		colourField: 'colour',
 
-	  cssClassField: 'css'
+		cssClassField: 'css',
 
-  },
+		/**
+		 * @cfg {String/Number} eventHeight How the height of an event bar will be calculated in Day View.
+		 * Possible values:
+		 * auto: This will expand the event bar to contain it's content.
+		 * duration: (default) This will set the event bar to be the height equivalent of its duration
+		 * <number>: This will make the event bars to this explicit height
+		 */
+	    eventHeight: 'duration'
+
+	},
   /**
    * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
    */
@@ -517,31 +526,67 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 				eventBar        = this.createEventBar(rec, eventRecord),
 
 				verticalPos     = this.getVerticalDayPosition(rec),
-				horizontalPos   = this.getHorizontalDayPosition(rec);
+				horizontalPos   = this.getHorizontalDayPosition(rec),
+				eventHeight     = this.getEventBarHeight(rec);
 
 			eventBar.setLeft(horizontalPos);
 			eventBar.setTop(verticalPos - this.calendar.element.getY());
+
+			eventBar.setHeight(eventHeight);
 
 			eventBar.addCls(eventRecord.get(this.getCssClassField()));
 		}
 
 	},
 
-	getVerticalDayPosition: function(event){
+	getEventBarHeight: function(event){
+		var eventHeight = this.getEventHeight();
+
+		if(Ext.isNumeric(eventHeight)){
+			return eventHeight;
+		} else if(eventHeight === 'duration'){
+			return this.getEventBarHeightDuration(event);
+		} else {
+			return 'auto';
+		}
+	},
+
+	getEventBarHeightDuration: function(event){
 		var startDate           = event.data.Record.get(this.startEventField),
+			endDate             = event.data.Record.get(this.endEventField),
 			roundedStartDate    = this.getRoundedTime(startDate),
-			minutesDiff         = (startDate.getTime() - roundedStartDate.getTime()) / 1000 / 60,
+			minutesLength       = (endDate.getTime() - startDate.getTime()) / 1000 / 60,
 			timeSlotEl          = this.calendar.getDateCell(roundedStartDate),
 			timeSlotRowEl       = timeSlotEl.parent('tr', false),
-			verticalPosition    = 0;
+			heightPixels        = 0;
 
 		if(timeSlotRowEl){
 			var timeSlotHeight  = timeSlotEl.getHeight(),
-				timeSlotY       = timeSlotRowEl.getY(),
-				minutesPerPixel = timeSlotHeight / 30,
-				extraMinutesY   = minutesDiff * minutesPerPixel;
+				minutesPerPixel = timeSlotHeight / 30;
 
-			verticalPosition = timeSlotY + extraMinutesY;
+			heightPixels    = minutesLength * minutesPerPixel;
+
+			console.log('Height: ' + heightPixels.toString());
+		}
+
+		return heightPixels;
+	},
+
+	getVerticalDayPosition: function(event){
+		var startDate           = event.data.Record.get(this.startEventField),
+			roundedStartDate    = this.getRoundedTime(startDate),
+			timeSlotCount       = (roundedStartDate.getHours() * 2) + (roundedStartDate.getMinutes() === 30 ? 1 : 0),
+			minutesDiff         = (startDate.getTime() - roundedStartDate.getTime()) / 1000 / 60,
+			firstTimeSlotEl     = this.calendar.element.select('td').first(),
+			verticalPosition    = 0;
+
+		if(firstTimeSlotEl){
+			var firstTimeSlotHeight = firstTimeSlotEl.getHeight(),
+				firstTimeSlotY      = firstTimeSlotEl.getY(), // first time slot position - needed so we take the header row into account
+				minutesPerPixel     = firstTimeSlotHeight / 30,
+				extraMinutesY       = minutesDiff * minutesPerPixel;
+
+			verticalPosition = firstTimeSlotY + (timeSlotCount * firstTimeSlotHeight) + extraMinutesY;
 		}
 
 		return verticalPosition;
@@ -582,9 +627,6 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 		// create the event bar
 		var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
 			tag: 'div',
-			style: {
-				height: '50px'
-			},
 			html: this.getEventBarTpl().apply(eventRecord.data),
 			eventID: record.get('EventID'),
 			cls: cssClasses.join(' ')
