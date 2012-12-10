@@ -701,7 +701,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
             }, true);
             
             this.eventWrapperEl.on('tap', this.onEventWrapperTap, this, {
-                delegate: 'div.' + this.eventBarCls
+                delegate: 'div.' + this.getEventBarCls()
             });
             this.renderEventBars(this.eventBarStore);
         }else{
@@ -719,9 +719,10 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     onEventWrapperTap: function(e, node){
         e.stopPropagation(); // stop event bubbling up
         
-        var eventID = node.attributes['eventID'];
+        var eventID = e.getTarget('div.' + this.getEventBarCls()).getAttribute('eventID');
+
         if (eventID) {
-            var eventRecord = this.getEventRecord(node.attributes['eventID'].value);
+            var eventRecord = this.getEventRecord(eventID);
             
             this.deselectEvents();
 
