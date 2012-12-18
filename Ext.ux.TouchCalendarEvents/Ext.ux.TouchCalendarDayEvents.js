@@ -35,7 +35,7 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 			store.filterBy(Ext.bind(this.eventFilterFn, this, [currentDateTime], true), this);
 
 			// sort the Events Store so we have a consistent ordering to ensure no overlaps
-			store.sort(this.getPlugin().startEventField, 'ASC');
+			store.sort(this.getPlugin().getStartEventField(), 'ASC');
 
 			// Loop through currentDate's Events
 			store.each(function(event){
@@ -57,7 +57,7 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 
 					// if currentDate is at the start of the week then we must create a new EventBarRecord
 					// to represent the new bar on the next row.
-					if (currentDate.getDay() === this.getCalendar().weekStart) {
+					if (currentDate.getDay() === this.getCalendar().getWeekStart()) {
 						// push the inherited BarPosition of the parent
 						// EventBarRecord onto the takenDatePositions array
 						takenDatePositions.push(eventBarRecord.get('BarPosition'));
@@ -114,8 +114,8 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 
 	eventFilterFn: function(record, currentDateTime){
 		//debugger;
-		var startDate   = this.getRoundedTime(record.get(this.getPlugin().startEventField)).getTime(),
-			endDate     = this.getRoundedTime(record.get(this.getPlugin().endEventField)).getTime();
+		var startDate   = this.getRoundedTime(record.get(this.getPlugin().getStartEventField())).getTime(),
+			endDate     = this.getRoundedTime(record.get(this.getPlugin().getEndEventField())).getTime();
 
 		return (startDate <= currentDateTime) && (endDate >= currentDateTime);
 	},
@@ -160,8 +160,8 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 	},
 
 	getEventBarHeightDuration: function(event){
-		var startDate           = event.data.Record.get(this.getPlugin().startEventField),
-			endDate             = event.data.Record.get(this.getPlugin().endEventField),
+		var startDate           = event.data.Record.get(this.getPlugin().getStartEventField()),
+			endDate             = event.data.Record.get(this.getPlugin().getEndEventField()),
 			roundedStartDate    = this.getRoundedTime(startDate),
 			minutesLength       = (endDate.getTime() - startDate.getTime()) / 1000 / 60,
 			timeSlotEl          = this.getCalendar().getDateCell(roundedStartDate),
@@ -181,7 +181,7 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 	},
 
 	getVerticalDayPosition: function(event){
-		var startDate           = event.data.Record.get(this.getPlugin().startEventField),
+		var startDate           = event.data.Record.get(this.getPlugin().getStartEventField()),
 			roundedStartDate    = this.getRoundedTime(startDate),
 			timeSlotCount       = (roundedStartDate.getHours() * 2) + (roundedStartDate.getMinutes() === 30 ? 1 : 0),
 			minutesDiff         = (startDate.getTime() - roundedStartDate.getTime()) / 1000 / 60,
@@ -204,7 +204,7 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 		var barPos      = event.get('BarPosition'),
 			leftMargin  = 50,
 			barWidth    = 100,
-			spacing = this.getPlugin().eventBarSpacing;
+			spacing = this.getPlugin().getEventBarSpacing();
 
 		return leftMargin + (barPos * barWidth) + (barPos * spacing);
 	},

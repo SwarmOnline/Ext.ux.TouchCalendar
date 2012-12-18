@@ -6,8 +6,8 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
     extend: 'Ext.ux.TouchCalendarEventsBase',
 
 	eventFilterFn: function(record, currentDateTime){
-		var startDate = Ext.Date.clearTime(record.get(this.getPlugin().startEventField), true).getTime(),
-			endDate = Ext.Date.clearTime(record.get(this.getPlugin().endEventField), true).getTime();
+		var startDate = Ext.Date.clearTime(record.get(this.getPlugin().getStartEventField()), true).getTime(),
+			endDate = Ext.Date.clearTime(record.get(this.getPlugin().getEndEventField()), true).getTime();
 
 		return (startDate <= currentDateTime) && (endDate >= currentDateTime);
 	},
@@ -45,7 +45,7 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 			store.filterBy(Ext.bind(this.eventFilterFn, this, [currentDateTime], true), this);
 
 			// sort the Events Store so we have a consistent ordering to ensure no overlaps
-			store.sort(this.getPlugin().startEventField, 'ASC');
+			store.sort(this.getPlugin().getStartEventField(), 'ASC');
 
 			// Loop through currentDate's Events
 			store.each(function(event){
@@ -133,11 +133,11 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 		store.each(function(record){
 			var eventRecord = this.getEventRecord(record.get('EventID')),
 				dayEl = this.getCalendar().getDateCell(record.get('Date')),
-				doesWrap = this.getPlugin().eventBarDoesWrap(record),
-				hasWrapped = this.getPlugin().eventBarHasWrapped(record);
+				doesWrap = this.eventBarDoesWrap(record),
+				hasWrapped = this.eventBarHasWrapped(record);
 
 			// create the event bar
-			var eventBar = Ext.DomHelper.append(this.getPlugin().eventWrapperEl, {
+			var eventBar = Ext.DomHelper.append(this.getPlugin().getEventWrapperEl(), {
 				tag: 'div',
 				style: {
 					'background-color': eventRecord.get(this.getPlugin().colourField)
@@ -203,7 +203,7 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 				dayCellX = (this.getCalendar().element.getWidth() / 7) * dayEl.dom.cellIndex,
 				dayCellWidth = dayEl.getWidth(),
 				eventBarHeight = eventBar.getHeight(),
-				spacing = this.getPlugin().eventBarSpacing;
+				spacing = this.getPlugin().getEventBarSpacing();
 
 			// set sizes and positions
 			eventBar.setLeft(dayCellX + (hasWrapped ? 0 : spacing));

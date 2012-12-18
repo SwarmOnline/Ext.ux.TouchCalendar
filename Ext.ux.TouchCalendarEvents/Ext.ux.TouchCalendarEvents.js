@@ -57,52 +57,58 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 		 * auto: This will expand the bar to fill the space
 		 * <number>: This will make the event bars this explicit width
 		 */
-		eventWidth: 'auto'
+		eventWidth: 'auto',
+
+		/**
+		 * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
+		 */
+		startEventField: 'start',
+
+		/**
+		 * @cfg {String} endEventField Name of the Model field which contains the Event's End date
+		 */
+		endEventField: 'end',
+
+		/**
+		 * @cfg {String} eventWrapperCls CSS class given to the EventBars' wrapping element
+		 */
+		eventWrapperCls: 'event-wrapper',
+
+		/**
+		 * @cfg {String} eventBarSelectedCls CSS class given to the EventBar after it has been selected
+		 */
+		eventBarSelectedCls: 'event-bar-selected',
+
+		/**
+		 * @cfg {String} cellHoverCls CSS class given to date cells when an event is dragged over
+		 */
+		cellHoverCls: 'date-cell-hover',
+
+		/**
+		 * @cfg {Boolean} autoUpdateEvent Decides whether the configured startEventField and endEventField
+		 * dates are updated after an event is dragged and dropped
+		 */
+		autoUpdateEvent: true,
+
+		/**
+		 * @cfg {Boolean} allowEventDragAndDrop Decides whether the Event Bars can be dragged and dropped
+		 */
+		allowEventDragAndDrop: false,
+
+		/**
+		 * @cfg {Number} eventBarSpacing Space (in pixels) between EventBars
+		 */
+		eventBarSpacing: 1,
+
+		eventWrapperEl: null
 
 	},
-  /**
-   * @cfg {String} startEventField Name of the Model field which contains the Event's Start date
-   */
-  startEventField: 'start',
-
-  /**
-   * @cfg {Stirng} endEventField Name of the Model field which contains the Event's End date
-   */
-  endEventField: 'end',
 
 
 
-  /**
-   * @cfg {String} eventWrapperCls CSS class given to the EventBars' wrapping element
-   */
-  eventWrapperCls: 'event-wrapper',
-  
-  /**
-   * @cfg {String} eventBarSelectedCls CSS class given to the EventBar after it has been selected
-   */
-  eventBarSelectedCls: 'event-bar-selected',
-  
-  /**
-   * @cfg {String} cellHoverCls CSS class given to date cells when an event is dragged over
-   */
-  cellHoverCls: 'date-cell-hover',
-    
-  /**
-   * @cfg {Boolean} autoUpdateEvent Decides whether the configured startEventField and endEventField 
-   * dates are updated after an event is dragged and dropped
-   */
-  autoUpdateEvent: true,
-  
-  /**
-   * @cfg {Boolean} allowEventDragAndDrop Decides whether the Event Bars can be dragged and dropped
-   */
-  allowEventDragAndDrop: false,
-  
-    /**
-     * @cfg {Number} eventBarSpacing Space (in pixels) between EventBars
-     */
-    eventBarSpacing: 1,
- 
+
+
+
     
     init: function(calendar){
 	    var me = this;
@@ -223,7 +229,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
         this.createEventWrapper();
         
         
-        if (this.allowEventDragAndDrop) {
+        if (this.getAllowEventDragAndDrop()) {
             this.createDroppableRegion();
         }
     },
@@ -328,11 +334,11 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
                     validDrop = true;
                     var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID')),
                         droppedDate = this.calendar.getCellDate(cell),
-                        daysDifference = this.getDaysDifference(eventRecord.get(this.startEventField), droppedDate);
+                        daysDifference = this.getDaysDifference(eventRecord.get(this.getStartEventField()), droppedDate);
 
-                    if (this.autoUpdateEvent) {
-                        eventRecord.set(this.startEventField, droppedDate);
-                        eventRecord.set(this.endEventField, eventRecord.get(this.endEventField).add(Date.DAY, daysDifference));
+                    if (this.getAutoUpdateEvent()) {
+                        eventRecord.set(this.getStartEventField(), droppedDate);
+                        eventRecord.set(this.getEndEventField(), eventRecord.get(this.getEndEventField()).add(Date.DAY, daysDifference));
                     }
 
                     this.refreshEvents();
@@ -343,7 +349,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
                 }
             }, this);
 
-            this.calendar.all.removeCls(this.cellHoverCls);
+            this.calendar.all.removeCls(this.getCellHoverCls());
 
             if (!validDrop) { // if it wasn't a valid drop then move the Event Bar back to its original location
                 draggable.setOffset(draggable.startOffset, true);
@@ -372,36 +378,14 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     // Update the draggables boundary so the resized bar can be dragged right to the edge.
     draggable.updateBoundary(true);
 
-    // hide all linked Event Bars
+        // hide all linked Event Bars
         this.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
             if (eventBar.dom !== draggable.el.dom) {
                 eventBar.hide();
             }
         }, this);
     
-    this.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
-    },
-    
-    /**
-     * Returns true if the specified EventBar record will wrap and so will need square ends
-     * Compares the calculated date that the bar will end on and the actual end date of the event. If they aren't the same
-     * the bar will wrap to the next row
-     * @method
-     * @private
-     * @param {Ext.ux.CalendarEventBarModel} r The EventBar model instance to figure out if it wraps to the next row of dates
-     */
-    eventBarDoesWrap: function(r){
-        var barEndDate = Ext.Date.add(r.get('Date'), Ext.Date.DAY, (r.get('BarLength') - 1));
-        return Ext.Date.clearTime(barEndDate, true).getTime() !== Ext.Date.clearTime(r.get('Record').get(this.endEventField), true).getTime();
-    },
-    /**
-     * Returns true if the specified EventBar record has been wrapped from the row before.
-     * @method
-     * @private
-     * @param {Ext.ux.CalendarEventBarModel} r The EventBar model instance to figure out if it has wrapped from the previous row of dates
-     */
-    eventBarHasWrapped: function(r){
-        return Ext.Date.clearTime(r.get('Date'), true).getTime() !== Ext.Date.clearTime(r.get('Record').get(this.startEventField), true).getTime();
+        this.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
     },
     
     /**
@@ -411,13 +395,13 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * @private
      */
     createEventWrapper: function(){
-        if (this.calendar.rendered && !this.eventWrapperEl) {
-            this.eventWrapperEl = Ext.DomHelper.append(this.getEventsWrapperContainer(), {
+        if (this.calendar.rendered && !this.getEventWrapperEl()) {
+            this.setEventWrapperEl(Ext.DomHelper.append(this.getEventsWrapperContainer(), {
                 tag: 'div',
-                cls: this.eventWrapperCls
-            }, true);
+                cls: this.getEventWrapperCls()
+            }, true));
             
-            this.eventWrapperEl.on('tap', this.onEventWrapperTap, this, {
+            this.getEventWrapperEl().on('tap', this.onEventWrapperTap, this, {
                 delegate: 'div.' + this.getEventBarCls()
             });
             this.getViewModeProcessor().renderEventBars(this.getViewModeProcessor().eventBarStore);
@@ -447,7 +431,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 
 			    this.deselectEvents();
 
-			    eventBarEl.addCls(this.eventBarSelectedCls);
+			    eventBarEl.addCls(this.getEventBarSelectedCls());
 
 			    this.calendar.fireEvent('eventtap', eventRecord, e);
 		    }
@@ -481,7 +465,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * @return {void}
      */
     deselectEvents: function(){
-        this.calendar.element.select('.' + this.eventBarSelectedCls).removeCls(this.eventBarSelectedCls);
+        this.calendar.element.select('.' + this.getEventBarSelectedCls()).removeCls(this.getEventBarSelectedCls());
     },
     
     /**
@@ -504,10 +488,10 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * @private
      */
     removeEvents: function(){
-        if (this.eventWrapperEl) {
-            this.eventWrapperEl.dom.innerHTML = '';
-            this.eventWrapperEl.destroy();
-            this.eventWrapperEl = null;
+        if (this.getEventWrapperEl()) {
+            this.getEventWrapperEl().dom.innerHTML = '';
+            this.getEventWrapperEl().destroy();
+            this.setEventWrapperEl(null);
         }
         
         if (this.eventBarStore) {

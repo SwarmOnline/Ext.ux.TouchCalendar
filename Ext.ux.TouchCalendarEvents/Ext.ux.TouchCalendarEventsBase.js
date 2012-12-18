@@ -17,6 +17,28 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 	},
 
 	/**
+	 * Returns true if the specified EventBar record will wrap and so will need square ends
+	 * Compares the calculated date that the bar will end on and the actual end date of the event. If they aren't the same
+	 * the bar will wrap to the next row
+	 * @method
+	 * @private
+	 * @param {Ext.ux.CalendarEventBarModel} r The EventBar model instance to figure out if it wraps to the next row of dates
+	 */
+	eventBarDoesWrap: function(r){
+		var barEndDate = Ext.Date.add(r.get('Date'), Ext.Date.DAY, (r.get('BarLength') - 1));
+		return Ext.Date.clearTime(barEndDate, true).getTime() !== Ext.Date.clearTime(r.get('Record').get(this.getPlugin().getEndEventField()), true).getTime();
+	},
+	/**
+	 * Returns true if the specified EventBar record has been wrapped from the row before.
+	 * @method
+	 * @private
+	 * @param {Ext.ux.CalendarEventBarModel} r The EventBar model instance to figure out if it has wrapped from the previous row of dates
+	 */
+	eventBarHasWrapped: function(r){
+		return Ext.Date.clearTime(r.get('Date'), true).getTime() !== Ext.Date.clearTime(r.get('Record').get(this.getPlugin().getStartEventField()), true).getTime();
+	},
+
+	/**
 	 * Get the Event record with the specified eventID (eventID equates to a record's internalId)
 	 * @method
 	 * @private
@@ -62,8 +84,8 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 
 
 	createEventBar: function(record, eventRecord){
-		var doesWrap    = this.getPlugin().eventBarDoesWrap(record),
-			hasWrapped  = this.getPlugin().eventBarHasWrapped(record),
+		var doesWrap    = this.eventBarDoesWrap(record),
+			hasWrapped  = this.eventBarHasWrapped(record),
 			cssClasses  = [
 				this.getPlugin().getEventBarCls(),
 				'e-' + record.get('EventID'),
@@ -73,7 +95,7 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 
 
 		// create the event bar
-		var eventBar = Ext.DomHelper.append(this.getPlugin().eventWrapperEl, {
+		var eventBar = Ext.DomHelper.append(this.getPlugin().getEventWrapperEl(), {
 			tag: 'div',
 			html: this.getPlugin().getEventBarTpl().apply(eventRecord.data),
 			eventID: record.get('EventID'),
