@@ -21,6 +21,9 @@
 Ext.define('Ext.ux.TouchCalendarEvents', {
 	extend: 'Ext.mixin.Observable',
 	config: {
+
+		viewModeProcessor: null,
+
 		/**
 		 * @cfg {String} eventBarTpl Template that will be used to fill the Event Bar
 		 */
@@ -46,7 +49,15 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 		 * duration: (default) This will set the event bar to be the height equivalent of its duration
 		 * <number>: This will make the event bars to this explicit height
 		 */
-	    eventHeight: 'duration'
+	    eventHeight: 'duration',
+
+		/**
+		 * @cfg {String/Number} eventWidth How the width of an event bar will be calculated in Day View
+		 * Possible values:
+		 * auto: This will expand the bar to fill the space
+		 * <number>: This will make the event bars this explicit width
+		 */
+		eventWidth: 'auto'
 
 	},
   /**
@@ -94,6 +105,8 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
  
     
     init: function(calendar){
+	    var me = this;
+
         this.calendar = calendar; // cache the parent calendar
         this.calendar.eventsPlugin = this; // cache the plugin instance on the calendar itself  
         
@@ -146,7 +159,56 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 	    // create a sequence to refresh the Event Bars when the calendar either refreshes or has a component layout happen
 	    this.calendar.refresh = Ext.Function.createSequence(this.calendar.refresh, this.refreshEvents, this);
 	    this.calendar.afterComponentLayout = Ext.Function.createSequence(this.calendar.afterComponentLayout, this.refreshEvents, this);
+	    this.calendar.setViewMode = this.createPreSequence(this.calendar.setViewMode, this.onViewModeUpdate, this);
+
+		this.setViewModeProcessor(Ext.create('Ext.ux.TouchCalendarDayEvents', {
+			calendar: this.calendar,
+			plugin: this
+		}));
     },
+
+	createPreSequence: function(originalFn, newFn, scope){
+		if (!newFn) {
+			return originalFn;
+		}
+		else {
+			return function() {
+				newFn.apply(scope || this, arguments);
+
+				var result = originalFn.apply(this, arguments);
+
+				return result;
+			};
+		}
+	},
+
+	onViewModeUpdate: function(mode){
+		this.setViewModeProcessor(Ext.create(this.getViewModeProcessorClass(mode), {
+			calendar: this.calendar,
+			plugin: this
+		}));
+	},
+
+	getViewModeProcessorClass: function(viewMode){
+		var processorCls    = '';
+
+		switch(viewMode.toLowerCase()){
+
+			case 'month':
+				processorCls = 'Ext.ux.TouchCalendarMonthEvents';
+				break;
+
+			case 'week':
+				processorCls = 'Ext.ux.TouchCalendarMonthEvents';
+				break;
+
+			case 'day':
+				processorCls = 'Ext.ux.TouchCalendarDayEvents';
+				break;
+		}
+
+		return processorCls;
+	},
     
     /**
      * Regenerates the Event Bars
@@ -156,7 +218,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     refreshEvents: function(){
         this.removeEvents();
         
-        this.generateEventBars(); // in turn calls this.renderEventBars(this.eventBarStore);
+        this.getViewModeProcessor().generateEventBars(); // in turn calls this.renderEventBars(this.eventBarStore);
         
         this.createEventWrapper();
         
@@ -288,353 +350,8 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
             }
         }
     },
-    
-    /**
-     * Processes the Events store and generates the EventBar records needed to create the markup
-     * @method
-     * @private
-     */
-    generateEventBars: function(){
-    /**
-     * @property {Ext.data.Store} eventBarStore Store to store the Event Bar definitions. It is defined 
-     * with the Ext.ux.CalendarEventBarModel model.
-     * @private
-     */
-        this.eventBarStore = Ext.create('Ext.data.Store', {
-            model: 'Ext.ux.CalendarEventBarModel',
-            data: []
-        });
-        
-        var dates = this.calendar.getStore();
-        var store = this.calendar.eventStore;
-        var eventBarRecord;
-
-        // Loop through Calendar's date collection of visible dates
-        dates.each(function(dateObj){
-            var currentDate = dateObj.get('date'),
-		        currentDateTime = Ext.Date.clearTime(currentDate, true).getTime(),
-		        takenDatePositions = []; // stores 'row positions' that are taken on current date
-
-            // Filter the Events Store for events that are happening on the currentDate
-            store.filterBy(function(record){
-                var startDate = Ext.Date.clearTime(record.get(this.startEventField), true).getTime(),
-                    endDate = Ext.Date.clearTime(record.get(this.endEventField), true).getTime();
-
-                return (startDate <= currentDateTime) && (endDate >= currentDateTime);
-            }, this);
-            
-            // sort the Events Store so we have a consistent ordering to ensure no overlaps
-            store.sort(this.startEventField, 'ASC');
-
-            // Loop through currentDate's Events
-            store.each(function(event){
-                // Find any Event Bar record in the EventBarStore for the current Event's record (using internalID)
-                var eventBarIndex = this.eventBarStore.findBy(function(record, id){
-                    return record.get('EventID') === event.internalId;
-                }, this);
-                
-                // if an EventBarRecord was found then it is a multiple day Event so we must link them
-                if (eventBarIndex > -1) {
-                    eventBarRecord = this.eventBarStore.getAt(eventBarIndex); // get the actual EventBarRecord
-                    
-                    // recurse down the linked EventBarRecords to get the last record in the chain for
-                    // wrapping Events
-                    while (eventBarRecord.linked().getCount() > 0) {
-                        eventBarRecord = eventBarRecord.linked().getAt(eventBarRecord.linked().getCount() - 1);
-                    }
-                    
-                    // if currentDate is at the start of the week then we must create a new EventBarRecord
-                    // to represent the new bar on the next row.
-                    if (currentDate.getDay() === this.calendar.weekStart) {
-                        // push the inherited BarPosition of the parent 
-                        // EventBarRecord onto the takenDatePositions array
-                        takenDatePositions.push(eventBarRecord.get('BarPosition'));
-                        
-                        // create a new EventBar record 
-                        var wrappedEventBarRecord = Ext.ModelMgr.create({
-                            EventID: event.internalId,
-                            Date: currentDate,
-                            BarLength: 1,
-                            BarPosition: eventBarRecord.get('BarPosition'),
-				              Colour: eventBarRecord.get('Colour'),
-                            Record: event
-                        }, 'Ext.ux.CalendarEventBarModel');
-                        
-                        // add it as a linked EventBar of the parent
-                        eventBarRecord.linked().add(wrappedEventBarRecord);
-                    }
-                    else {
-                        // add the inherited BarPosition to the takenDatePositions array
-                        takenDatePositions.push(eventBarRecord.get('BarPosition'));
-                        
-                        // increment the BarLength value for this day
-                        eventBarRecord.set('BarLength', eventBarRecord.get('BarLength') + 1);
-                    }
-                }
-                else {
-                    // get the next free bar position
-                    var barPos = this.getNextFreePosition(takenDatePositions);
-                    
-                    // push it onto array so it isn't reused
-                    takenDatePositions.push(barPos);
-                    
-                    // create new EventBar record
-                    eventBarRecord = Ext.ModelMgr.create({
-                        EventID: event.internalId,
-                        Date: currentDate,
-                        BarLength: 1,
-                        BarPosition: barPos,
-                        Colour: this.getRandomColour(),
-                        Record: event
-                    }, 'Ext.ux.CalendarEventBarModel');
-                    
-                    // add EventBar record to main store
-                    this.eventBarStore.add(eventBarRecord);
-                }
-                
-            }, this);
-            
-            // remove the filter
-            store.clearFilter();
-        }, this);
-    },
-
-	renderEventBars: function(store){
-		var mode = this.calendar.getViewMode();
-
-		switch(mode.toLowerCase()){
-
-			case 'month':
-				this.renderMonthEventBars(store);
-				break;
-
-			case 'week':
-				this.renderMonthEventBars(store);
-				break;
-
-			case 'day':
-				this.renderDayEventBars(store);
-				break;
-		}
-	},
-    
-    /**
-     * After the Event store has been processed, this method recursively creates and positions the Event Bars
-     * @method
-     * @private
-     * @param {Ext.data.Store} store The store to process - used to then recurse into
-     */
-    renderMonthEventBars: function(store){
-      var me = this;
-    
-        store.each(function(record){
-            var eventRecord = this.getEventRecord(record.get('EventID')),
-		        dayEl = this.calendar.getDateCell(record.get('Date')),
-		        doesWrap = this.eventBarDoesWrap(record),
-		        hasWrapped = this.eventBarHasWrapped(record);
-
-            // create the event bar
-            var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
-                tag: 'div',
-		        style: {
-		          'background-color': eventRecord.get(this.colourField)
-		        },
-                html: this.getEventBarTpl().apply(eventRecord.data),
-                eventID: record.get('EventID'),
-                cls: this.getEventBarCls() + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
-            }, true);
-      
-			if (this.allowEventDragAndDrop) {
-
-				new Ext.util.Draggable(eventBar, {
-					revert: true,
-
-					/**
-					* Override for Ext.util.Draggable's onStart method to process the Event Bar's element before dragging
-					* and raise the 'eventdragstart' event
-					* @method
-					* @private
-					* @param {Event} e
-					*/
-					onStart: function(e){
-
-						var draggable = this, eventID = draggable.el.getAttribute('eventID'), eventRecord = me.getEventRecord(eventID), eventBarRecord = me.getEventBarRecord(eventID);
-
-						// Resize dragged Event Bar so it is 1 cell wide
-						draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));
-						// Reposition dragged Event Bar so it is in the middle of the User's finger.
-						draggable.el.setLeft(e.startX - (draggable.el.getWidth() / 2));
-
-						// hide all linked Event Bars
-						me.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
-						if (eventBar.dom !== draggable.el.dom) {
-						eventBar.hide();
-						}
-						}, this);
-
-						Ext.util.Draggable.prototype.onStart.apply(this, arguments);
-
-						me.calendar.fireEvent('eventdragstart', draggable, eventRecord, e);
-
-						return true;
-					}
-				});
-			}
 
 
-	        var headerHeight = this.calendar.element.select('thead').first().getHeight();
-	        var bodyHeight = this.calendar.element.select('tbody').first().getHeight();
-	        var rowCount = this.calendar.element.select('tbody tr').getCount();
-	        var rowHeight = bodyHeight/rowCount;
-
-	        var dateIndex = this.calendar.getStore().findBy(function(dateRec){
-		        return dateRec.get('date').getTime() === Ext.Date.clearTime(record.get('Date'), true).getTime();
-	        }, this);
-
-	        var rowIndex = Math.floor(dateIndex / 7) + 1;
-
-	        var eventY = headerHeight + (rowHeight * rowIndex);
-
-            var barPosition = record.get('BarPosition'),
-		        barLength = record.get('BarLength'),
-		        dayCellX = (this.calendar.element.getWidth() / 7) * dayEl.dom.cellIndex,
-		        dayCellWidth = dayEl.getWidth(),
-				eventBarHeight = eventBar.getHeight(),
-				spacing = this.eventBarSpacing;
-
-            // set sizes and positions
-            eventBar.setLeft(dayCellX + (hasWrapped ? 0 : spacing));
-            eventBar.setTop(eventY - eventBarHeight - (barPosition * eventBarHeight + (barPosition * spacing) + spacing));
-            eventBar.setWidth((dayCellWidth * barLength) - (spacing * (doesWrap ? (doesWrap && hasWrapped ? 0 : 1) : 2)));
-            
-            if (record.linked().getCount() > 0) {
-                this.renderEventBars(record.linked());
-            }
-        }, this);
-    },
-
-	renderDayEventBars: function(store){
-		var me = this,
-			l = store.getCount(),
-			i = 0,
-			rec;
-
-		for(; i < l; i++){
-			rec = store.getAt(i);
-
-			var eventRecord     = rec.data.Record,
-				eventBar        = this.createEventBar(rec, eventRecord),
-
-				verticalPos     = this.getVerticalDayPosition(rec),
-				horizontalPos   = this.getHorizontalDayPosition(rec),
-				eventHeight     = this.getEventBarHeight(rec);
-
-			eventBar.setLeft(horizontalPos);
-			eventBar.setTop(verticalPos - this.calendar.element.getY());
-
-			eventBar.setHeight(eventHeight);
-
-			eventBar.addCls(eventRecord.get(this.getCssClassField()));
-		}
-
-	},
-
-	getEventBarHeight: function(event){
-		var eventHeight = this.getEventHeight();
-
-		if(Ext.isNumeric(eventHeight)){
-			return eventHeight;
-		} else if(eventHeight === 'duration'){
-			return this.getEventBarHeightDuration(event);
-		} else {
-			return 'auto';
-		}
-	},
-
-	getEventBarHeightDuration: function(event){
-		var startDate           = event.data.Record.get(this.startEventField),
-			endDate             = event.data.Record.get(this.endEventField),
-			roundedStartDate    = this.getRoundedTime(startDate),
-			minutesLength       = (endDate.getTime() - startDate.getTime()) / 1000 / 60,
-			timeSlotEl          = this.calendar.getDateCell(roundedStartDate),
-			timeSlotRowEl       = timeSlotEl.parent('tr', false),
-			heightPixels        = 0;
-
-		if(timeSlotRowEl){
-			var timeSlotHeight  = timeSlotEl.getHeight(),
-				minutesPerPixel = timeSlotHeight / 30;
-
-			heightPixels    = minutesLength * minutesPerPixel;
-
-			console.log('Height: ' + heightPixels.toString());
-		}
-
-		return heightPixels;
-	},
-
-	getVerticalDayPosition: function(event){
-		var startDate           = event.data.Record.get(this.startEventField),
-			roundedStartDate    = this.getRoundedTime(startDate),
-			timeSlotCount       = (roundedStartDate.getHours() * 2) + (roundedStartDate.getMinutes() === 30 ? 1 : 0),
-			minutesDiff         = (startDate.getTime() - roundedStartDate.getTime()) / 1000 / 60,
-			firstTimeSlotEl     = this.calendar.element.select('td').first(),
-			verticalPosition    = 0;
-
-		if(firstTimeSlotEl){
-			var firstTimeSlotHeight = firstTimeSlotEl.getHeight(),
-				firstTimeSlotY      = firstTimeSlotEl.getY(), // first time slot position - needed so we take the header row into account
-				minutesPerPixel     = firstTimeSlotHeight / 30,
-				extraMinutesY       = minutesDiff * minutesPerPixel;
-
-			verticalPosition = firstTimeSlotY + (timeSlotCount * firstTimeSlotHeight) + extraMinutesY;
-		}
-
-		return verticalPosition;
-	},
-
-	getHorizontalDayPosition: function(event){
-		return 50;
-	},
-
-	/**
-	 * Returns the specified date rounded to the nearest 30 minute block.
-	 * @method
-	 * @private
-	 * @param {Date} date
-	 * @return {Date}
-	 */
-	getRoundedTime: function(date){
-		date = Ext.Date.clone(date);
-
-		var minutes = date.getMinutes();
-
-		date.setMinutes(minutes - (minutes % 30));
-
-		return date;
-	},
-
-	createEventBar: function(record, eventRecord){
-		var doesWrap    = this.eventBarDoesWrap(record),
-			hasWrapped  = this.eventBarHasWrapped(record),
-			cssClasses  = [
-				this.getEventBarCls(),
-				'e-' + record.get('EventID'),
-				(doesWrap ? ' wrap-end' : ''),
-				(hasWrapped ? ' wrap-start' : '')
-			];
-
-
-		// create the event bar
-		var eventBar = Ext.DomHelper.append(this.eventWrapperEl, {
-			tag: 'div',
-			html: this.getEventBarTpl().apply(eventRecord.data),
-			eventID: record.get('EventID'),
-			cls: cssClasses.join(' ')
-		}, true);
-
-		return eventBar;
-	},
-  
   /**
    * Handler function for the Event Bars' 'dragstart' event
    * @method
@@ -703,7 +420,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
             this.eventWrapperEl.on('tap', this.onEventWrapperTap, this, {
                 delegate: 'div.' + this.getEventBarCls()
             });
-            this.renderEventBars(this.eventBarStore);
+            this.getViewModeProcessor().renderEventBars(this.getViewModeProcessor().eventBarStore);
         }else{
           this.calendar.on('painted', this.createEventWrapper, this);
         }
@@ -718,18 +435,23 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      */
     onEventWrapperTap: function(e, node){
         e.stopPropagation(); // stop event bubbling up
-        
-        var eventID = e.getTarget('div.' + this.getEventBarCls()).getAttribute('eventID');
 
-        if (eventID) {
-            var eventRecord = this.getEventRecord(eventID);
-            
-            this.deselectEvents();
+	    var eventBarDom = e.getTarget('div.' + this.getEventBarCls());
 
-            this.eventWrapperEl.select('div.' + eventRecord.internalId).addCls(this.eventBarSelectedCls);
-            
-            this.calendar.fireEvent('eventtap', eventRecord, e);
-        }
+	    if(eventBarDom){
+		    var eventID = eventBarDom.getAttribute('eventID'),
+			    eventBarEl  = Ext.fly(eventBarDom);
+
+		    if (eventID) {
+			    var eventRecord = this.getEventRecord(eventID);
+
+			    this.deselectEvents();
+
+			    eventBarEl.addCls(this.eventBarSelectedCls);
+
+			    this.calendar.fireEvent('eventtap', eventRecord, e);
+		    }
+	    }
     },
   
 	getEventsWrapperContainer: function(){
@@ -752,32 +474,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
         return i;
     },
     
-    /**
-     * Get the Event record with the specified eventID (eventID equates to a record's internalId)
-     * @method
-     * @private
-     * @param {Object} eventID
-     */
-    getEventRecord: function(eventID){
-        var eventRecordIndex = this.calendar.eventStore.findBy(function(rec){
-            return rec.internalId === eventID;
-        }, this);
-        return this.calendar.eventStore.getAt(eventRecordIndex);
-    },
-    
-    /**
-     * Get the EventBar record with the specified eventID
-     * @method
-     * @private
-     * @param {String} eventID InternalID of a Model instance
-     */
-    getEventBarRecord: function(eventID){
-        var eventRecordIndex = this.eventBarStore.findBy(function(rec){
-            return rec.get('EventID') === eventID;
-        }, this);
-        return this.eventBarStore.getAt(eventRecordIndex);
-    },
-    
+
     /**
      * Remove the selected CSS class from all selected Event Bars
      * @method
@@ -822,10 +519,6 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
       this.droppable = null;
     }
     },
-  
-	getRandomColour: function(){
-		return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
-	},
 
 	applyEventBarTpl: function(tpl){
 		if(Ext.isString(tpl) || Ext.isArray(tpl)){
