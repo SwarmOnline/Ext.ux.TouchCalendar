@@ -25,7 +25,7 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 		var me = this;
 
 		store.each(function(record){
-			var eventRecord = this.getEventRecord(record.get('EventID')),
+			var eventRecord = this.getPlugin().getEventRecord(record.get('EventID')),
 				dayEl = this.getCalendar().getDateCell(record.get('Date')),
 				doesWrap = this.eventBarDoesWrap(record),
 				hasWrapped = this.eventBarHasWrapped(record);
@@ -55,7 +55,7 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 					 */
 					onStart: function(e){
 
-						var draggable = this, eventID = draggable.el.getAttribute('eventID'), eventRecord = me.getEventRecord(eventID), eventBarRecord = me.getEventBarRecord(eventID);
+						var draggable = this, eventID = draggable.el.getAttribute('eventID'), eventRecord = me.getPlugin().getEventRecord(eventID), eventBarRecord = me.getEventBarRecord(eventID);
 
 						// Resize dragged Event Bar so it is 1 cell wide
 						draggable.el.setWidth(draggable.el.getWidth() / eventBarRecord.get('BarLength'));

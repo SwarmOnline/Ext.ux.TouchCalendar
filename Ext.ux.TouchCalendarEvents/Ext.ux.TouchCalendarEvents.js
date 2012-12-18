@@ -441,22 +441,32 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 	getEventsWrapperContainer: function(){
 		return this.calendar.element.select('thead th').first() || this.calendar.element.select('tr td').first();
 	},
-    
-    /**
-     * Returns the first index number that isn't in the specified array
-     * @method
-     * @private
-     * @param {Aarray[Numbers]} datePositions An array of numbers representing the current date cell's taken positions 
-     */
-    getNextFreePosition: function(datePositions){
-        var i = 0;
-        
-        // loop until the i value isn't present in the array
-        while (datePositions.indexOf(i) > -1) {
-            i++;
-        }
-        return i;
-    },
+
+	/**
+	 * Get the Event record with the specified eventID (eventID equates to a record's internalId)
+	 * @method
+	 * @private
+	 * @param {Object} eventID
+	 */
+	getEventRecord: function(eventID){
+		var eventRecordIndex = this.calendar.eventStore.findBy(function(rec){
+			return rec.internalId === eventID;
+		}, this);
+		return this.calendar.eventStore.getAt(eventRecordIndex);
+	},
+
+	/**
+	 * Get the EventBar record with the specified eventID
+	 * @method
+	 * @private
+	 * @param {String} eventID InternalID of a Model instance
+	 */
+	getEventBarRecord: function(eventID){
+		var eventRecordIndex = this.eventBarStore.findBy(function(rec){
+			return rec.get('EventID') === eventID;
+		}, this);
+		return this.eventBarStore.getAt(eventRecordIndex);
+	},
     
 
     /**

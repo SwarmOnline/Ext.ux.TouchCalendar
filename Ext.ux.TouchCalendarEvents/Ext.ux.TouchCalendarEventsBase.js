@@ -172,34 +172,6 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 	},
 
 	/**
-	 * Get the Event record with the specified eventID (eventID equates to a record's internalId)
-	 * @method
-	 * @private
-	 * @param {Object} eventID
-	 */
-	getEventRecord: function(eventID){
-		var eventRecordIndex = this.getCalendar().eventStore.findBy(function(rec){
-			return rec.internalId === eventID;
-		}, this);
-		return this.getCalendar().eventStore.getAt(eventRecordIndex);
-	},
-
-	/**
-	 * Get the EventBar record with the specified eventID
-	 * @method
-	 * @private
-	 * @param {String} eventID InternalID of a Model instance
-	 */
-	getEventBarRecord: function(eventID){
-		var eventRecordIndex = this.eventBarStore.findBy(function(rec){
-			return rec.get('EventID') === eventID;
-		}, this);
-		return this.eventBarStore.getAt(eventRecordIndex);
-	},
-
-
-
-	/**
 	 * Returns the first index number that isn't in the specified array
 	 * @method
 	 * @private
