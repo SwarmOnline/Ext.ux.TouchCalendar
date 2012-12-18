@@ -15,7 +15,14 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 		 * as the key with the count as the value.
 		 * @private
 		 */
-		eventsPerTimeSlot: {}
+		eventsPerTimeSlot: {},
+
+		/**
+		 * @accessor {String} eventSortDirection Used to define the sort direction the Event Store is sorted in while generating the Event models.
+		 * This is required to be configurable because Month/Week modes work from bottom to top, whereas Day view works from left to right so we want the ordering to be different.
+		 * Default to 'DESC' for the Month and Week views.
+		 */
+		eventSortDirection: 'DESC'
 	},
 
 	constructor: function(config){
@@ -57,7 +64,7 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 			eventStore.filterBy(Ext.bind(this.eventFilterFn, this, [currentDateTime], true), this);
 
 			// sort the Events Store so we have a consistent ordering to ensure no overlaps
-			eventStore.sort(this.getPlugin().getStartEventField(), 'ASC');
+			eventStore.sort(this.getPlugin().getStartEventField(), this.getEventSortDirection());
 
 			// Loop through currentDate's Events
 			eventStore.each(function(event){

@@ -5,6 +5,13 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 
     extend: 'Ext.ux.TouchCalendarEventsBase',
 
+	config: {
+		/**
+		 * Sort the generated events early to late so they appear Left to Right, early to late.
+		 */
+		eventSortDirection: 'ASC'
+	},
+
 	eventFilterFn: function(record, currentDateTime){
 		var startDate   = this.getRoundedTime(record.get(this.getPlugin().getStartEventField())).getTime(),
 			endDate     = this.getRoundedTime(record.get(this.getPlugin().getEndEventField())).getTime();
