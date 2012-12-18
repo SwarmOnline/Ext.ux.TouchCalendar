@@ -205,7 +205,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 				break;
 
 			case 'week':
-				processorCls = 'Ext.ux.TouchCalendarMonthEvents';
+				processorCls = 'Ext.ux.TouchCalendarWeekEvents';
 				break;
 
 			case 'day':

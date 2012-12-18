@@ -7,13 +7,139 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 
 	config: {
 		calendar: null,
-		plugin: null
+		plugin: null,
+
+		/**
+		 * @accessor {Object} eventsPerTimeSlot Tracks the number of events that occur in specified time slots so it can be used to calculate widths
+		 * when rendering. The counts are only stored if 1 or more events exist. The numeric value of the time slot's date (i.e. date.getTime()) is used
+		 * as the key with the count as the value.
+		 * @private
+		 */
+		eventsPerTimeSlot: {}
 	},
 
 	constructor: function(config){
 		this.initConfig(config);
 
 		this.callParent(arguments);
+	},
+
+	/**
+	 * Processes the Events store and generates the EventBar records needed to create the markup
+	 * @method
+	 * @private
+	 */
+	generateEventBars: function(){
+		/**
+		 * @property {Ext.data.Store} eventBarStore Store to store the Event Bar definitions. It is defined
+		 * with the Ext.ux.CalendarEventBarModel model.
+		 * @private
+		 */
+		this.eventBarStore = Ext.create('Ext.data.Store', {
+			model: 'Ext.ux.CalendarEventBarModel',
+			data: []
+		});
+
+		this.setEventsPerTimeSlot({});
+
+		var dates = this.getCalendar().getStore(),
+			eventStore = this.getCalendar().eventStore,
+			eventBarRecord,
+			eventsPerTimeSlotCount = 0;
+
+		// Loop through Calendar's date collection of visible dates
+		dates.each(function(dateObj){
+			var currentDate = dateObj.get('date'),
+				currentDateTime = currentDate.getTime(),
+				takenDatePositions = []; // stores 'row positions' that are taken on current date
+
+			// Filter the Events Store for events that are happening on the currentDate
+			eventStore.filterBy(Ext.bind(this.eventFilterFn, this, [currentDateTime], true), this);
+
+			// sort the Events Store so we have a consistent ordering to ensure no overlaps
+			eventStore.sort(this.getPlugin().getStartEventField(), 'ASC');
+
+			// Loop through currentDate's Events
+			eventStore.each(function(event){
+
+				eventsPerTimeSlotCount = eventsPerTimeSlotCount + 1;
+
+				// Find any Event Bar record in the EventBarStore for the current Event's record (using internalID)
+				var eventBarIndex = this.eventBarStore.findBy(function(record, id){
+					return record.get('EventID') === event.internalId;
+				}, this);
+
+				// if an EventBarRecord was found then it is a multiple day Event so we must link them
+				if (eventBarIndex > -1) {
+					eventBarRecord = this.eventBarStore.getAt(eventBarIndex); // get the actual EventBarRecord
+
+					// recurse down the linked EventBarRecords to get the last record in the chain for
+					// wrapping Events
+					while (eventBarRecord.linked().getCount() > 0) {
+						eventBarRecord = eventBarRecord.linked().getAt(eventBarRecord.linked().getCount() - 1);
+					}
+
+					// if currentDate is at the start of the week then we must create a new EventBarRecord
+					// to represent the new bar on the next row.
+					if (currentDate.getDay() === this.getCalendar().getWeekStart()) {
+						// push the inherited BarPosition of the parent
+						// EventBarRecord onto the takenDatePositions array
+						takenDatePositions.push(eventBarRecord.get('BarPosition'));
+
+						// create a new EventBar record
+						var wrappedEventBarRecord = Ext.create('Ext.ux.CalendarEventBarModel', {
+							EventID: event.internalId,
+							Date: currentDate,
+							BarLength: 1,
+							BarPosition: eventBarRecord.get('BarPosition'),
+							Colour: eventBarRecord.get('Colour'),
+							Record: event
+						});
+
+						// add it as a linked EventBar of the parent
+						eventBarRecord.linked().add(wrappedEventBarRecord);
+					}
+					else {
+						// add the inherited BarPosition to the takenDatePositions array
+						takenDatePositions.push(eventBarRecord.get('BarPosition'));
+
+						// increment the BarLength value for this day
+						eventBarRecord.set('BarLength', eventBarRecord.get('BarLength') + 1);
+					}
+				}
+				else {
+					// get the next free bar position
+					var barPos = this.getNextFreePosition(takenDatePositions);
+
+					// push it onto array so it isn't reused
+					takenDatePositions.push(barPos);
+
+					// create new EventBar record
+					eventBarRecord = Ext.create('Ext.ux.CalendarEventBarModel', {
+						EventID: event.internalId,
+						Date: currentDate,
+						BarLength: 1,
+						BarPosition: barPos,
+						Colour: this.getRandomColour(),
+						Record: event
+					});
+
+					// add EventBar record to main store
+					this.eventBarStore.add(eventBarRecord);
+				}
+
+			}, this);
+
+			// remove the filter
+			eventStore.clearFilter();
+
+			// keep track of the number of Events per time
+			if(eventsPerTimeSlotCount > 0){
+				this.getEventsPerTimeSlot()[currentDate.getTime()] = eventsPerTimeSlotCount;
+			}
+
+			eventsPerTimeSlotCount = 0;
+		}, this);
 	},
 
 	/**
