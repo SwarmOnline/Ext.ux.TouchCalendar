@@ -84,8 +84,6 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 				minutesPerPixel = timeSlotHeight / 30;
 
 			heightPixels    = minutesLength * minutesPerPixel;
-
-			console.log('Height: ' + heightPixels.toString());
 		}
 
 		return heightPixels;
@@ -96,7 +94,7 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 			roundedStartDate    = this.getRoundedTime(startDate),
 			timeSlotCount       = (roundedStartDate.getHours() * 2) + (roundedStartDate.getMinutes() === 30 ? 1 : 0),
 			minutesDiff         = (startDate.getTime() - roundedStartDate.getTime()) / 1000 / 60,
-			firstTimeSlotEl     = this.getCalendar().element.select('td').first(),
+			firstTimeSlotEl     = this.getCalendar().element.select('table.time-slot-table td').first(),
 			verticalPosition    = 0;
 
 		if(firstTimeSlotEl){
@@ -120,7 +118,7 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 	},
 
 	/**
-	 * Returns the specified date rounded to the nearest 30 minute block.
+	 * Returns the specified date rounded to the nearest minute block.
 	 * @method
 	 * @private
 	 * @param {Date} date
@@ -131,7 +129,7 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 
 		var minutes = date.getMinutes();
 
-		date.setMinutes(minutes - (minutes % 30));
+		date.setMinutes(minutes - (minutes % this.getCalendar().getDayTimeSlotSize()));
 
 		return date;
 	}

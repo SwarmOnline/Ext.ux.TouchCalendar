@@ -40,6 +40,10 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 		 */
 		colourField: 'colour',
 
+		/**
+		 * @cfg {String} cssClassField Name of the Model field which contains a CSS class to be applied to the
+		 * event bar
+		 */
 		cssClassField: 'css',
 
 		/**
@@ -100,15 +104,13 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 		 */
 		eventBarSpacing: 1,
 
+		/**
+		 * {Ext.Element} eventWrapperEl The Ext.Element that contains all of the Event Bar elements
+		 * @accessor
+		 */
 		eventWrapperEl: null
 
 	},
-
-
-
-
-
-
     
     init: function(calendar){
 	    var me = this;
@@ -167,12 +169,24 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 	    this.calendar.afterComponentLayout = Ext.Function.createSequence(this.calendar.afterComponentLayout, this.refreshEvents, this);
 	    this.calendar.setViewMode = this.createPreSequence(this.calendar.setViewMode, this.onViewModeUpdate, this);
 
+	    // default to Day mode processor
 		this.setViewModeProcessor(Ext.create('Ext.ux.TouchCalendarDayEvents', {
 			calendar: this.calendar,
 			plugin: this
 		}));
     },
 
+	/**
+	 * Creates a "Pre-Sequence" function.
+	 * Identical to the Ext.Function.createSequence function but reverses the order the functions are executed in.
+	 * This calls the newFn first and then the originalFn
+	 * @method
+	 * @private
+	 * @param originalFn
+	 * @param newFn
+	 * @param scope
+	 * @return {*}
+	 */
 	createPreSequence: function(originalFn, newFn, scope){
 		if (!newFn) {
 			return originalFn;
@@ -188,13 +202,28 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 		}
 	},
 
-	onViewModeUpdate: function(mode){
-		this.setViewModeProcessor(Ext.create(this.getViewModeProcessorClass(mode), {
+	/**
+	 * Called BEFORE the parent calendar's setViewMode method is executed.
+	 * This is because we need to have the new processor in place so the calendar refresh can use it.
+	 * @method
+	 * @private
+	 * @param {String} viewMode
+	 */
+	onViewModeUpdate: function(viewMode){
+		this.setViewModeProcessor(Ext.create(this.getViewModeProcessorClass(viewMode), {
 			calendar: this.calendar,
 			plugin: this
 		}));
 	},
 
+	/**
+	 * Returns the appropriate ViewMode Processor class based on the ViewMode
+	 * passed in
+	 * @method
+	 * @private
+	 * @param {String} viewMode The viewMode to get the processor class for
+	 * @return {String} The Processor class name
+	 */
 	getViewModeProcessorClass: function(viewMode){
 		var processorCls    = '';
 

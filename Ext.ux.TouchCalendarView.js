@@ -72,6 +72,32 @@ Ext.define('Ext.ux.TouchCalendarView', {
          */
         dayTimeSlotSize: 30,
 
+	    /**
+	     * @cfg {Object} timeSlotDateTpls The templates to be used for the rendering of the Date labels. This should be supplied as an object with
+	     * a key relating to the template for each View Mode. For example:
+	     * {
+	     *     day: '<template>',
+	     *     month: '<template>',
+	     *     week: '<template>'
+	     * }
+	     *
+	     * The values can be either strings (which will be used to create an Ext.XTemplate) or an Ext.XTemplate instance.
+	     *
+	     * Defaults to:
+	     * {
+	     *    day: '{date:date("H:i")}',
+	     *    month: '{date:date("j")}',
+	     *    week: '{date:date("j")}'
+	     * }
+	     */
+	    timeSlotDateTpls: {},
+
+	    /**
+	     * @cfg {Boolean} hideHalfHourTimeSlotLabels Determines if the half-hour time slot labels are hidden in the Day View.
+	     * Defaults to true
+	     */
+	    hideHalfHourTimeSlotLabels: true,
+
         value: null,
 
         store: null,
@@ -95,7 +121,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
                             '<tpl for=".">',
 
                                 '<td class="time-block {[this.getClasses(values)]}" datetime="{[this.me.getDateAttribute(values.date)]}">',
-                                    '{date:date("j")}',
+                                    '{date:this.formatDate()}',
                                 '</td>',
 
                                 '<tpl if="this.isEndOfRow(xindex)">',
@@ -116,12 +142,72 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
     },
 
+	// default TimeSlot date templates that are merged with the supplied config
+	timeSlotDateTplsDefaults: {
+		day: '{date:date("H:i")}',
+		month: '{date:date("j")}',
+		week: '{date:date("j")}'
+	},
+
     /**
    	 * Object containing common functions to be passed to XTemplate for internal use
    	 * @property {Object} commonTemplateFunctions
    	 * @private
    	 */
    	commonTemplateFunctions: {
+
+	    /**
+	     * Returns a string of CSS classes to be applied to the time slot's TR tags.
+	     * This is only used in the Day View template.
+	     * @method
+	     * @private
+	     * @param {Date} date The date for the current time slot
+	     * @return {String} A string of CSS classes
+	     */
+	    getTimeSlotRowCls: function(date){
+		    var classes         = [],
+			    isHalfHourly    = date.getMinutes() !== 0;
+
+		    if(isHalfHourly){
+			    classes.push('half-hour');
+		    }
+
+		    return classes.join(' ');
+	    },
+
+	    /**
+	     * Returns true determining if the date is a half-hour slot. Only used in the Day View.
+	     * @method
+	     * @private
+	     * @param {Date} date The date for the current time slot.
+	     * @return {Boolean}
+	     */
+	    isHalfHour: function(date){
+		    return date.getMinutes() !== 0;
+	    },
+
+	    /**
+	     * Uses the templates defined in the 'timeSlotDateTpls' config to format the date HTML.
+	     * @method
+	     * @private
+	     * @param {Date} date The date for the current time slot.
+	     * @return {String} HTML output from date template
+	     */
+	    formatDate: function(date){
+			return this.getTimeSlotDateTpl().apply({date: date});
+	    },
+
+	    /**
+	     * Returns the appropriate TimeSlotDateTpl for the current View Mode.
+	     * @method
+	     * @private
+	     * @return {Ext.XTemplate}
+	     */
+	    getTimeSlotDateTpl: function(){
+			var mode = this.me.getViewMode().toLowerCase();
+
+		    return this.me.getTimeSlotDateTpls()[mode];
+	    },
 
    		/**
    		 * Gets the classes that should be applied to the current day's cell
@@ -218,6 +304,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	    });
 
 	    this.setStore(store);
+
+		// merge the supplied TimeSlot Date tpls with the defaults
+		config.timeSlotDateTpls = config.timeSlotDateTpls || {};
+		Ext.applyIf(config.timeSlotDateTpls, this.timeSlotDateTplsDefaults);
 
 		Ext.apply(this, config || {
 		});
@@ -641,6 +731,23 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	stringToDate: function(dateString) {
 		return Ext.Date.parseDate(dateString, this.dateAttributeFormat);
 	},
+
+	/**
+	 * Creates an Ext.XTemplate instance for any TimeSlotDateTpls that are defined as strings.
+	 * @method
+	 * @private
+	 * @param {Object} value
+	 * @return {Object}
+	 */
+	applyTimeSlotDateTpls: function(value){
+		Ext.Object.each(value, function(key, val){
+			if(Ext.isString){
+				value[key] = Ext.create('Ext.XTemplate', val);
+			}
+		}, this)
+
+		return value;
+	},
 	
 	statics: {
 		
@@ -780,16 +887,29 @@ Ext.define('Ext.ux.TouchCalendarView', {
                                 '</tr>',
                             '</thead>',
 							'<tbody>',
-								'<tpl for=".">',
-									'<tr>',
-								
-										'<td class="time-block" datetime="{[this.me.getDateAttribute(values.date)]}" colspan="3">',
-	
-											'{date:date("H:i")}',
-										
-										'</td>',
-									'</tr>',
-								'</tpl>',
+								'<tr>',
+									'<td colspan="3">',
+										'<table class="time-slot-table">',
+											'<tpl for=".">',
+												'<tr class="{[this.getTimeSlotRowCls(values.date)]}">',
+
+													'<td class="label" datetime="{[this.me.getDateAttribute(values.date)]}">',
+
+														'<tpl if="!this.me.getHideHalfHourTimeSlotLabels() || !this.isHalfHour(values.date)">',
+															'{date:this.formatDate()}',
+														'</tpl>',
+
+													'</td>',
+													'<td class="time-block" colspan="2">',
+
+
+
+													'</td>',
+												'</tr>',
+											'</tpl>',
+										'</table>',
+									'</td>',
+								'</tr>',
 							'</tbody>',
 						'</table>'],
 						
@@ -838,7 +958,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 					getDeltaDate: function(date, delta){
 						return new Date(date.getFullYear(), date.getMonth(), date.getDate() + delta);
 					},
-					
+
 					periodRowDayCount: 1
 				}
 	}
