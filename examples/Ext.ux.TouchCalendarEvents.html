@@ -3,11 +3,20 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" type="text/css" href="../lib/sencha/resources/css/sencha-touch.css" media="all"/>
-        <script src="../lib/sencha/sencha-touch-debug.js" type="text/javascript">
+        <script src="../lib/sencha/sencha-touch-all.js" type="text/javascript">
         </script>
 
         <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendarView.css" media="all"/>
+        <link rel="stylesheet" type="text/css" href="../resources/css/skin1.css" media="all"/>
         <script src="../Ext.ux.TouchCalendarView.js" type="text/javascript">
+        </script>
+        <script src="../Ext.ux.TouchCalendarEvents/Ext.ux.TouchCalendarEventsBase.js" type="text/javascript">
+        </script>
+        <script src="../Ext.ux.TouchCalendarEvents/Ext.ux.TouchCalendarDayEvents.js" type="text/javascript">
+        </script>
+        <script src="../Ext.ux.TouchCalendarEvents/Ext.ux.TouchCalendarMonthEvents.js" type="text/javascript">
+        </script>
+        <script src="../Ext.ux.TouchCalendarEvents/Ext.ux.TouchCalendarWeekEvents.js" type="text/javascript">
         </script>
         <script src="../Ext.ux.TouchCalendarEvents/Ext.ux.TouchCalendarEvents.js" type="text/javascript">
         </script>
@@ -19,18 +28,23 @@
             Ext.application({
                 name: 'Ext.ux.TouchCalendarEvents',
                 launch: function(){
-                
+
                     calendarView = Ext.create('Ext.ux.TouchCalendarView', {
                         //minDate: (new Date()).add(Date.DAY, -40),
                         //maxDate: (new Date()).add(Date.DAY, 55),
-                        mode: 'month',
+                        mode: 'day',
                         weekStart: 0,
                         value: new Date(),
                         eventStore: eventStore,
                         
                         plugins: [Ext.create('Ext.ux.TouchCalendarEvents', {
-                            eventBarTpl: '{event} - {location}'
-                        })]
+                            eventHeight: 'auto',
+                            eventBarTpl: '<div>{event}</div><div>Weight: {weight}kg</div><div>Waste Weight: {wasteWeight}kg</div>'
+                        })],
+
+                        timeSlotDateTpls: {
+                            day: '<span class="hour">{date:date("g")}</span><span class="am-pm">{date:date("A")}</span>'
+                        }
                     });
                     
                     var calendarPanel = new Ext.Panel({
@@ -63,6 +77,10 @@
                     
                     calendarView.on('eventtap', function(event){
                         console.log('eventtap');
+                        Ext.Msg.alert(
+                            event.get('event'),
+                            'Weight: ' + event.get('weight') + '<br/>' + 'Waste Weight: ' + event.get('wasteWeight')
+                        );
                         //console.log(event);
                     });
                     calendarView.on('eventdragstart', function(draggable, eventRecord, e){
@@ -82,7 +100,10 @@
                         console.log('eventdrag');
                         //console.log(arguments);
                     });
-                    
+
+                    calendarView.setViewMode('day');
+
+
                 }
                 
                 
