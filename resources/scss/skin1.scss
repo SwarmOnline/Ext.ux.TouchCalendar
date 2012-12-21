@@ -7,6 +7,7 @@
 
 	table
 	{
+        background: white;
 
 		&.week
 		{
@@ -74,36 +75,71 @@
             }
 		}
 	}
-	
+
 	// borders
 	tbody
     {
 		td
 		{
-			border-bottom: 1px solid $bd-color;
-			border-left: 1px solid $bd-color;
-			border-right: 1px solid lighten($bd-color, 20%);
-			border-top: 1px solid lighten($bd-color, 20%);
+            background-color: white;
+            background: none;
+
+            border-right: 1px solid #EDEDED;
+            border-top: 1px solid #EDEDED;
+            border-bottom: none;
+            border-left: none;
+            padding: 0 5px 0 0;
+
+            &.today
+            {
+                background-color: #A5A5A5;
+                background-image: none;
+                -webkit-box-shadow: none;
+                text-shadow: none;
+                color: #3F4E5E;
+            }
+
+            &.unselectable
+            {
+                color: #EEE;
+                background-image: none;
+            }
+
+            &.selected
+            {
+                background: none;
+                background-color: #E0E0E0;
+                border: 1px solid #999;
+                text-shadow: none;
+                color: #3F4E5E;
+            }
+
+            &.today.selected
+            {
+                background: none;
+                background-color: #E0E0E0;
+                color: white;
+            }
 		}
 	}
- 	
+
 	thead
 	{
 		background-color: white;
         background-image: none;
-	
+
 		th
 		{
 			border-bottom: none;
 
             &:first-child
             {
-                width: 45px;
+                //width: 45px;
             }
 
             &:last-child
             {
-                width: 45px;
+                //width: 45px;
             }
 
             span

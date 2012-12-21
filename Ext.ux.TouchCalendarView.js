@@ -880,7 +880,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
                                     '<th class="{[this.me.getPrevPeriodCls()]} style="display: block;">',
                                     '</th>',
                                     '<th>',
-                                        '<span style="position: static;">{[Ext.Date.format(values[0].date, "D jS M Y")]}</span>',
+                                        '<span>{[Ext.Date.format(values[0].date, "D jS M Y")]}</span>',
                                     '</th>',
                                     '<th class="{[this.me.getNextPeriodCls()]} style="display: block;"">',
                                     '</th>',
