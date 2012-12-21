@@ -166,8 +166,8 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 
 	    // create a sequence to refresh the Event Bars when the calendar either refreshes or has a component layout happen
 	    this.calendar.refresh = Ext.Function.createSequence(this.calendar.refresh, this.refreshEvents, this);
-	    this.calendar.afterComponentLayout = Ext.Function.createSequence(this.calendar.afterComponentLayout, this.refreshEvents, this);
 	    this.calendar.setViewMode = this.createPreSequence(this.calendar.setViewMode, this.onViewModeUpdate, this);
+	    this.calendar.on('resize', this.refreshEvents, this);
 
 	    // default to Day mode processor
 		this.setViewModeProcessor(Ext.create('Ext.ux.TouchCalendarDayEvents', {

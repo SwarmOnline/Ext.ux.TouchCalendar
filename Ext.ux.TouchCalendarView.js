@@ -358,7 +358,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
         this.on({
             painted: this.syncHeight,
-            scope: this
+            resize: this.onComponentResize,
+		    scope: this
         });
 
         this.callParent();
@@ -576,6 +577,17 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
         this.fireEvent('selectionchange', this, newDate, previousValue);
     },
+
+	/**
+	 * Handler for the component's resize event.
+	 * This is required to sync the height of the calendar's table so it keeps filling the screen.
+	 * @method
+	 * @private
+	 * @param comp
+	 */
+	onComponentResize: function(comp){
+		this.syncHeight();
+	},
 
 	/**
 	 * Override for the Ext.DataView's refresh method. Repopulates the store, calls parent then sync the height of the table
