@@ -131,6 +131,9 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 
 		date.setMinutes(minutes - (minutes % this.getCalendar().getDayTimeSlotSize()));
 
+		date.setSeconds(0);
+		date.setMilliseconds(0);
+
 		return date;
 	}
 
