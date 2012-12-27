@@ -265,6 +265,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
    			return ((currentIndex-1) % 7) === 0 && (currentIndex-1 >= 0);
    		},
 
+	    isEndOfPeriod: function(currentIndex){
+			return currentIndex % this.me.periodRowDayCount === 0;
+	    },
+
    		/**
    		 * Gets an array containing the first 7 dates to be used in headings
    		 * @method
