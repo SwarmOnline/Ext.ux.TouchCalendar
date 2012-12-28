@@ -88,6 +88,8 @@ $include-tab-highlights: $include-highlights !default;
 
 $tabs-top-height: $global-row-height - .8em;
 
+$tabs-top-icon-size: $tabs-top-height - .6em;
+
 /**
  * Includes default tab styles.
  *
@@ -116,8 +118,13 @@ $tabs-top-height: $global-row-height - .8em;
   }
 
   .x-tab {
+    z-index: 1;
     -webkit-user-select: none;
     overflow: visible !important;
+
+    .x-button-label {
+      overflow: visible !important;
+    }
   }
 }
 
@@ -130,16 +137,45 @@ $tabs-top-height: $global-row-height - .8em;
     padding: 0 .8em;
 
     .x-tab {
+      position: relative;
       padding: (($tabs-top-height - 1em) / 2) .8em;
       height: $tabs-top-height;
+      min-width : 3.3em;
       @if $include-border-radius { @include border-radius($tabs-top-height / 2); }
-    }
 
-    .x-button-label {
-      font-size: .8em;
-      line-height: 1.2em;
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
+      .x-button-label {
+        font-size              : .8em;
+        line-height            : 1.2em;
+        text-rendering         : optimizeLegibility;
+        -webkit-font-smoothing : antialiased;
+      }
+
+      .x-badge {
+        font-size : .6em !important;
+        top       : -0.5em;
+      }
+
+      &.x-tab-icon {
+        padding : (($tabs-top-height - 1em) / 2) - .1em .8em;
+
+        .x-button-icon {
+          -webkit-mask-size : $tabs-top-icon-size;
+          width             : $tabs-top-icon-size;
+          height            : $tabs-top-icon-size;
+          display           : inline-block;
+          margin            : 0 auto;
+          position          : relative;
+        }
+
+        .x-button-label {
+          margin      : 0;
+          margin-left : .3em;
+          padding     : .1em 0 .2em 0;
+          display     : inline-block;
+          position    : relative;
+          top         : -.4em;
+        }
+      }
     }
   }
 }
@@ -157,6 +193,7 @@ $tabs-top-height: $global-row-height - .8em;
       min-width: 3.3em;
       position: relative;
       padding-top: .2em;
+      @include box-orient(vertical);
 
       .x-button-icon {
         -webkit-mask-size: $tabs-bottom-icon-size;
@@ -222,11 +259,12 @@ $tabs-top-height: $global-row-height - .8em;
 
     .x-tab {
       @include color-by-background($bar-color, 40%);
+      border-bottom: 1px solid transparent;
     }
 
     .x-tab-active {
       @include color-by-background($bar-color, 90%);
-      border-bottom: 1px solid lighten($bar-color, 3%);
+      border-bottom-color: lighten($bar-color, 3%);
     }
 
     .x-tab-pressed {
@@ -263,6 +301,11 @@ $tabs-top-height: $global-row-height - .8em;
       .x-tab-active {
         @include background-gradient(darken($bar-color, 5%), 'recessed');
         @include color-by-background(darken($bar-color, 5%));
+      }
+      .x-tab {
+        .x-button-icon {
+          @include mask-by-background($bar-color, 20%, $tabs-bar-gradient);
+        }
       }
     }
   }

@@ -70,7 +70,7 @@
       // Actual thumb
       // &:after {
       //   @include insertion($form-thumb-size, $form-thumb-size, 0, 0);
-      //   -webkit-box-shadow: rgba(0,0,0,.5) 0 0 .15em;
+      //   @include box-shadow(rgba(0,0,0,.5) 0 0 .15em);
       //   @if $include-border-radius { @include border-radius($form-thumb-size/2); }
       //   -webkit-transform: scale(.65);
       //   @include background-gradient($complement_light, 'glossy');

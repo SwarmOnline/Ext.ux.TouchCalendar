@@ -28,6 +28,8 @@ $tabs-dark: #111;
 @include sencha-form;
 @include sencha-msgbox;
 @include sencha-loading-spinner;
+@include sencha-draw;
+@include sencha-charts;
 
 .x-toolbar-light .x-title {
     color: #fff;

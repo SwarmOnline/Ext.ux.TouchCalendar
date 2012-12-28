@@ -1,4 +1,4 @@
-$theme-name: 'default';
+$theme-name: 'default' !default;
 
 /**
  * @class Global_CSS
@@ -70,7 +70,7 @@ $base-color: #1985D0 !default; // Triton Blue
  * The primary gradient variable from which most elements derive their color scheme.
  * @see background-gradient
  */
-$base-gradient: 'matte' !default;
+$base-gradient: if($include-highlights, matte, null) !default;
 
 /**
  * @var {font-family} $font-family
@@ -111,6 +111,12 @@ $page-bg-color: #eee !default;
 
 /**
  * @var {measurement} $global-row-height
- * The minimum row height for items like toolbars and list items.
+ * The minimum row height for items like toolbars.
  */
 $global-row-height: 2.6em !default;
+
+/**
+ * @var {measurement} $global-list-height
+ * The minimum row height for items like toolbars.
+ */
+$global-list-height: 46px !default;

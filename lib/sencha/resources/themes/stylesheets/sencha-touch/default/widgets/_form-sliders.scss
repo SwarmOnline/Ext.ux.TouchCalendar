@@ -60,7 +60,7 @@
       width: $form-thumb-size;
 
       // The actual thumb
-      &:before {
+      &:after {
         @include insertion($form-toggle-size, $form-toggle-size, $form-thumb-space, $form-thumb-space);
         border: 1px solid darken($form-light, 30%);
         @if $include-border-radius { @include border-radius($form-toggle-size/2); }
@@ -70,7 +70,7 @@
       }
 
       &.x-dragging {
-        &:before {
+        &:after {
           @include background-gradient(darken($form-light, 5%));
         }
         opacity: 1;
@@ -85,7 +85,7 @@
       @include background-gradient($form-light, 'recessed');
       border: .1em solid rgba(#000, .1);
       border-bottom: 0;
-      -webkit-box-shadow: rgba(#fff,.7) 0 .1em 0;
+      @include box-shadow(rgba(#fff,.7) 0 .1em 0);
       @if $include-border-radius { @include border-radius($form-slider-size/2); }
     }
   }

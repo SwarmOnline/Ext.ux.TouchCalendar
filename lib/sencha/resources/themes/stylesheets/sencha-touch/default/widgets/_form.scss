@@ -113,14 +113,17 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
   background-color: $color;
 }
 
+@mixin radiomark($color: #000){
+  @extend .x-radiomark-base;
+  background-color: $color;
+}
+
 @mixin selectmark($color: #000){
   @extend .x-selectmark-base;
   background-color: $color;
 }
 /**
  * Includes default form styles.
- *
- * See {@link Global_CSS#background-gradient background-gradient}.
  *
  * @member Ext.form.Panel
  */
@@ -143,22 +146,27 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
     @include bevel-text('light');
     padding: $form-spacing;
     display: none !important;
-    @include ellipsis;
     background-color: $form-label-background-color;
 
     span {
       font-size: .8em;
       font-weight: bold;
     }
+
+    .x-form-label-nowrap & {
+      @include ellipsis;
+    }
   }
 
   //  Ext.field.Field
   .x-field {
+    @include display-box;
     min-height: $form-field-height;
     background: #fff;
 
     .x-field-input {
       position: relative;
+      min-width: 3.7em;
     }
 
     .x-field-input,
@@ -223,9 +231,14 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
     }
   }
 
+  .x-label-align-left,
+  .x-label-align-right {
+    @include box-orient(horizontal !important);
+  }
+
   .x-label-align-top,
   .x-label-align-bottom {
-    @include box-orient(vertical);
+    @include box-orient(vertical !important);
     .x-form-label {
 
     }
@@ -237,9 +250,15 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
         @if $include-border-radius { @include border-top-radius($form-fieldset-radius); }
       }
     }
+
+    // Needed so that the arrow icon in selectfield's only fit to the size of the field. TOUCH-2672
+    .x-component-outer {
+      position: relative;
+    }
   }
 
   .x-label-align-bottom {
+    @include box-direction(reverse);
 
     &:last-child {
       .x-form-label {
@@ -295,12 +314,20 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
     @include insertion(1.4em, 1.4em, 50%, auto);
     right: ($form-spacing + .5em);
     -webkit-mask-size: 1.4em;
-    -webkit-mask-image: theme_image($theme-name, "pictos/check2.png");
+    -webkit-mask-image: theme_image('default', "pictos/check2.png");
     margin-top: -.7em;
   }
 
-  .x-field .x-input-radio,
-  .x-field .x-input-checkbox {
+  // Ext.field.Radio
+  .x-radiomark-base {
+    @include insertion(1.4em, 1.4em, 50%, auto);
+    right: ($form-spacing + .5em);
+    margin-top: -0.7em;
+    -webkit-mask-size: 1.4em;
+    -webkit-mask-image: theme_image('default', "pictos/circle4.png");
+  }
+
+  .x-field-checkbox .x-input-el {
     position: relative;
     &:after {
       @include checkmark($form-light);
@@ -310,11 +337,36 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
     }
   }
 
-  .x-field.x-item-disabled {
-    .x-input-radio,
-    .x-input-checkbox {
-      &:checked:after {
-        @include checkmark(mix($form-light, $active-color, 70));
+  .x-field-radio .x-input-el {
+    position: relative;
+    &:before {
+      @include radiomark(darken($form-light, 5));
+    }
+    &:after {
+      @include radiomark($form-light);
+      -webkit-mask-image: theme_image('default', "pictos/circle3.png");
+    }
+    &:checked:before {
+      background-color: $active-color;
+    }
+  }
+
+  .x-item-disabled {
+    &.x-field-radio {
+      .x-input-el:checked:before {
+        background: mix($form-light, $active-color, 60);
+      }
+
+      .x-input-el:after {
+        background: #eee;
+      }
+    }
+
+    &.x-field-checkbox {
+      .x-input-el {
+        &:checked:after {
+          background: mix($form-light, $active-color, 60);
+        }
       }
     }
   }
@@ -393,16 +445,8 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
     }
   }
 
-  .x-phone .x-select-overlay {
-    min-width: 14em;
-    min-height: 12.5em;
-  }
-
   // Ext.field.Select
   .x-select-overlay {
-    min-width: 18em;
-    min-height: 22em;
-
     .x-list-item-label {
       height: 2.6em;
     }
@@ -417,7 +461,7 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
         margin-right: 2.6em;
       }
 
-      .x-list-item-label {
+      .x-list-item-inner {
         &:before {
           @include checkmark(rgba(0,0,0,.3));
           margin-top: -.8em;
@@ -453,7 +497,7 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
 
             &:before {
                 @include insertion(.86em, .86em, 50%, .5em);
-                -webkit-mask-image: theme_image($theme-name, "pictos/search.png");
+                -webkit-mask-image: theme_image('default', "pictos/search.png");
                 -webkit-mask-size: .86em;
                 background-color: #ccc;
                 -webkit-mask-repeat: no-repeat;
@@ -471,7 +515,7 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
   .x-field-input {
     .x-clear-icon {
       display: none;
-      background: theme_image($theme-name, "clear_icon.png") no-repeat;
+      background: theme_image('default', "clear_icon.png") no-repeat;
       background-position: center center;
       background-size: 55% 55%;
       width: $form-clear-size;
@@ -557,7 +601,10 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
     margin: 1em ( $form-spacing + .1em ) .3em;
     color: $form-dark;
     font-weight: bold;
-    white-space: nowrap;
+
+    .x-innerhtml {
+      @include ellipsis;
+    }
   }
 
   .x-form-fieldset-instructions {
@@ -573,7 +620,7 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
     @include insertion(1em, 1em, 50%, auto);
     right: ($form-spacing + .1em);
     -webkit-mask-size: 1em;
-    -webkit-mask-image: theme_image($theme-name, "pictos/arrow_down.png");
+    -webkit-mask-image: theme_image('default', "pictos/arrow_down.png");
     margin-top: -.5em;
   }
 
@@ -581,11 +628,11 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
   // for select fields
   .x-field-select {
     position: relative;
+    z-index: 1;
 
     .x-component-outer {
       &:after {
         @include selectmark($form-light);
-        z-index: 2;
       }
 
       &:before,
@@ -601,7 +648,6 @@ $form-scrollable-fields: '.x-field-slider, .x-field-toggle';
         bottom: 0;
         @if $include-border-radius { @include border-right-radius($form-fieldset-radius); }
         @if $include-highlights { background: -webkit-gradient(linear, 0% 0%, 100% 0%, from(rgba($form-field-bg-color, 0)), color-stop(.5, rgba($form-field-bg-color, 1))); }
-        z-index: 1;
       }
     }
   }

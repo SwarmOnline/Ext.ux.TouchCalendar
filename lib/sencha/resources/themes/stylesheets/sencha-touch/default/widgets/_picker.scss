@@ -23,22 +23,25 @@ $picker-bar-gradient: $base-gradient !default;
     overflow: hidden;
     margin: $sheet-padding;
 
-    @if $include-picker-highlights {
-      &:before, &:after {
-        z-index: 1;
-        @include insertion(100%, 30%, 0, 0);
-      }
 
-      &:before {
-        top: auto;
-        @if $include-border-radius { @include border-bottom-radius($picker-sheet-radius); }
-        bottom: 0;
-        @include background-image(linear-gradient(color-stops(#fff, #bbb)));
-      }
-      &:after {
-        @if $include-border-radius { @include border-top-radius($picker-sheet-radius); }
-        @include background-image(linear-gradient(color-stops(#bbb, #fff)));
-      }
+    @if $include-picker-highlights {
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bbbbbb), color-stop(30%,#ffffff), color-stop(70%,#ffffff), color-stop(100%,#bbbbbb));
+      background: -webkit-linear-gradient(top,  #bbbbbb 0%,#ffffff 30%,#ffffff 70%,#bbbbbb 100%);
+    //  &:before, &:after {
+    //    z-index: 1;
+    //    @include insertion(100%, 30%, 0, 0);
+    //  }
+    //
+    //  &:before {
+    //    top: auto;
+    //    @if $include-border-radius { @include border-bottom-radius($picker-sheet-radius); }
+    //    bottom: 0;
+    //    @include background-image(linear-gradient(color-stops(#fff, #bbb)));
+    //  }
+    //  &:after {
+    //    @if $include-border-radius { @include border-top-radius($picker-sheet-radius); }
+    //    @include background-image(linear-gradient(color-stops(#bbb, #fff)));
+    //  }
     }
 
     .x-picker-slot {
@@ -67,10 +70,10 @@ $picker-bar-gradient: $base-gradient !default;
     position: relative;
 
     @if $include-highlights {
-      -webkit-box-shadow: rgba(#000,.4) -1px 0 1px;
+      @include box-shadow(rgba(#000,.4) -1px 0 1px);
     }
     &:first-child {
-      -webkit-box-shadow: none;
+      @include box-shadow(none);
     }
   }
 
@@ -94,7 +97,7 @@ $picker-bar-gradient: $base-gradient !default;
     height: $picker-row-height;
     @include background-gradient(hsla(hue($active-color), 90, 50, .3), $picker-bar-gradient);
     @if $include-highlights {
-      -webkit-box-shadow: rgba(#000,0.2) 0 .2em .2em;
+      @include box-shadow(rgba(#000,0.2) 0 .2em .2em);
     }
   }
 
@@ -111,7 +114,7 @@ $picker-bar-gradient: $base-gradient !default;
     @include background-gradient($picker-title-bg-color, $picker-title-bg-gradient);
     border-top: 1px solid $picker-title-bg-color;
     border-bottom: 1px solid darken($picker-title-bg-color, 20%);
-    -webkit-box-shadow: 0px .1em .3em rgba(0, 0, 0, 0.3);
+    @include box-shadow(rgba(0, 0, 0, 0.3) 0px .1em .3em);
     padding: 0.2em 1.02em;
 
     > div {
@@ -126,7 +129,7 @@ $picker-bar-gradient: $base-gradient !default;
 
   .x-picker-slot {
     .x-dataview-inner {
-      width: 100%;
+      width: 100% !important;
     }
 
     .x-dataview-item {

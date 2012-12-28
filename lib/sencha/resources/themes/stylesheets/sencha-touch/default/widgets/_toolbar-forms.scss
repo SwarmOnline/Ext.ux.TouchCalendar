@@ -91,7 +91,7 @@ $toolbar-search-left-padding: 1.67em;
         background-color: $toolbar-input-bg;
 
         @if $include-highlights {
-          -webkit-box-shadow: inset $toolbar-input-border-color 0 .1em 0, inset $toolbar-input-border-color 0 -.1em 0, inset $toolbar-input-border-color .1em 0 0, inset $toolbar-input-border-color -.1em 0 0, inset rgba(#000, .5) 0 .15em .4em;
+          @include box-shadow($toolbar-input-border-color 0 .1em 0 inset, $toolbar-input-border-color 0 -.1em 0 inset, $toolbar-input-border-color .1em 0 0 inset, $toolbar-input-border-color -.1em 0 0 inset, rgba(#000, .5) 0 .15em .4em inset);
         }
       }
     }

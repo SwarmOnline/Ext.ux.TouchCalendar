@@ -1,35 +1,12 @@
 @import 'compass/css3';
+@import 'recipes/background';
+@import 'recipes/color';
+
+$default-gradient: $base-gradient;
 
 /**
  * @class Global_CSS
  */
-
-/**
- * Add a background gradient to a selector.
- *
- *     .my-element {
- *       @include background-gradient(green, 'recessed')
- *     }
- *
- * @param {color} $bg-color The base color of the gradient.
- * @param {string} $type The style of the gradient, one of five pre-defined options: matte, bevel, glossy, recessed, or flat.
- */
-@mixin background-gradient($bg-color, $type: $base-gradient) {
-  background-color: $bg-color;
-  @if $include-highlights {
-    @if $type == bevel {
-      @include background-image(linear-gradient(color_stops(lighten($bg-color, 30%), lighten($bg-color, 15%) 2%, lighten($bg-color, 8%) 30%, $bg-color 65%, darken($bg-color, 10%))));
-    } @else if $type == glossy {
-      @include background-image(linear-gradient(color_stops(lighten($bg-color, 15%), lighten($bg-color, 5%) 50%, $bg-color 51%, darken($bg-color, 5%))));
-    } @else if $type == recessed {
-      @include background-image(linear-gradient(color_stops(darken($bg-color, 10%), darken($bg-color, 5%) 10%, $bg-color 65%, lighten($bg-color, .5%))));
-    } @else if $type == matte {
-      @include background-image(linear-gradient(color_stops(lighten($bg-color, 30%), lighten($bg-color, 7%) 2%, darken($bg-color, 7%))));
-    } @else {
-      background-image: none;
-    }
-  }
-}
 
 /**
  * Includes a base64-encoded icon for use within tab bars and buttons (With the component parameter iconMask: true).
@@ -41,7 +18,7 @@
 @mixin pictos-iconmask($name) {
   .x-tab .x-button-icon.#{$name},
   .x-button .x-button-icon.x-icon-mask.#{$name} {
-    -webkit-mask-image: theme_image($theme-name, "pictos/" + $name + ".png");
+    -webkit-mask-image: theme_image('default', "pictos/" + $name + ".png");
   }
 }
 
@@ -100,9 +77,9 @@
 @mixin bevel-box($type: 'light') {
   @if $include-highlights {
     @if $type == shadow {
-      -webkit-box-shadow: rgba(#000, .5) 0 -.06em 0;
+      @include box-shadow(rgba(#000, .5) 0 -.06em 0);
     } @else {
-      -webkit-box-shadow: rgba(#fff, .35) 0 .06em 0;
+      @include box-shadow(rgba(#fff, .35) 0 .06em 0);
     }
   }
 }
@@ -138,26 +115,6 @@
   right: 0;
   bottom: 0;
   left: 0;
-}
-
-/**
- * Colors the text of an element based on lightness of its background.
- *
- *     .my-element {
- *       @include color-by-background(#fff); // Colors text black.
- *     }
- *
- *     .my-element {
- *       @include color-by-background(#fff, 40%); // Colors text gray.
- *     }
- *
- * @param {color} $bg-color Background color of element.
- * @param {percent} $contrast Contrast of text color to its background.
- *
- */
-@mixin color-by-background($bg-color, $contrast: 100%) {
-  @if (lightness($bg-color) > 50) { color: darken($bg-color, $contrast) }
-  @else { color: lighten($bg-color, $contrast) }
 }
 
 /**

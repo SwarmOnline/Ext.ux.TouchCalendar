@@ -25,8 +25,6 @@ $button-stroke-weight: .1em !default;
 
 /**
  * @var {string} $button-gradient Default gradient for buttons.
- *
- * See {@link Global_CSS#background-gradient background-gradient}.
  */
 $button-gradient: $base-gradient !default;
 
@@ -48,8 +46,6 @@ $include-button-highlights: $include-highlights !default;
 
 /**
  * Includes default button styles.
- *
- * See {@link Global_CSS#background-gradient background-gradient}.
  */
 @mixin sencha-buttons {
   // Basic button style
@@ -64,6 +60,7 @@ $include-button-highlights: $include-highlights !default;
     position: relative;
     overflow: hidden;
     -webkit-user-select: none;
+    z-index: 1;
 
     // Default icon style
     .x-button-icon {
@@ -74,9 +71,9 @@ $include-button-highlights: $include-highlights !default;
       display: block;
 
       &.x-icon-mask {
-        width: 1.3em;
-        height: 1.3em;
-        -webkit-mask-size: 1.3em;
+        width: 1.1em;
+        height: 1.1em;
+        -webkit-mask-size: 1.1em;
       }
     }
 
@@ -85,9 +82,10 @@ $include-button-highlights: $include-highlights !default;
     }
   }
 
-  .x-button-round {
-    @if $include-border-radius { @include border-radius($button-height/2); }
-    padding: .1em $button-height/2;
+  @if $include-border-radius {
+    .x-button-round {
+      @include border-radius($button-height/2);
+    }
   }
 
   // Button icon alignment
@@ -137,6 +135,10 @@ $include-button-highlights: $include-highlights !default;
     .x-button-label {
       font-size: .7em;
     }
+
+    .x-button-label, .x-hasbadge .x-badge {
+      line-height: 1.6em;
+    }
   }
 
   .x-button-small, .x-toolbar .x-button-small {
@@ -151,30 +153,34 @@ $include-button-highlights: $include-highlights !default;
     .x-button-icon {
       width: .75em;
       height: .75em;
+
+      &.x-icon-mask {
+        -webkit-mask-size: .75em;
+      }
     }
   }
 
   // Back/Forward buttons
-  $shadow-width: .065em; // Space between tip and its shadow
+  $shadow-width: .045em; // Space between tip and its shadow
   $overlap-width: .2em; // how far the mask is clipped
 
   // $mask-height: $button-height + $button-stroke-weight * 2; // Ugh, this is non-specific... borders?
   $mask-height: $button-height;
-  $mask-width: $mask-height/2.33;
+  $mask-width: $mask-height/2.23;
 
-  $mask-offset: $button-radius - $overlap-width - $button-stroke-weight + $shadow-width - .02em;
+  $mask-offset: $button-radius - $overlap-width - $button-stroke-weight + $shadow-width - .02;
 
   $tip-width: $mask-width - $mask-offset + $shadow-width;
 
   .x-button-forward, .x-button-back {
     position: relative;
     overflow: visible;
-    height: $button-height;
+    height: $button-height - 0.1;
     z-index: 1;
     &:before, &:after {
       @include insertion($mask-width, $mask-height, -$button-stroke-weight, auto);
       z-index: 2;
-      -webkit-mask: $mask-offset 0 theme_image($theme-name, "tip.png") no-repeat;
+      -webkit-mask: $mask-offset 0 theme_image($theme-name, "tip2_left.png") no-repeat;
       -webkit-mask-size: $mask-width $mask-height;
       overflow: hidden;
     }
@@ -182,7 +188,7 @@ $include-button-highlights: $include-highlights !default;
 
   .x-button-back,
   .x-toolbar .x-button-back {
-    margin-left: $tip-width - $shadow-width + $toolbar-spacing;
+    margin-left: $tip-width - $shadow-width + $toolbar-spacing  - 0.01;
     padding-left: .4em;
     &:before {
       left: - $tip-width;
@@ -197,7 +203,7 @@ $include-button-highlights: $include-highlights !default;
     margin-right: $tip-width - $shadow-width + $toolbar-spacing;
     padding-right: .4em;
     &:before, &:after {
-      -webkit-mask: -$mask-offset 0 theme_image($theme-name, "tip_right.png") no-repeat;
+      -webkit-mask: -$mask-offset 0 theme_image($theme-name, "tip2_right.png") no-repeat;
     }
     &:before {
       right: - $tip-width;
@@ -217,8 +223,8 @@ $include-button-highlights: $include-highlights !default;
     min-height: 0;
     text-shadow: none;
     line-height: auto;
-    height: auto;
-    padding: 0.5em;
+    height: 1.9em;
+    padding: 0em 0.5em;
 
     & > * {
       overflow: visible;
@@ -256,7 +262,7 @@ $include-button-highlights: $include-highlights !default;
       }
     }
 
-    &:not(:first-child) {
+    &:not(.x-first) {
       border-left: 0;
     }
   }
@@ -344,8 +350,10 @@ $include-button-highlights: $include-highlights !default;
     @include toolbar-button($color, $gradient);
   }
 
-  .x-button.x-button-#{$ui-label}-round {
-    @extend .x-button-round;
+  @if $include-border-radius {
+    .x-button.x-button-#{$ui-label}-round {
+      @extend .x-button-round;
+    }
   }
 
   .x-button.x-button-#{$ui-label}-small {

@@ -35,13 +35,13 @@ $include-toolbar-uis: $include-default-uis !default;
 
   .x-toolbar {
     padding: 0 $toolbar-spacing;
-    overflow: hidden;
+    //overflow: hidden;
     position: relative;
-    height: $global-row-height;
+    //height: $global-row-height;
 
-    & > * {
-      z-index: 1;
-    }
+    //& > * {
+    //  z-index: 1;
+    //}
 
     &.x-docked-top {
       border-bottom: .1em solid;
@@ -75,13 +75,13 @@ $include-toolbar-uis: $include-default-uis !default;
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0 0.3em;
+    padding: 0 .3em;
     max-width: 100%;
 
     .x-innerhtml {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding: 0 .3em;
     }
   }
 
@@ -89,6 +89,14 @@ $include-toolbar-uis: $include-default-uis !default;
     @include sencha-toolbar-ui('dark', darken($toolbar-base-color, 10%));
     @include sencha-toolbar-ui('light', $toolbar-base-color);
     @include sencha-toolbar-ui('neutral', $neutral-color);
+
+    .x-toolbar.x-toolbar-neutral .x-toolbar-inner .x-button.x-button-pressing {
+      $mask-radial-glow: lighten($base-color, 25);
+      @include background-image(radial-gradient(fade-out($mask-radial-glow, .3), fade-out($mask-radial-glow, 1) 24px));
+      .x-button-icon.x-button-mask {
+        @include background-gradient(#fff, 'recessed');
+      }
+    }
   }
 
   .x-navigation-bar {
@@ -148,7 +156,9 @@ $include-toolbar-uis: $include-default-uis !default;
       @include toolbar-button($toolbar-button-color, $gradient);
     }
 
+    .x-label,
     .x-form-label {
+      font-weight: bold;
       @include color-by-background($color);
       @include bevel-by-background($color);
     }

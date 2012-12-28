@@ -31,6 +31,8 @@ $basic-slider: true;
 @include sencha-form;
 @include sencha-msgbox;
 @include sencha-loading-spinner;
+@include sencha-draw;
+@include sencha-charts;
 
 .x-indexbar-item {
     color: #FFF;
@@ -53,7 +55,7 @@ $mask-offset: $button-radius - $overlap-width - $button-stroke-weight + $shadow-
     &:before, &:after {
         @include insertion($mask-width, $mask-height, -$button-stroke-weight, auto);
         z-index: 2;
-        -webkit-mask: $mask-offset 0 theme_image($theme-name, "tip.png") no-repeat;
+        -webkit-mask: $mask-offset 0 theme_image($theme-name, "tip_left.png") no-repeat;
         -webkit-mask-size: $mask-width $mask-height;
         overflow: hidden;
     }
