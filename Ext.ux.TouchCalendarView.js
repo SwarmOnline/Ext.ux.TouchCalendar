@@ -403,6 +403,11 @@ Ext.define('Ext.ux.TouchCalendarView', {
      */
     updateViewMode: function(viewMode, oldViewMode){
         this.refresh();
+
+	    // fire periodchange event
+	    var minMaxDate = this.getPeriodMinMaxDate();
+
+	    this.fireEvent('periodchange', this, minMaxDate.min.get('date'), minMaxDate.max.get('date'), 'none');
     },
 	
 	/**
@@ -612,7 +617,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
    	 */
    	syncHeight: function(){
         if (this.getViewMode().toUpperCase() !== 'DAY') {
-   			var tableEl = this.element.select('table').first();
+   			var tableEl = this.element.select('table', this.element.dom).first();
 
             if(tableEl){
                 tableEl.setHeight(this.element.getHeight());
@@ -628,7 +633,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	selectCell: function(cell){
         var selCls = this.getSelectedItemCls();
 
-        var selectedEl = this.element.select('td.' + selCls).first();
+        var selectedEl = this.element.select('td.' + selCls, this.element.dom).first();
 
         if(selectedEl){
             selectedEl.removeCls(selCls);
@@ -722,7 +727,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @return {Ext.Element}
 	 */
 	getDateCell: function(date){
-		return this.element.select('td[datetime="' + this.getDateAttribute(date) + '"]').first();
+		return this.element.select('td[datetime="' + this.getDateAttribute(date) + '"]', this.element.dom).first();
 	},
 	
 	/**
