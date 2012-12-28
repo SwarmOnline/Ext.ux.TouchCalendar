@@ -169,8 +169,8 @@ Ext.define('Ext.ux.TouchCalendar',{
 	onTableHeaderTap: function(e, el){
 		el = Ext.fly(el);
 
-		if (el.hasCls(this.view.prevPeriodCls) || el.hasCls(this.view.nextPeriodCls)) {
-			this[(el.hasCls(this.view.prevPeriodCls) ? 'prev' : 'next')]();
+		if (el.hasCls(this.view.getPrevPeriodCls()) || el.hasCls(this.view.getNextPeriodCls())) {
+			this[(el.hasCls(this.view.getPrevPeriodCls()) ? 'previous' : 'next')]();
 		}
 	},
 
@@ -228,12 +228,12 @@ Ext.define('Ext.ux.TouchCalendar',{
 
 			if (direction === 'forward') {
 				this.remove(items.get(0));
-				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(Ext.Date.add(newCard.currentDate, Ext.Date[this.viewMode], 1)));
+				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(this.getViewDate(newCard.currentDate, 1)));
 				this.add(newCalendar);
 			}
 			else {
 				this.remove(items.get(items.getCount() - 1));
-				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(Ext.Date.add(newCard.currentDate, Ext.Date[this.viewMode], -1)));
+				var newCalendar = new Ext.ux.TouchCalendarView(this.getViewConfig(this.getViewDate(newCard.currentDate, -1)));
 				this.insert(0, newCalendar);
 			}
 
