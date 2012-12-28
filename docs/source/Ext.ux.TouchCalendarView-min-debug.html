@@ -89,6 +89,32 @@ Ext.define('Ext.ux.TouchCalendarView', {
          */
         dayTimeSlotSize: 30,
 
+<span id='Ext-ux-TouchCalendarView-cfg-timeSlotDateTpls'>	    /**
+</span>	     * @cfg {Object} timeSlotDateTpls The templates to be used for the rendering of the Date labels. This should be supplied as an object with
+	     * a key relating to the template for each View Mode. For example:
+	     * {
+	     *     day: '&lt;template&gt;',
+	     *     month: '&lt;template&gt;',
+	     *     week: '&lt;template&gt;'
+	     * }
+	     *
+	     * The values can be either strings (which will be used to create an Ext.XTemplate) or an Ext.XTemplate instance.
+	     *
+	     * Defaults to:
+	     * {
+	     *    day: '{date:date(&quot;H:i&quot;)}',
+	     *    month: '{date:date(&quot;j&quot;)}',
+	     *    week: '{date:date(&quot;j&quot;)}'
+	     * }
+	     */
+	    timeSlotDateTpls: {},
+
+<span id='Ext-ux-TouchCalendarView-cfg-hideHalfHourTimeSlotLabels'>	    /**
+</span>	     * @cfg {Boolean} hideHalfHourTimeSlotLabels Determines if the half-hour time slot labels are hidden in the Day View.
+	     * Defaults to true
+	     */
+	    hideHalfHourTimeSlotLabels: true,
+
         value: null,
 
         store: null,
@@ -112,7 +138,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
                             '&lt;tpl for=&quot;.&quot;&gt;',
 
                                 '&lt;td class=&quot;time-block {[this.getClasses(values)]}&quot; datetime=&quot;{[this.me.getDateAttribute(values.date)]}&quot;&gt;',
-                                    '{date:date(&quot;j&quot;)}',
+                                    '{date:this.formatDate()}',
                                 '&lt;/td&gt;',
 
                                 '&lt;tpl if=&quot;this.isEndOfRow(xindex)&quot;&gt;',
@@ -133,12 +159,72 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
     },
 
+	// default TimeSlot date templates that are merged with the supplied config
+	timeSlotDateTplsDefaults: {
+		day: '{date:date(&quot;H:i&quot;)}',
+		month: '{date:date(&quot;j&quot;)}',
+		week: '{date:date(&quot;j&quot;)}'
+	},
+
 <span id='Ext-ux-TouchCalendarView-property-commonTemplateFunctions'>    /**
 </span>   	 * Object containing common functions to be passed to XTemplate for internal use
    	 * @property {Object} commonTemplateFunctions
    	 * @private
    	 */
    	commonTemplateFunctions: {
+
+<span id='Ext-ux-TouchCalendarView-method-getTimeSlotRowCls'>	    /**
+</span>	     * Returns a string of CSS classes to be applied to the time slot's TR tags.
+	     * This is only used in the Day View template.
+	     * @method
+	     * @private
+	     * @param {Date} date The date for the current time slot
+	     * @return {String} A string of CSS classes
+	     */
+	    getTimeSlotRowCls: function(date){
+		    var classes         = [],
+			    isHalfHourly    = date.getMinutes() !== 0;
+
+		    if(isHalfHourly){
+			    classes.push('half-hour');
+		    }
+
+		    return classes.join(' ');
+	    },
+
+<span id='Ext-ux-TouchCalendarView-method-isHalfHour'>	    /**
+</span>	     * Returns true determining if the date is a half-hour slot. Only used in the Day View.
+	     * @method
+	     * @private
+	     * @param {Date} date The date for the current time slot.
+	     * @return {Boolean}
+	     */
+	    isHalfHour: function(date){
+		    return date.getMinutes() !== 0;
+	    },
+
+<span id='Ext-ux-TouchCalendarView-method-formatDate'>	    /**
+</span>	     * Uses the templates defined in the 'timeSlotDateTpls' config to format the date HTML.
+	     * @method
+	     * @private
+	     * @param {Date} date The date for the current time slot.
+	     * @return {String} HTML output from date template
+	     */
+	    formatDate: function(date){
+			return this.getTimeSlotDateTpl().apply({date: date});
+	    },
+
+<span id='Ext-ux-TouchCalendarView-method-getTimeSlotDateTpl'>	    /**
+</span>	     * Returns the appropriate TimeSlotDateTpl for the current View Mode.
+	     * @method
+	     * @private
+	     * @return {Ext.XTemplate}
+	     */
+	    getTimeSlotDateTpl: function(){
+			var mode = this.me.getViewMode().toLowerCase();
+
+		    return this.me.getTimeSlotDateTpls()[mode];
+	    },
 
 <span id='Ext-ux-TouchCalendarView-method-getClasses'>   		/**
 </span>   		 * Gets the classes that should be applied to the current day's cell
@@ -196,6 +282,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
    			return ((currentIndex-1) % 7) === 0 &amp;&amp; (currentIndex-1 &gt;= 0);
    		},
 
+	    isEndOfPeriod: function(currentIndex){
+			return currentIndex % this.me.periodRowDayCount === 0;
+	    },
+
 <span id='Ext-ux-TouchCalendarView-method-getDaysArray'>   		/**
 </span>   		 * Gets an array containing the first 7 dates to be used in headings
    		 * @method
@@ -236,13 +326,18 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
 	    this.setStore(store);
 
+		// merge the supplied TimeSlot Date tpls with the defaults
+		config.timeSlotDateTpls = config.timeSlotDateTpls || {};
+		Ext.applyIf(config.timeSlotDateTpls, this.timeSlotDateTplsDefaults);
+
 		Ext.apply(this, config || {
 		});
 		
 <span id='Ext-ux-TouchCalendarView-event-selectionchange'>        /**
 </span>         * @event selectionchange Fires when the Calendar's selected date is changed
          * @param {Ext.ux.TouchCalendarView} this
-         * @param {Array[Ext.ux.TouchCalendarViewModel]} selectedDates An array of the selected date records
+         * @param {Date} newDate The new selected date
+         * @param {Date} oldDate The previously selected date
          */
 
 <span id='Ext-ux-TouchCalendarView-event-periodchange'>        /**
@@ -284,7 +379,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
         this.on({
             painted: this.syncHeight,
-            scope: this
+            resize: this.onComponentResize,
+		    scope: this
         });
 
         this.callParent();
@@ -324,6 +420,11 @@ Ext.define('Ext.ux.TouchCalendarView', {
      */
     updateViewMode: function(viewMode, oldViewMode){
         this.refresh();
+
+	    // fire periodchange event
+	    var minMaxDate = this.getPeriodMinMaxDate();
+
+	    this.fireEvent('periodchange', this, minMaxDate.min.get('date'), minMaxDate.max.get('date'), 'none');
     },
 	
 <span id='Ext-ux-TouchCalendarView-method-applyViewMode'>	/**
@@ -503,6 +604,17 @@ Ext.define('Ext.ux.TouchCalendarView', {
         this.fireEvent('selectionchange', this, newDate, previousValue);
     },
 
+<span id='Ext-ux-TouchCalendarView-method-onComponentResize'>	/**
+</span>	 * Handler for the component's resize event.
+	 * This is required to sync the height of the calendar's table so it keeps filling the screen.
+	 * @method
+	 * @private
+	 * @param comp
+	 */
+	onComponentResize: function(comp){
+		this.syncHeight();
+	},
+
 <span id='Ext-ux-TouchCalendarView-method-refresh'>	/**
 </span>	 * Override for the Ext.DataView's refresh method. Repopulates the store, calls parent then sync the height of the table
 	 * @method
@@ -522,7 +634,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
    	 */
    	syncHeight: function(){
         if (this.getViewMode().toUpperCase() !== 'DAY') {
-   			var tableEl = this.element.select('table').first();
+   			var tableEl = this.element.select('table', this.element.dom).first();
 
             if(tableEl){
                 tableEl.setHeight(this.element.getHeight());
@@ -538,7 +650,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	selectCell: function(cell){
         var selCls = this.getSelectedItemCls();
 
-        var selectedEl = this.element.select('td.' + selCls).first();
+        var selectedEl = this.element.select('td.' + selCls, this.element.dom).first();
 
         if(selectedEl){
             selectedEl.removeCls(selCls);
@@ -632,7 +744,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @return {Ext.Element}
 	 */
 	getDateCell: function(date){
-		return this.element.select('td[datetime=&quot;' + this.getDateAttribute(date) + '&quot;]').first();
+		return this.element.select('td[datetime=&quot;' + this.getDateAttribute(date) + '&quot;]', this.element.dom).first();
 	},
 	
 <span id='Ext-ux-TouchCalendarView-method-getDateAttribute'>	/**
@@ -656,6 +768,23 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 */
 	stringToDate: function(dateString) {
 		return Ext.Date.parseDate(dateString, this.dateAttributeFormat);
+	},
+
+<span id='Ext-ux-TouchCalendarView-method-applyTimeSlotDateTpls'>	/**
+</span>	 * Creates an Ext.XTemplate instance for any TimeSlotDateTpls that are defined as strings.
+	 * @method
+	 * @private
+	 * @param {Object} value
+	 * @return {Object}
+	 */
+	applyTimeSlotDateTpls: function(value){
+		Ext.Object.each(value, function(key, val){
+			if(Ext.isString){
+				value[key] = Ext.create('Ext.XTemplate', val);
+			}
+		}, this)
+
+		return value;
 	},
 	
 	statics: {
@@ -789,23 +918,36 @@ Ext.define('Ext.ux.TouchCalendarView', {
                                     '&lt;th class=&quot;{[this.me.getPrevPeriodCls()]} style=&quot;display: block;&quot;&gt;',
                                     '&lt;/th&gt;',
                                     '&lt;th&gt;',
-                                        '&lt;span style=&quot;position: static;&quot;&gt;{[Ext.Date.format(values[0].date, &quot;D jS M Y&quot;)]}&lt;/span&gt;',
+                                        '&lt;span&gt;{[Ext.Date.format(values[0].date, &quot;D jS M Y&quot;)]}&lt;/span&gt;',
                                     '&lt;/th&gt;',
                                     '&lt;th class=&quot;{[this.me.getNextPeriodCls()]} style=&quot;display: block;&quot;&quot;&gt;',
                                     '&lt;/th&gt;',
                                 '&lt;/tr&gt;',
                             '&lt;/thead&gt;',
 							'&lt;tbody&gt;',
-								'&lt;tpl for=&quot;.&quot;&gt;',
-									'&lt;tr&gt;',
-								
-										'&lt;td class=&quot;time-block&quot; datetime=&quot;{[this.me.getDateAttribute(values.date)]}&quot; colspan=&quot;3&quot;&gt;',
-	
-											'{date:date(&quot;H:i&quot;)}',
-										
-										'&lt;/td&gt;',
-									'&lt;/tr&gt;',
-								'&lt;/tpl&gt;',
+								'&lt;tr&gt;',
+									'&lt;td colspan=&quot;3&quot;&gt;',
+										'&lt;table class=&quot;time-slot-table&quot;&gt;',
+											'&lt;tpl for=&quot;.&quot;&gt;',
+												'&lt;tr class=&quot;{[this.getTimeSlotRowCls(values.date)]}&quot;&gt;',
+
+													'&lt;td class=&quot;label&quot; datetime=&quot;{[this.me.getDateAttribute(values.date)]}&quot;&gt;',
+
+														'&lt;tpl if=&quot;!this.me.getHideHalfHourTimeSlotLabels() || !this.isHalfHour(values.date)&quot;&gt;',
+															'{date:this.formatDate()}',
+														'&lt;/tpl&gt;',
+
+													'&lt;/td&gt;',
+													'&lt;td class=&quot;time-block&quot; colspan=&quot;2&quot;&gt;',
+
+
+
+													'&lt;/td&gt;',
+												'&lt;/tr&gt;',
+											'&lt;/tpl&gt;',
+										'&lt;/table&gt;',
+									'&lt;/td&gt;',
+								'&lt;/tr&gt;',
 							'&lt;/tbody&gt;',
 						'&lt;/table&gt;'],
 						
@@ -854,7 +996,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 					getDeltaDate: function(date, delta){
 						return new Date(date.getFullYear(), date.getMonth(), date.getDate() + delta);
 					},
-					
+
 					periodRowDayCount: 1
 				}
 	}
