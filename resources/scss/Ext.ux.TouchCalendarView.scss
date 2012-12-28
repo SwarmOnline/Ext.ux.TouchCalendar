@@ -127,12 +127,14 @@
 			{
 				background: url(../images/larr.png) center center no-repeat;
 				cursor: pointer;
+                width: 15%;
 			}
 	
 			&:last-child
 			{
 				background: url(../images/rarr.png) center center no-repeat;
 				cursor: pointer;
+                width: 15%;
 			}
 	
 			span
