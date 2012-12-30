@@ -167,7 +167,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 	    // create a sequence to refresh the Event Bars when the calendar either refreshes or has a component layout happen
 	    this.calendar.refresh = Ext.Function.createSequence(this.calendar.refresh, this.refreshEvents, this);
 	    this.calendar.setViewMode = this.createPreSequence(this.calendar.setViewMode, this.onViewModeUpdate, this);
-	    this.calendar.on('resize', this.refreshEvents, this);
+	    this.calendar.onComponentResize = Ext.Function.createSequence(this.calendar.onComponentResize, this.onComponentResize, this);
 
 	    // default to Day mode processor
 		this.setViewModeProcessor(Ext.create('Ext.ux.TouchCalendarDayEvents', {
@@ -175,6 +175,22 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 			plugin: this
 		}));
     },
+
+	/**
+	 * Method that is executed after the parent calendar's onComponentResize event handler has completed.
+	 * We want to refresh the event bars we're displaying but we must delay the refresh so the resize (mainly a
+	 * orientation change) to take place so the calculations are using figures from final positions (i.e. the underlying table cells are
+	 * where they are going to be, if we do it too soon the bars are in the wrong place.)
+	 * @method
+	 * @private
+	 */
+	onComponentResize: function(){
+		var me = this;
+
+		setTimeout(function(){
+			me.refreshEvents();
+		}, 200);
+	},
 
 	/**
 	 * Creates a "Pre-Sequence" function.
@@ -251,7 +267,13 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * @return {void}
      */
     refreshEvents: function(){
-        this.removeEvents();
+
+	    // scroll the parent calendar to the top so we're calculating positions from the base line.
+	    if(this.calendar.getScrollable()){
+		    this.calendar.getScrollable().getScroller().scrollTo(0,0);
+	    }
+
+	    this.removeEvents();
         
         this.getViewModeProcessor().generateEventBars(); // in turn calls this.renderEventBars(this.eventBarStore);
         
