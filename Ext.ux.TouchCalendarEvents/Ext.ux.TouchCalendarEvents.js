@@ -163,17 +163,13 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 	       * @param {Event} e The event object for the drag operation
 	       */
 
-
 	    // create a sequence to refresh the Event Bars when the calendar either refreshes or has a component layout happen
 	    this.calendar.refresh = Ext.Function.createSequence(this.calendar.refresh, this.refreshEvents, this);
 	    this.calendar.setViewMode = this.createPreSequence(this.calendar.setViewMode, this.onViewModeUpdate, this);
 	    this.calendar.onComponentResize = Ext.Function.createSequence(this.calendar.onComponentResize, this.onComponentResize, this);
 
 	    // default to Day mode processor
-		this.setViewModeProcessor(Ext.create('Ext.ux.TouchCalendarDayEvents', {
-			calendar: this.calendar,
-			plugin: this
-		}));
+		this.onViewModeUpdate(this.calendar.getViewMode());
     },
 
 	/**

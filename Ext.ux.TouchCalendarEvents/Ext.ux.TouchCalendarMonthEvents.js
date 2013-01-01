@@ -5,7 +5,7 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 
     extend: 'Ext.ux.TouchCalendarEventsBase',
 
-	eventFilterFn: function(record, currentDateTime){
+	eventFilterFn: function(record, id, currentDateTime){
 		var startDate = Ext.Date.clearTime(record.get(this.getPlugin().getStartEventField()), true).getTime(),
 			endDate = Ext.Date.clearTime(record.get(this.getPlugin().getEndEventField()), true).getTime();
 

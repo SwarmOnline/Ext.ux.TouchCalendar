@@ -12,7 +12,7 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 		eventSortDirection: 'ASC'
 	},
 
-	eventFilterFn: function(record, currentDateTime){
+	eventFilterFn: function(record, id, currentDateTime){
 		var startDate   = this.getRoundedTime(record.get(this.getPlugin().getStartEventField())).getTime(),
 			endDate     = this.getRoundedTime(record.get(this.getPlugin().getEndEventField())).getTime();
 

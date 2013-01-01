@@ -103,14 +103,15 @@ Ext.define('Ext.ux.TouchCalendar',{
 		var plugins = [];
 
 		if(this.enableSimpleEvents){
-			plugins.push(new Ext.ux.TouchCalendarSimpleEvents());
+			plugins.push(Ext.create('Ext.ux.TouchCalendarSimpleEvents', {}));
 		} else if (this.enableEventBars){
-			plugins.push(new Ext.ux.TouchCalendarEvents());
+			plugins.push(Ext.create('Ext.ux.TouchCalendarEvents', {}));
 		}
 
 		Ext.apply(this.viewConfig, {
 			plugins: plugins,
 			currentDate: viewValue,
+			viewMode: this.viewMode,
 			onTableHeaderTap: Ext.bind(this.onTableHeaderTap, this)
 		});
 
@@ -140,22 +141,22 @@ Ext.define('Ext.ux.TouchCalendar',{
 		// first out of view
 		var viewValue = this.getViewDate(origCurrentDate, -1);
 		items.push(
-		    new Ext.ux.TouchCalendarView(Ext.applyIf({
+		    Ext.create('Ext.ux.TouchCalendarView', Ext.applyIf({
 		        currentDate: viewValue
 		      }, this.getViewConfig(viewValue)))
 		);
 
 		// active view
 		items.push(
-		    new Ext.ux.TouchCalendarView(this.getViewConfig(origCurrentDate))
+			Ext.create('Ext.ux.TouchCalendarView', Ext.ux.TouchCalendarView(this.getViewConfig(origCurrentDate)))
 		);
 
 		// second out of view (i.e. third)
 		viewValue = this.getViewDate(origCurrentDate, 1);
 		items.push(
-		    new Ext.ux.TouchCalendarView(Ext.applyIf({
+			Ext.create('Ext.ux.TouchCalendarView', Ext.ux.TouchCalendarView(Ext.applyIf({
 		        currentDate: viewValue
-		    }, this.getViewConfig(viewValue)))
+		    }, this.getViewConfig(viewValue))))
 		);
 
 		this.setItems(items);
