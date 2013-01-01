@@ -31,14 +31,14 @@ Ext.define('Ext.ux.TouchCalendar',{
 	enableSwipeNavigate: true,
 
 	/**
-	* @cfg {Boolean} enableSimpleEvents True to enable the Ext.ux.TouchCalendarSimpleEvents plugin. When true the Ext.ux.TouchCalendarSimpleEvents JS and CSS files
-	* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
+	* @cfg {Boolean/Object} enableSimpleEvents True to enable the Ext.ux.TouchCalendarSimpleEvents plugin. When true the Ext.ux.TouchCalendarSimpleEvents JS and CSS files
+	* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig. If an object is passed in this is used as the config for the plugin.
 	*/
 	enableSimpleEvents: false,
 
 	/**
-	* @cfg {Boolean} enableEventBars True to enable the Ext.ux.TouchCalendarEvents plugin. When true the Ext.ux.TouchCalendarEvents JS and CSS files
-	* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
+	* @cfg {Boolean/Object} enableEventBars True to enable the Ext.ux.TouchCalendarEvents plugin. When true the Ext.ux.TouchCalendarEvents JS and CSS files
+	* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.  If an object is passed in this is used as the config for the plugin.
 	*/
 	enableEventBars: false,
 
@@ -103,9 +103,11 @@ Ext.define('Ext.ux.TouchCalendar',{
 		var plugins = [];
 
 		if(this.enableSimpleEvents){
-			plugins.push(Ext.create('Ext.ux.TouchCalendarSimpleEvents', {}));
+			var config = Ext.isObject(this.enableSimpleEvents) ? this.enableSimpleEvents : {};
+			plugins.push(Ext.create('Ext.ux.TouchCalendarSimpleEvents', config));
 		} else if (this.enableEventBars){
-			plugins.push(Ext.create('Ext.ux.TouchCalendarEvents', {}));
+			var config = Ext.isObject(this.enableEventBars) ? this.enableEventBars : {};
+			plugins.push(Ext.create('Ext.ux.TouchCalendarEvents', config));
 		}
 
 		Ext.apply(this.viewConfig, {
