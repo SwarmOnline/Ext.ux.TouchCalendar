@@ -26,6 +26,9 @@ Ext.define('Ext.ux.TouchCalendar',{
 	xtype: 'calendar',
 
 	config: {
+
+		viewMode: 'month',
+
 		/**
 		* @cfg {Boolean} enableSwipeNavigate True to allow the calendar's period to be change by swiping across it.
 		*/
@@ -115,8 +118,9 @@ Ext.define('Ext.ux.TouchCalendar',{
 		Ext.apply(this._viewConfig, {
 			plugins: plugins,
 			currentDate: viewValue,
-			viewMode: this.viewMode,
-			onTableHeaderTap: Ext.bind(this.onTableHeaderTap, this)
+			viewMode: this.getViewMode(),
+			onTableHeaderTap: Ext.bind(this.onTableHeaderTap, this),
+			bubbleEvents: ['periodchange', 'eventtap', 'selectionchange']
 		});
 
 		return this._viewConfig;
@@ -243,6 +247,9 @@ Ext.define('Ext.ux.TouchCalendar',{
 			}
 
 			this.view = newCard;
+
+			var dateRange = this.view.getPeriodMinMaxDate();
+			this.fireEvent('periodchange', this.view, dateRange.min.get('date'), dateRange.max.get('date'), direction);
 		}
 	}
     
