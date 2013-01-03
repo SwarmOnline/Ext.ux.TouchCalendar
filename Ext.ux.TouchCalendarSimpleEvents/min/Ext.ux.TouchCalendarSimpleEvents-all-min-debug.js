@@ -25,28 +25,30 @@ Ext.define('Ext.ux.TouchCalendar',{
 
 	xtype: 'calendar',
 
-	/**
-	* @cfg {Boolean} enableSwipeNavigate True to allow the calendar's period to be change by swiping across it.
-	*/
-	enableSwipeNavigate: true,
+	config: {
+		/**
+		* @cfg {Boolean} enableSwipeNavigate True to allow the calendar's period to be change by swiping across it.
+		*/
+		enableSwipeNavigate: true,
 
-	/**
-	* @cfg {Boolean} enableSimpleEvents True to enable the Ext.ux.TouchCalendarSimpleEvents plugin. When true the Ext.ux.TouchCalendarSimpleEvents JS and CSS files
-	* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
-	*/
-	enableSimpleEvents: false,
+		/**
+		* @cfg {Boolean/Object} enableSimpleEvents True to enable the Ext.ux.TouchCalendarSimpleEvents plugin. When true the Ext.ux.TouchCalendarSimpleEvents JS and CSS files
+		* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig. If an object is passed in this is used as the config for the plugin.
+		*/
+		enableSimpleEvents: false,
 
-	/**
-	* @cfg {Boolean} enableEventBars True to enable the Ext.ux.TouchCalendarEvents plugin. When true the Ext.ux.TouchCalendarEvents JS and CSS files
-	* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
-	*/
-	enableEventBars: false,
+		/**
+		* @cfg {Boolean/Object} enableEventBars True to enable the Ext.ux.TouchCalendarEvents plugin. When true the Ext.ux.TouchCalendarEvents JS and CSS files
+		* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.  If an object is passed in this is used as the config for the plugin.
+		*/
+		enableEventBars: false,
 
-	/**
-	* @cfg {Object} viewConfig A set of configuration options that will be applied to the TouchCalendarView component
-	*/
-	viewConfig: {
+		/**
+		* @cfg {Object} viewConfig A set of configuration options that will be applied to the TouchCalendarView component
+		*/
+		viewConfig: {
 
+		}
 	},
 
 	defaultViewConfig: {
@@ -68,7 +70,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 
 		Ext.apply(this, {
 			cls: 'touch-calendar',
-			activeItem: (this.enableSwipeNavigate ? 1: 0),
+			activeItem: (this.getEnableSwipeNavigate() ? 1: 0),
 			direction: 'horizontal'
 		});
 
@@ -78,7 +80,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 		this.on('selectionchange', this.onSelectionChange);
 		this.on('activeitemchange', this.onActiveItemChange);
 
-		if (this.enableSwipeNavigate) {
+		if (this.getEnableSwipeNavigate()) {
 			// Bind the required listeners
 			this.on(this.element, {
 				drag: this.onDrag,
@@ -102,19 +104,22 @@ Ext.define('Ext.ux.TouchCalendar',{
 	getViewConfig: function(viewValue){
 		var plugins = [];
 
-		if(this.enableSimpleEvents){
-			plugins.push(new Ext.ux.TouchCalendarSimpleEvents());
-		} else if (this.enableEventBars){
-			plugins.push(new Ext.ux.TouchCalendarEvents());
+		if(this.getEnableSimpleEvents()){
+			var config = Ext.isObject(this.getEnableSimpleEvents()) ? this.getEnableSimpleEvents() : {};
+			plugins.push(Ext.create('Ext.ux.TouchCalendarSimpleEvents', config));
+		} else if (this.getEnableEventBars()){
+			var config = Ext.isObject(this.getEnableEventBars()) ? this.getEnableEventBars() : {};
+			plugins.push(Ext.create('Ext.ux.TouchCalendarEvents', config));
 		}
 
-		Ext.apply(this.viewConfig, {
+		Ext.apply(this._viewConfig, {
 			plugins: plugins,
 			currentDate: viewValue,
+			viewMode: this.viewMode,
 			onTableHeaderTap: Ext.bind(this.onTableHeaderTap, this)
 		});
 
-		return this.viewConfig;
+		return this._viewConfig;
 	},
 
 	getViewDate: function(date, i){
@@ -133,33 +138,33 @@ Ext.define('Ext.ux.TouchCalendar',{
 	initViews: function(){
 		var items = [];
 		var origCurrentDate = Ext.Date.clone(this.viewConfig.currentDate),
-		  i = (this.enableSwipeNavigate ? -1 : 0),
-		  iMax = (this.enableSwipeNavigate ? 1 : 0),
+		  i = (this.getEnableSwipeNavigate() ? -1 : 0),
+		  iMax = (this.getEnableSwipeNavigate() ? 1 : 0),
 		  plugins = [];
 
 		// first out of view
 		var viewValue = this.getViewDate(origCurrentDate, -1);
 		items.push(
-		    new Ext.ux.TouchCalendarView(Ext.applyIf({
+		    Ext.create('Ext.ux.TouchCalendarView', Ext.applyIf({
 		        currentDate: viewValue
 		      }, this.getViewConfig(viewValue)))
 		);
 
 		// active view
 		items.push(
-		    new Ext.ux.TouchCalendarView(this.getViewConfig(origCurrentDate))
+			Ext.create('Ext.ux.TouchCalendarView', Ext.ux.TouchCalendarView(this.getViewConfig(origCurrentDate)))
 		);
 
 		// second out of view (i.e. third)
 		viewValue = this.getViewDate(origCurrentDate, 1);
 		items.push(
-		    new Ext.ux.TouchCalendarView(Ext.applyIf({
+			Ext.create('Ext.ux.TouchCalendarView', Ext.ux.TouchCalendarView(Ext.applyIf({
 		        currentDate: viewValue
-		    }, this.getViewConfig(viewValue)))
+		    }, this.getViewConfig(viewValue))))
 		);
 
 		this.setItems(items);
-		this.view = items[(this.enableSwipeNavigate ? 1: 0)];
+		this.view = items[(this.getEnableSwipeNavigate() ? 1: 0)];
 	},
 
 	/**
@@ -220,7 +225,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 	 * @private
 	 */
 	onActiveItemChange: function(container, newCard, oldCard){
-		if (this.enableSwipeNavigate) {
+		if (this.getEnableSwipeNavigate()) {
 			var items = this.getItems();
 			var newIndex = items.indexOf(newCard), oldIndex = items.indexOf(oldCard), direction = (newIndex > oldIndex) ? 'forward' : 'backward';
 
@@ -448,7 +453,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	hideEvents: function(){
 		this.simpleEventsPlugin.disabled = true;
 		
-		this.calendar.element.select('span.' + this.wrapperCls).hide();
+		this.calendar.element.select('span.' + this.wrapperCls, this.calendar.element.dom).hide();
 	},
 	
 	/**
@@ -460,7 +465,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	showEvents: function(){
 		this.simpleEventsPlugin.disabled = false;
 		
-		this.calendar.element.select('span.' + this.wrapperCls).show();
+		this.calendar.element.select('span.' + this.wrapperCls, this.calendar.element.dom).show();
 	},
 	
 	/**
@@ -471,7 +476,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	 */
 	removeEvents: function(){
 		if(this.calendar.element){
-			this.calendar.element.select('span.' + this.wrapperCls).remove();
+			this.calendar.element.select('span.' + this.wrapperCls, this.calendar.element.dom).remove();
 		}
 	}	
 });

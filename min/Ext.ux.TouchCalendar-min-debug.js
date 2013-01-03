@@ -28,28 +28,30 @@ Ext.define('Ext.ux.TouchCalendar',{
 
 	xtype: 'calendar',
 
-	/**
-	* @cfg {Boolean} enableSwipeNavigate True to allow the calendar's period to be change by swiping across it.
-	*/
-	enableSwipeNavigate: true,
+	config: {
+		/**
+		* @cfg {Boolean} enableSwipeNavigate True to allow the calendar's period to be change by swiping across it.
+		*/
+		enableSwipeNavigate: true,
 
-	/**
-	* @cfg {Boolean} enableSimpleEvents True to enable the Ext.ux.TouchCalendarSimpleEvents plugin. When true the Ext.ux.TouchCalendarSimpleEvents JS and CSS files
-	* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
-	*/
-	enableSimpleEvents: false,
+		/**
+		* @cfg {Boolean/Object} enableSimpleEvents True to enable the Ext.ux.TouchCalendarSimpleEvents plugin. When true the Ext.ux.TouchCalendarSimpleEvents JS and CSS files
+		* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig. If an object is passed in this is used as the config for the plugin.
+		*/
+		enableSimpleEvents: false,
 
-	/**
-	* @cfg {Boolean} enableEventBars True to enable the Ext.ux.TouchCalendarEvents plugin. When true the Ext.ux.TouchCalendarEvents JS and CSS files
-	* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.
-	*/
-	enableEventBars: false,
+		/**
+		* @cfg {Boolean/Object} enableEventBars True to enable the Ext.ux.TouchCalendarEvents plugin. When true the Ext.ux.TouchCalendarEvents JS and CSS files
+		* must be included and an eventStore option, containing an Ext.data.Store instance, be given to the viewConfig.  If an object is passed in this is used as the config for the plugin.
+		*/
+		enableEventBars: false,
 
-	/**
-	* @cfg {Object} viewConfig A set of configuration options that will be applied to the TouchCalendarView component
-	*/
-	viewConfig: {
+		/**
+		* @cfg {Object} viewConfig A set of configuration options that will be applied to the TouchCalendarView component
+		*/
+		viewConfig: {
 
+		}
 	},
 
 	defaultViewConfig: {
@@ -71,7 +73,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 
 		Ext.apply(this, {
 			cls: 'touch-calendar',
-			activeItem: (this.enableSwipeNavigate ? 1: 0),
+			activeItem: (this.getEnableSwipeNavigate() ? 1: 0),
 			direction: 'horizontal'
 		});
 
@@ -81,7 +83,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 		this.on('selectionchange', this.onSelectionChange);
 		this.on('activeitemchange', this.onActiveItemChange);
 
-		if (this.enableSwipeNavigate) {
+		if (this.getEnableSwipeNavigate()) {
 			// Bind the required listeners
 			this.on(this.element, {
 				drag: this.onDrag,
@@ -105,19 +107,22 @@ Ext.define('Ext.ux.TouchCalendar',{
 	getViewConfig: function(viewValue){
 		var plugins = [];
 
-		if(this.enableSimpleEvents){
-			plugins.push(new Ext.ux.TouchCalendarSimpleEvents());
-		} else if (this.enableEventBars){
-			plugins.push(new Ext.ux.TouchCalendarEvents());
+		if(this.getEnableSimpleEvents()){
+			var config = Ext.isObject(this.getEnableSimpleEvents()) ? this.getEnableSimpleEvents() : {};
+			plugins.push(Ext.create('Ext.ux.TouchCalendarSimpleEvents', config));
+		} else if (this.getEnableEventBars()){
+			var config = Ext.isObject(this.getEnableEventBars()) ? this.getEnableEventBars() : {};
+			plugins.push(Ext.create('Ext.ux.TouchCalendarEvents', config));
 		}
 
-		Ext.apply(this.viewConfig, {
+		Ext.apply(this._viewConfig, {
 			plugins: plugins,
 			currentDate: viewValue,
+			viewMode: this.viewMode,
 			onTableHeaderTap: Ext.bind(this.onTableHeaderTap, this)
 		});
 
-		return this.viewConfig;
+		return this._viewConfig;
 	},
 
 	getViewDate: function(date, i){
@@ -136,33 +141,33 @@ Ext.define('Ext.ux.TouchCalendar',{
 	initViews: function(){
 		var items = [];
 		var origCurrentDate = Ext.Date.clone(this.viewConfig.currentDate),
-		  i = (this.enableSwipeNavigate ? -1 : 0),
-		  iMax = (this.enableSwipeNavigate ? 1 : 0),
+		  i = (this.getEnableSwipeNavigate() ? -1 : 0),
+		  iMax = (this.getEnableSwipeNavigate() ? 1 : 0),
 		  plugins = [];
 
 		// first out of view
 		var viewValue = this.getViewDate(origCurrentDate, -1);
 		items.push(
-		    new Ext.ux.TouchCalendarView(Ext.applyIf({
+		    Ext.create('Ext.ux.TouchCalendarView', Ext.applyIf({
 		        currentDate: viewValue
 		      }, this.getViewConfig(viewValue)))
 		);
 
 		// active view
 		items.push(
-		    new Ext.ux.TouchCalendarView(this.getViewConfig(origCurrentDate))
+			Ext.create('Ext.ux.TouchCalendarView', Ext.ux.TouchCalendarView(this.getViewConfig(origCurrentDate)))
 		);
 
 		// second out of view (i.e. third)
 		viewValue = this.getViewDate(origCurrentDate, 1);
 		items.push(
-		    new Ext.ux.TouchCalendarView(Ext.applyIf({
+			Ext.create('Ext.ux.TouchCalendarView', Ext.ux.TouchCalendarView(Ext.applyIf({
 		        currentDate: viewValue
-		    }, this.getViewConfig(viewValue)))
+		    }, this.getViewConfig(viewValue))))
 		);
 
 		this.setItems(items);
-		this.view = items[(this.enableSwipeNavigate ? 1: 0)];
+		this.view = items[(this.getEnableSwipeNavigate() ? 1: 0)];
 	},
 
 	/**
@@ -223,7 +228,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 	 * @private
 	 */
 	onActiveItemChange: function(container, newCard, oldCard){
-		if (this.enableSwipeNavigate) {
+		if (this.getEnableSwipeNavigate()) {
 			var items = this.getItems();
 			var newIndex = items.indexOf(newCard), oldIndex = items.indexOf(oldCard), direction = (newIndex > oldIndex) ? 'forward' : 'backward';
 
@@ -1463,7 +1468,7 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 		eventSortDirection: 'ASC'
 	},
 
-	eventFilterFn: function(record, currentDateTime){
+	eventFilterFn: function(record, id, currentDateTime){
 		var startDate   = this.getRoundedTime(record.get(this.getPlugin().getStartEventField())).getTime(),
 			endDate     = this.getRoundedTime(record.get(this.getPlugin().getEndEventField())).getTime();
 
@@ -1545,7 +1550,7 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 			roundedStartDate    = this.getRoundedTime(startDate),
 			timeSlotCount       = (roundedStartDate.getHours() * 2) + (roundedStartDate.getMinutes() === 30 ? 1 : 0),
 			minutesDiff         = (startDate.getTime() - roundedStartDate.getTime()) / 1000 / 60,
-			firstTimeSlotEl     = this.getCalendar().element.select('table.time-slot-table td').first(),
+			firstTimeSlotEl     = this.getCalendar().element.select('table.time-slot-table td', this.getCalendar().element.dom).first(),
 			verticalPosition    = 0;
 
 		if(firstTimeSlotEl){
@@ -1595,7 +1600,7 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 
     extend: 'Ext.ux.TouchCalendarEventsBase',
 
-	eventFilterFn: function(record, currentDateTime){
+	eventFilterFn: function(record, id, currentDateTime){
 		var startDate = Ext.Date.clearTime(record.get(this.getPlugin().getStartEventField()), true).getTime(),
 			endDate = Ext.Date.clearTime(record.get(this.getPlugin().getEndEventField()), true).getTime();
 
@@ -1653,7 +1658,7 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 						draggable.el.setLeft(e.startX - (draggable.el.getWidth() / 2));
 
 						// hide all linked Event Bars
-						me.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
+						me.calendar.element.select('div.' + eventRecord.internalId, me.calendar.element.dom).each(function(eventBar){
 							if (eventBar.dom !== draggable.el.dom) {
 								eventBar.hide();
 							}
@@ -1668,10 +1673,9 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 				});
 			}
 
-
-			var headerHeight = this.getCalendar().element.select('thead').first().getHeight();
-			var bodyHeight = this.getCalendar().element.select('tbody').first().getHeight();
-			var rowCount = this.getCalendar().element.select('tbody tr').getCount();
+			var headerHeight = this.getCalendar().element.select('thead', this.getCalendar().element.dom).first().getHeight();
+			var bodyHeight = this.getCalendar().element.select('tbody', this.getCalendar().element.dom).first().getHeight();
+			var rowCount = this.getCalendar().element.select('tbody tr', this.getCalendar().element.dom).getCount();
 			var rowHeight = bodyHeight/rowCount;
 
 			var dateIndex = this.getCalendar().getStore().findBy(function(dateRec){
@@ -1872,18 +1876,30 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 	       * @param {Event} e The event object for the drag operation
 	       */
 
-
 	    // create a sequence to refresh the Event Bars when the calendar either refreshes or has a component layout happen
 	    this.calendar.refresh = Ext.Function.createSequence(this.calendar.refresh, this.refreshEvents, this);
 	    this.calendar.setViewMode = this.createPreSequence(this.calendar.setViewMode, this.onViewModeUpdate, this);
-	    this.calendar.on('resize', this.refreshEvents, this);
+	    this.calendar.onComponentResize = Ext.Function.createSequence(this.calendar.onComponentResize, this.onComponentResize, this);
 
 	    // default to Day mode processor
-		this.setViewModeProcessor(Ext.create('Ext.ux.TouchCalendarDayEvents', {
-			calendar: this.calendar,
-			plugin: this
-		}));
+		this.onViewModeUpdate(this.calendar.getViewMode());
     },
+
+	/**
+	 * Method that is executed after the parent calendar's onComponentResize event handler has completed.
+	 * We want to refresh the event bars we're displaying but we must delay the refresh so the resize (mainly a
+	 * orientation change) to take place so the calculations are using figures from final positions (i.e. the underlying table cells are
+	 * where they are going to be, if we do it too soon the bars are in the wrong place.)
+	 * @method
+	 * @private
+	 */
+	onComponentResize: function(){
+		var me = this;
+
+		setTimeout(function(){
+			me.refreshEvents();
+		}, 200);
+	},
 
 	/**
 	 * Creates a "Pre-Sequence" function.
@@ -1960,7 +1976,13 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * @return {void}
      */
     refreshEvents: function(){
-        this.removeEvents();
+
+	    // scroll the parent calendar to the top so we're calculating positions from the base line.
+	    if(this.calendar.getScrollable()){
+		    this.calendar.getScrollable().getScroller().scrollTo(0,0);
+	    }
+
+	    this.removeEvents();
         
         this.getViewModeProcessor().generateEventBars(); // in turn calls this.renderEventBars(this.eventBarStore);
         
@@ -2043,7 +2065,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
       var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID'));
       
       // reshow all the hidden linked Event Bars
-      this.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
+      this.calendar.element.select('div.' + eventRecord.internalId, this.calendar.element.dom).each(function(eventBar){
         eventBar.show();
       }, this);
     }
@@ -2117,7 +2139,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     draggable.updateBoundary(true);
 
         // hide all linked Event Bars
-        this.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
+        this.calendar.element.select('div.' + eventRecord.internalId, this.calendar.element.dom).each(function(eventBar){
             if (eventBar.dom !== draggable.el.dom) {
                 eventBar.hide();
             }
@@ -2138,12 +2160,13 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
                 tag: 'div',
                 cls: this.getEventWrapperCls()
             }, true));
-            
+
             this.getEventWrapperEl().on('tap', this.onEventWrapperTap, this, {
                 delegate: 'div.' + this.getEventBarCls()
             });
-            this.getViewModeProcessor().renderEventBars(this.getViewModeProcessor().eventBarStore);
-        }else{
+
+	        this.getViewModeProcessor().renderEventBars(this.getViewModeProcessor().eventBarStore);
+        } else {
           this.calendar.on('painted', this.createEventWrapper, this);
         }
     },
@@ -2177,7 +2200,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     },
   
 	getEventsWrapperContainer: function(){
-		return this.calendar.element.select('thead th').first() || this.calendar.element.select('tr td').first();
+		return this.calendar.element.select('thead th', this.calendar.element.dom).first() || this.calendar.element.select('tr td', this.calendar.element.dom).first();
 	},
 
 	/**
@@ -2213,7 +2236,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * @return {void}
      */
     deselectEvents: function(){
-        this.calendar.element.select('.' + this.getEventBarSelectedCls()).removeCls(this.getEventBarSelectedCls());
+        this.calendar.element.select('.' + this.getEventBarSelectedCls(), this.calendar.element.dom).removeCls(this.getEventBarSelectedCls());
     },
     
     /**
@@ -2525,7 +2548,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	hideEvents: function(){
 		this.simpleEventsPlugin.disabled = true;
 		
-		this.calendar.element.select('span.' + this.wrapperCls).hide();
+		this.calendar.element.select('span.' + this.wrapperCls, this.calendar.element.dom).hide();
 	},
 	
 	/**
@@ -2537,7 +2560,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	showEvents: function(){
 		this.simpleEventsPlugin.disabled = false;
 		
-		this.calendar.element.select('span.' + this.wrapperCls).show();
+		this.calendar.element.select('span.' + this.wrapperCls, this.calendar.element.dom).show();
 	},
 	
 	/**
@@ -2548,7 +2571,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	 */
 	removeEvents: function(){
 		if(this.calendar.element){
-			this.calendar.element.select('span.' + this.wrapperCls).remove();
+			this.calendar.element.select('span.' + this.wrapperCls, this.calendar.element.dom).remove();
 		}
 	}	
 });
