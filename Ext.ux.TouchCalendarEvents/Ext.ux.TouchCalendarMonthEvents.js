@@ -63,7 +63,7 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 						draggable.el.setLeft(e.startX - (draggable.el.getWidth() / 2));
 
 						// hide all linked Event Bars
-						me.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
+						me.calendar.element.select('div.' + eventRecord.internalId, me.calendar.element.dom).each(function(eventBar){
 							if (eventBar.dom !== draggable.el.dom) {
 								eventBar.hide();
 							}
@@ -78,10 +78,9 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 				});
 			}
 
-
-			var headerHeight = this.getCalendar().element.select('thead').first().getHeight();
-			var bodyHeight = this.getCalendar().element.select('tbody').first().getHeight();
-			var rowCount = this.getCalendar().element.select('tbody tr').getCount();
+			var headerHeight = this.getCalendar().element.select('thead', this.getCalendar().element.dom).first().getHeight();
+			var bodyHeight = this.getCalendar().element.select('tbody', this.getCalendar().element.dom).first().getHeight();
+			var rowCount = this.getCalendar().element.select('tbody tr', this.getCalendar().element.dom).getCount();
 			var rowHeight = bodyHeight/rowCount;
 
 			var dateIndex = this.getCalendar().getStore().findBy(function(dateRec){

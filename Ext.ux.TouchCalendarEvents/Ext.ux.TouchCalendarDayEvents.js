@@ -94,7 +94,7 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 			roundedStartDate    = this.getRoundedTime(startDate),
 			timeSlotCount       = (roundedStartDate.getHours() * 2) + (roundedStartDate.getMinutes() === 30 ? 1 : 0),
 			minutesDiff         = (startDate.getTime() - roundedStartDate.getTime()) / 1000 / 60,
-			firstTimeSlotEl     = this.getCalendar().element.select('table.time-slot-table td').first(),
+			firstTimeSlotEl     = this.getCalendar().element.select('table.time-slot-table td', this.getCalendar().element.dom).first(),
 			verticalPosition    = 0;
 
 		if(firstTimeSlotEl){

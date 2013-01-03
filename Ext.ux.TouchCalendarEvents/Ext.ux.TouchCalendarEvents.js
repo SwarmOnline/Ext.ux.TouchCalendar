@@ -352,7 +352,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
       var eventRecord = this.getEventRecord(draggable.el.getAttribute('eventID'));
       
       // reshow all the hidden linked Event Bars
-      this.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
+      this.calendar.element.select('div.' + eventRecord.internalId, this.calendar.element.dom).each(function(eventBar){
         eventBar.show();
       }, this);
     }
@@ -426,7 +426,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     draggable.updateBoundary(true);
 
         // hide all linked Event Bars
-        this.calendar.element.select('div.' + eventRecord.internalId).each(function(eventBar){
+        this.calendar.element.select('div.' + eventRecord.internalId, this.calendar.element.dom).each(function(eventBar){
             if (eventBar.dom !== draggable.el.dom) {
                 eventBar.hide();
             }
@@ -447,12 +447,13 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
                 tag: 'div',
                 cls: this.getEventWrapperCls()
             }, true));
-            
+
             this.getEventWrapperEl().on('tap', this.onEventWrapperTap, this, {
                 delegate: 'div.' + this.getEventBarCls()
             });
-            this.getViewModeProcessor().renderEventBars(this.getViewModeProcessor().eventBarStore);
-        }else{
+
+	        this.getViewModeProcessor().renderEventBars(this.getViewModeProcessor().eventBarStore);
+        } else {
           this.calendar.on('painted', this.createEventWrapper, this);
         }
     },
@@ -486,7 +487,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     },
   
 	getEventsWrapperContainer: function(){
-		return this.calendar.element.select('thead th').first() || this.calendar.element.select('tr td').first();
+		return this.calendar.element.select('thead th', this.calendar.element.dom).first() || this.calendar.element.select('tr td', this.calendar.element.dom).first();
 	},
 
 	/**
@@ -522,7 +523,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
      * @return {void}
      */
     deselectEvents: function(){
-        this.calendar.element.select('.' + this.getEventBarSelectedCls()).removeCls(this.getEventBarSelectedCls());
+        this.calendar.element.select('.' + this.getEventBarSelectedCls(), this.calendar.element.dom).removeCls(this.getEventBarSelectedCls());
     },
     
     /**
