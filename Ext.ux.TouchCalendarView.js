@@ -431,7 +431,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		// Create the template
 		this.setTpl(new Ext.XTemplate((viewModeFns.tpl || this.getBaseTpl()).join(''), this.commonTemplateFunctions));
 		
-		this.setScrollable(viewMode.toUpperCase() === 'DAY' ? 'vertical' : false);
+		this.setScrollable({
+			direction: viewMode.toUpperCase() === 'DAY' ? 'vertical' : false,
+			directionLock: true
+		});
 
         return viewMode;
 	},
