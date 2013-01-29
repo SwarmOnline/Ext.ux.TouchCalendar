@@ -24,14 +24,45 @@
 		
 		&.day
 		{
+            tr.selected
+            {
+                td
+                {
+                    $c: #1980e5;
+                    color: #FFFFFF;
+                    text-shadow: #333 1px 1px 0px;
+                    border: 1px solid black;
+                    background: $c;
+                    @include background-gradient(lighten($c, 10%), 'glossy');
+
+                    &:first-child
+                    {
+                        border-right: none;
+                    }
+
+                    &:last-child
+                    {
+                        border-left: none;
+                    }
+                }
+            }
+
+
 			td
 			{
+                &.label
+                {
+                    width: 40px;
+                    border-right: none;
+                    vertical-align: middle;
+                }
+
 				&.time-block
 				{
 					text-align: left;
-					background-image: none;
 					font-size: 0.7em;
 					height: 30px;
+                    border-left: none;
 				}
 			}
 		}
