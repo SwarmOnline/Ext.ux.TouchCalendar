@@ -431,7 +431,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		// Create the template
 		this.setTpl(new Ext.XTemplate((viewModeFns.tpl || this.getBaseTpl()).join(''), this.commonTemplateFunctions));
 		
-		this.setScrollable(viewMode.toUpperCase() === 'DAY' ? 'vertical' : false);
+		this.setScrollable({
+			direction: viewMode.toUpperCase() === 'DAY' ? 'vertical' : false,
+			directionLock: true
+		});
 
         return viewMode;
 	},
@@ -633,13 +636,15 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	selectCell: function(cell){
         var selCls = this.getSelectedItemCls();
 
-        var selectedEl = this.element.select('td.' + selCls, this.element.dom).first();
+        var selectedEl = this.element.select('.' + selCls, this.element.dom);
 
         if(selectedEl){
             selectedEl.removeCls(selCls);
         }
 
         cell.addCls(selCls);
+
+		cell.up('tr').addCls(selCls);
 	},
 	
 	/**

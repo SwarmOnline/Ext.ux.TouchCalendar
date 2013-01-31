@@ -28,6 +28,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 	config: {
 
 		/**
+		 * @cfg {String} viewMode This config should not be used directly, instead the 'viewMode' config should be added to the 'viewConfig' config object. Use the setViewMode method to change the viewMode of the calendar at runtime.
 		 * @accessor
 		 */
 		viewMode: 'month',

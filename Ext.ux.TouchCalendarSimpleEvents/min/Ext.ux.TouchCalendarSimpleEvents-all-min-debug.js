@@ -26,6 +26,13 @@ Ext.define('Ext.ux.TouchCalendar',{
 	xtype: 'calendar',
 
 	config: {
+
+		/**
+		 * @cfg {String} viewMode This config should not be used directly, instead the 'viewMode' config should be added to the 'viewConfig' config object. Use the setViewMode method to change the viewMode of the calendar at runtime.
+		 * @accessor
+		 */
+		viewMode: 'month',
+
 		/**
 		* @cfg {Boolean} enableSwipeNavigate True to allow the calendar's period to be change by swiping across it.
 		*/
@@ -56,6 +63,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 		weekStart: 1,
 		bubbleEvents: ['selectionchange']
 	},
+
 	indicator: false,
 
 	initialize: function(){
@@ -64,7 +72,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 
 		this.viewConfig.currentDate = this.viewConfig.currentDate || this.viewConfig.value || new Date();
 
-		this.viewMode = this.viewConfig.viewMode.toUpperCase();
+		this.setViewMode(this.viewConfig.viewMode.toUpperCase());
 
 		this.initViews();
 
@@ -115,16 +123,17 @@ Ext.define('Ext.ux.TouchCalendar',{
 		Ext.apply(this._viewConfig, {
 			plugins: plugins,
 			currentDate: viewValue,
-			viewMode: this.viewMode,
-			onTableHeaderTap: Ext.bind(this.onTableHeaderTap, this)
+			viewMode: this.getViewMode(),
+			onTableHeaderTap: Ext.bind(this.onTableHeaderTap, this),
+			bubbleEvents: ['periodchange', 'eventtap', 'selectionchange']
 		});
 
 		return this._viewConfig;
 	},
 
 	getViewDate: function(date, i){
-		var scale = (this.viewMode === 'WEEK' ? 'DAY' : this.viewMode.toUpperCase()),
-		  number = (this.viewMode === 'WEEK' ? (8 * i) : i);
+		var scale = (this.getViewMode() === 'WEEK' ? 'DAY' : this.getViewMode().toUpperCase()),
+		  number = (this.getViewMode() === 'WEEK' ? (8 * i) : i);
 
 		return Ext.Date.add(date, Ext.Date[scale], number)
 	},
@@ -179,22 +188,27 @@ Ext.define('Ext.ux.TouchCalendar',{
 		}
 	},
 
+	applyViewMode: function(mode){
+		return mode.toUpperCase();
+	},
+
 	/**
 	* Changes the mode of the calendar to the specified string's value. Possible values are 'month', 'week' and 'day'.
 	* @method
 	* @returns {void}
 	*/
-	setMode: function(mode){
-		this.viewMode = mode.toUpperCase();
-		this.viewConfig.viewMode = this.viewMode;
+	updateViewMode: function(mode){
+		this.viewConfig = this.viewConfig || {};
+		this.viewConfig.viewMode = mode;
 
-		this.getItems().each(function(view, index){
+		if(this.view){
+			this.getItems().each(function(view, index){
+				view.currentDate = this.getViewDate(Ext.Date.clone(this.view.currentDate), index-1);
 
-			view.currentDate = this.getViewDate(Ext.Date.clone(this.view.currentDate), index-1);
-
-			view.setViewMode(mode, true);
-			view.refresh();
-		}, this);
+				view.setViewMode(mode, true);
+				view.refresh();
+			}, this);
+		}
 	},
 
 	/**
@@ -243,6 +257,9 @@ Ext.define('Ext.ux.TouchCalendar',{
 			}
 
 			this.view = newCard;
+
+			var dateRange = this.view.getPeriodMinMaxDate();
+			this.fireEvent('periodchange', this.view, dateRange.min.get('date'), dateRange.max.get('date'), direction);
 		}
 	}
     
