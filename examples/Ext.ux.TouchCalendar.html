@@ -6,8 +6,8 @@
         <script src="../lib/sencha/sencha-touch-all-debug.js" type="text/javascript" language="JavaScript"></script>
 
 		    <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendarView.css" media="all"/>
-		    <script src="../Ext.ux.TouchCalendarView.js" type="text/javascript" language="JavaScript"></script>
-		    <script src="../Ext.ux.TouchCalendar.js" type="text/javascript" language="JavaScript"></script>
+
+		    <script src="../min/Ext.ux.TouchCalendar-min.js" type="text/javascript" language="JavaScript"></script>
 		
         <script type="text/javascript">
             
@@ -16,7 +16,7 @@
                 var calendar = new Ext.ux.TouchCalendar({
                   xtype: 'calendar',
                   viewConfig: {
-                    mode: 'month',
+                    mode: 'week',
                     weekStart: 1,
                     value: new Date()
                   }

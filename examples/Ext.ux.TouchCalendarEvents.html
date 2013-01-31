@@ -32,7 +32,7 @@
                     calendarView = Ext.create('Ext.ux.TouchCalendarView', {
                         //minDate: (new Date()).add(Date.DAY, -40),
                         //maxDate: (new Date()).add(Date.DAY, 55),
-                        mode: 'day',
+                        viewMode: 'day',
                         weekStart: 0,
                         value: new Date(),
                         eventStore: eventStore,
@@ -99,6 +99,10 @@
                     calendarView.on('eventdrag', function(draggable, eventRecord, e){
                         console.log('eventdrag');
                         //console.log(arguments);
+                    });
+                    calendarView.on('periodchange', function(view, minDate, maxDate, direction){
+                        console.log('periodchange');
+                        console.log(arguments);
                     });
 
                     calendarView.setViewMode('day');
