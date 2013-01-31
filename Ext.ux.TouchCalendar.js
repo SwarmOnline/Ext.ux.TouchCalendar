@@ -27,6 +27,9 @@ Ext.define('Ext.ux.TouchCalendar',{
 
 	config: {
 
+		/**
+		 * @accessor
+		 */
 		viewMode: 'month',
 
 		/**
@@ -59,6 +62,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 		weekStart: 1,
 		bubbleEvents: ['selectionchange']
 	},
+
 	indicator: false,
 
 	initialize: function(){
@@ -67,7 +71,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 
 		this.viewConfig.currentDate = this.viewConfig.currentDate || this.viewConfig.value || new Date();
 
-		this.viewMode = this.viewConfig.viewMode.toUpperCase();
+		this.setViewMode(this.viewConfig.viewMode.toUpperCase());
 
 		this.initViews();
 
@@ -127,8 +131,8 @@ Ext.define('Ext.ux.TouchCalendar',{
 	},
 
 	getViewDate: function(date, i){
-		var scale = (this.viewMode === 'WEEK' ? 'DAY' : this.viewMode.toUpperCase()),
-		  number = (this.viewMode === 'WEEK' ? (8 * i) : i);
+		var scale = (this.getViewMode() === 'WEEK' ? 'DAY' : this.getViewMode().toUpperCase()),
+		  number = (this.getViewMode() === 'WEEK' ? (8 * i) : i);
 
 		return Ext.Date.add(date, Ext.Date[scale], number)
 	},
@@ -183,22 +187,27 @@ Ext.define('Ext.ux.TouchCalendar',{
 		}
 	},
 
+	applyViewMode: function(mode){
+		return mode.toUpperCase();
+	},
+
 	/**
 	* Changes the mode of the calendar to the specified string's value. Possible values are 'month', 'week' and 'day'.
 	* @method
 	* @returns {void}
 	*/
-	setMode: function(mode){
-		this.viewMode = mode.toUpperCase();
-		this.viewConfig.viewMode = this.viewMode;
+	updateViewMode: function(mode){
+		this.viewConfig = this.viewConfig || {};
+		this.viewConfig.viewMode = mode;
 
-		this.getItems().each(function(view, index){
+		if(this.view){
+			this.getItems().each(function(view, index){
+				view.currentDate = this.getViewDate(Ext.Date.clone(this.view.currentDate), index-1);
 
-			view.currentDate = this.getViewDate(Ext.Date.clone(this.view.currentDate), index-1);
-
-			view.setViewMode(mode, true);
-			view.refresh();
-		}, this);
+				view.setViewMode(mode, true);
+				view.refresh();
+			}, this);
+		}
 	},
 
 	/**
