@@ -1,6 +1,6 @@
 # Ext.ux.TouchCalendar
 
-### This is the Sencha Touch 2 compatible version of the component. For the Sencha Touch 1.1 version please see the [master](https://github.com/SwarmOnline/Ext.ux.TouchCalendar) branch.
+### This is the Sencha Touch 2 compatible version of the component. For the Sencha Touch 1.1 version please see the [ST1](https://github.com/SwarmOnline/Ext.ux.TouchCalendar/ST1) branch.
 
 Ext.ux.TouchCalendar is an extension, and set of related plugins, for the Sencha Touch framework that allows easy integration of a calendar component into 
 applications.
@@ -99,10 +99,10 @@ and accepts any options that that component can.
     Ext.setup({
         onReady: function(){
   	                    
-				var calendar = new Ext.ux.TouchCalendar({
+				var calendar = Ext.create('Ext.ux.TouchCalendar', {
 					fullscreen: true,
 					viewConfig: {
-						mode: 'month',
+						viewMode: 'month',
 						weekStart: 1,
 						value: new Date()
 					}
@@ -273,6 +273,8 @@ There are a few known issues that will be ironed out after the first release, na
 
 ## Acknowledgements
 
-I'd like to thank @megous for his [sencha-touch-ux-datepicker](https://github.com/megous/sencha-touch-ux-datepicker) extension which this extension originally grew from.
+I'd like to put out a thank you to the following people for their help:
 
-I'd also like to thank [Cian Clarke](https://github.com/cianclarke) for his contributions to the Sencha Touch 2 upgrade - great work!
+- @megous for his [sencha-touch-ux-datepicker](https://github.com/megous/sencha-touch-ux-datepicker) extension which this extension originally grew from.
+
+- [Cian Clarke](https://github.com/cianclarke) for his contributions to the Sencha Touch 2 upgrade - great work!
