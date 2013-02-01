@@ -928,7 +928,9 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
                 delegate: 'div.' + this.getEventBarCls()
             });
 
-	        this.getViewModeProcessor().renderEventBars(this.getViewModeProcessor().eventBarStore);
+	        if(this.getViewModeProcessor().eventBarStore){
+	            this.getViewModeProcessor().renderEventBars(this.getViewModeProcessor().eventBarStore);
+	        }
         } else {
           this.calendar.on('painted', this.createEventWrapper, this);
         }

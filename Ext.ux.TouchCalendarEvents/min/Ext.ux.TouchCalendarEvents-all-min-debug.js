@@ -205,7 +205,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 		this.viewConfig.viewMode = mode;
 
 		if(this.view){
-			this.getItems().each(function(view, index){
+			Ext.each(this.getInnerItems(), function(view, index){
 				view.currentDate = this.getViewDate(Ext.Date.clone(this.view.currentDate), index-1);
 
 				view.setViewMode(mode, true);
@@ -1195,7 +1195,9 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
                 delegate: 'div.' + this.getEventBarCls()
             });
 
-	        this.getViewModeProcessor().renderEventBars(this.getViewModeProcessor().eventBarStore);
+	        if(this.getViewModeProcessor().eventBarStore){
+	            this.getViewModeProcessor().renderEventBars(this.getViewModeProcessor().eventBarStore);
+	        }
         } else {
           this.calendar.on('painted', this.createEventWrapper, this);
         }

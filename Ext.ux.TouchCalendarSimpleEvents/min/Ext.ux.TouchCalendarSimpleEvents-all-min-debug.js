@@ -202,7 +202,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 		this.viewConfig.viewMode = mode;
 
 		if(this.view){
-			this.getItems().each(function(view, index){
+			Ext.each(this.getInnerItems(), function(view, index){
 				view.currentDate = this.getViewDate(Ext.Date.clone(this.view.currentDate), index-1);
 
 				view.setViewMode(mode, true);
@@ -418,7 +418,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	 * @return {void}
 	 */
 	refreshEvents: function(){
-		if (!this.disabled) {
+		if (!this.disabled && this.calendar.getViewMode() !== 'DAY') {
 			var datesStore = this.calendar.getStore();
 
 			if (datesStore) {
@@ -493,7 +493,9 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	 */
 	removeEvents: function(){
 		if(this.calendar.element){
-			this.calendar.element.select('span.' + this.wrapperCls, this.calendar.element.dom).remove();
+			this.calendar.element.select('span.' + this.wrapperCls, this.calendar.element.dom).each(function(el){
+				Ext.destroy(el.dom);
+			});
 		}
 	}	
 });
