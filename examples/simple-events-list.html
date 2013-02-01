@@ -21,37 +21,38 @@
                 
                 
                     var calendar = new Ext.ux.TouchCalendarView({
-                        mode: 'month',
+                        viewMode: 'month',
                         weekStart: 0,
-                        value: new Date(2011, 8, 1),
+                        value: new Date(),
                         eventStore: eventStore,
                         
-                        plugins: [new Ext.ux.TouchCalendarSimpleEvents()]
+                        plugins: [Ext.create('Ext.ux.TouchCalendarSimpleEvents')]
                     });
                     
-                    var calendarPanel = new Ext.Panel({
+                    var calendarPanel = Ext.create('Ext.Panel', {
                     	fullscreen: true,
-                        dockedItems: [{
+                        layout: 'fit',
+                        items: [calendar, {
                             xtype: 'toolbar',
-                            dock: 'top',
+                            docked: 'top',
                             items: [{
                                 xtype: 'segmentedbutton',
-								allowMultiple: false,
+                                allowMultiple: false,
                                 items: [{
                                     text: 'Month',
-									pressed: true,
+                                    pressed: true,
                                     handler: function(){
-                                        calendar.setMode('month');
+                                        calendar.setViewMode('month');
                                     }
                                 }, {
                                     text: 'Week',
                                     handler: function(){
-                                        calendar.setMode('week');
+                                        calendar.setViewMode('week');
                                     }
                                 }]
                             }]
                         }, {
-                            dock: 'bottom',
+                            docked: 'bottom',
                             xtype: 'list',
                             height: 110,
                             itemTpl: '{event} {location}',
@@ -59,27 +60,22 @@
                                 model: 'Event',
                                 data: []
                             })
-                        }],
-                        layout: 'fit',
-                        items: [calendar]
+                        }]
                     });
                     
-                    calendar.on('selectionchange', function(selModel, records){
+                    calendar.on('selectionchange', function(calendarview, newDate, prevDate){
                         console.log('selectionchange');
                         var eventList = calendarPanel.getDockedItems()[1];
-                        
-                        if(records.length > 0){
-                        	var selectedRecord = records[0],
-                        		selectedDate = selectedRecord.get('date');
-	                        
-	                        calendar.eventStore.filterBy(function(record){
-	                            var startDate = record.get('start').clearTime(true).getTime(), endDate = record.get('end').clearTime(true).getTime();
-	                            
-	                            return (startDate <= selectedDate) && (endDate >= selectedDate);
-	                        }, this);
-	                        
-	                        eventList.store.loadData(calendar.eventStore.getRange());
-                        }
+
+
+                        calendar.eventStore.clearFilter();
+                        calendar.eventStore.filterBy(function(record){
+                            var startDate = Ext.Date.clearTime(record.get('start'), true).getTime(), endDate = Ext.Date.clearTime(record.get('end'), true).getTime();
+
+                            return (startDate <= newDate) && (endDate >= newDate);
+                        }, this);
+
+                        eventList.getStore().setData(calendar.eventStore.getRange());
                     });
                     
                     calendar.on('eventtap', function(event){

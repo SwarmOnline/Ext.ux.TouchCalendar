@@ -3,52 +3,55 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" type="text/css" href="../lib/sencha/resources/css/sencha-touch.css" media="all"/>
-        <script src="../lib/sencha/sencha-touch-debug.js" type="text/javascript" language="JavaScript">
-        </script>
-		<link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendarView.css" media="all"/>
-		<script src="../Ext.ux.TouchCalendarView.js" type="text/javascript" language="JavaScript"></script>
-		<script src="../Ext.ux.TouchCalendar.js" type="text/javascript" language="JavaScript"></script>
+        <script src="../lib/sencha/sencha-touch-all-debug.js" type="text/javascript" language="JavaScript"></script>
+
+		    <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendarView.css" media="all"/>
+		    <link rel="stylesheet" type="text/css" href="../resources/css/skin1.css" media="all"/>
+
+		    <script src="../min/Ext.ux.TouchCalendar-min.js" type="text/javascript" language="JavaScript"></script>
 		
         <script type="text/javascript">
             
         Ext.setup({
             onReady: function(){
-            
-                var calendar = new Ext.ux.TouchCalendar({
-					viewConfig: {
-						mode: 'month',
-						weekStart: 1,
-						value: new Date()
-					}
+                var calendar = Ext.create('Ext.ux.TouchCalendar', {
+                    xtype: 'calendar',
+                    viewConfig: {
+                        viewMode: 'week',
+                        weekStart: 1,
+                        value: new Date()
+                    }
                 });
                 
                 var panel = new Ext.Panel({
                     fullscreen: true,
-                    dockedItems: [{
+                    layout: 'fit',
+                    items: [
+                      {
                         xtype: 'toolbar',
-                        dock: 'top',
+                        docked: 'top',
                         items: [{
                             xtype: 'button',
                             text: 'Month View',
                             handler: function(){
-                                calendar.setMode('month');
+                                calendar.setViewMode('month');
                             }
                         }, {
                             xtype: 'button',
                             text: 'Week View',
                             handler: function(){
-                                calendar.setMode('week');
+                                calendar.setViewMode('week');
                             }
                         }, {
                             xtype: 'button',
                             text: 'Day View',
                             handler: function(){
-                                calendar.setMode('day');
+                                calendar.setViewMode('day');
                             }
                         }]
-                    }],
-                    layout: 'fit',
-                    items: [calendar]
+                      },
+                      calendar
+                    ]
             	});
             }
         });

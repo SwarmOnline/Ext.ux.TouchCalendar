@@ -1,0 +1,168 @@
+
+.touch-calendar-view
+{
+	$bd-color: #A3A7AF;
+	$date-bg-color: #cfced3;
+
+	table
+	{
+        background: white;
+
+		&.week
+		{
+			td
+			{
+				vertical-align: top;
+			}		
+		}
+		
+		&.day
+		{
+            tr
+            {
+                &.selected
+                {
+                    td
+                    {
+                        background-image: none;
+                        border: none;
+                        text-shadow: none;
+
+                        &.label
+                        {
+                            background-color: transparent;
+                        }
+                    }
+                }
+
+                &.half-hour
+                {
+                    td
+                    {
+                        &.time-block
+                        {
+                            border-top: 1px solid #efefef;
+                        }
+                    }
+                }
+                td
+                {
+                    border: none;
+                    background-image: none;
+                    background-color: white;
+                    text-align: right;
+
+                    &.time-block
+                    {
+                        background-color: #fafafa;
+                        height: 20px;
+                        border-top: 1px solid #e0e0e0;
+
+                        &.selected
+                        {
+                            background-color: #E0E0E0;
+                        }
+                    }
+
+                    .label
+                    {
+                        width: 45px;
+                        padding: 0 10px 0 0;
+
+                        .hour
+                        {
+                            font-weight: normal;
+                            color: #666;
+                            font-size: 1.3em;
+                        }
+
+                        .am-pm
+                        {
+                            font-weight: normal;
+                            color: #A5A5A5;
+                            font-size: 0.6em;
+                            margin-left: 4px;
+                            vertical-align: super;
+                        }
+                    }
+                }
+            }
+		}
+	}
+
+	// borders
+	tbody
+    {
+		td
+		{
+            background-color: white;
+            background: none;
+
+            border-right: 1px solid #EDEDED;
+            border-top: 1px solid #EDEDED;
+            border-bottom: none;
+            border-left: none;
+            padding: 0 5px 0 0;
+
+            &.today
+            {
+                background-color: #A5A5A5;
+                background-image: none;
+                -webkit-box-shadow: none;
+                text-shadow: none;
+                color: #3F4E5E;
+            }
+
+            &.unselectable
+            {
+                color: #EEE;
+                background-image: none;
+            }
+
+            &.selected
+            {
+                background: none;
+                background-color: #E0E0E0;
+                border: 1px solid #999;
+                text-shadow: none;
+                color: #3F4E5E;
+            }
+
+            &.today.selected
+            {
+                background: none;
+                background-color: #E0E0E0;
+                color: white;
+            }
+		}
+	}
+
+	thead
+	{
+		background-color: white;
+        background-image: none;
+
+		th
+		{
+			border-bottom: none;
+
+            &:first-child
+            {
+                //width: 45px;
+            }
+
+            &:last-child
+            {
+                //width: 45px;
+            }
+
+            span
+            {
+                font-weight: normal;
+                top: 10px;
+                color: #666;
+            }
+
+		}
+	}
+}

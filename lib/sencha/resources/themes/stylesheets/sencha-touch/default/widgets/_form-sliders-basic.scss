@@ -1,31 +1,7 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 @import '../global';
 
-/**
+/*
  * Includes basic form slider styles.
- *
- * @class Ext.form.Slider
- * @xtype sliderfield
  */
 @mixin sencha-form-sliders {
 
@@ -54,7 +30,7 @@
 
   .x-field-toggle, .x-field-slider {
     background-color: #fff;
-    @extend .x-input-el;
+//    @extend .x-input-el;
   }
 
   .x-field-toggle .x-slider {
@@ -94,7 +70,7 @@
       // Actual thumb
       // &:after {
       //   @include insertion($form-thumb-size, $form-thumb-size, 0, 0);
-      //   -webkit-box-shadow: rgba(0,0,0,.5) 0 0 .15em;
+      //   @include box-shadow(rgba(0,0,0,.5) 0 0 .15em);
       //   @if $include-border-radius { @include border-radius($form-thumb-size/2); }
       //   -webkit-transform: scale(.65);
       //   @include background-gradient($complement_light, 'glossy');

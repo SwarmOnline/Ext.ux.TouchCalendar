@@ -1,11 +1,3 @@
-/*
- * Originally written by Bruno Alexandre, 26.03.2010, twitter.com/balexandre,
- * balexandre.com,  abruno.in.dk [at] gmail.com
- *
- * Rewritten into CSS3/SASS by Ondrej Jirman <megous@megous.com>, 2011 (for
- * CodeBerry s.r.o.)
- */
-
 @import 'sencha-touch/default/all';
 
 .touch-calendar-view
@@ -32,14 +24,45 @@
 		
 		&.day
 		{
+            tr.selected
+            {
+                td
+                {
+                    $c: #1980e5;
+                    color: #FFFFFF;
+                    text-shadow: #333 1px 1px 0px;
+                    border: 1px solid black;
+                    background: $c;
+                    @include background-gradient(lighten($c, 10%), 'glossy');
+
+                    &:first-child
+                    {
+                        border-right: none;
+                    }
+
+                    &:last-child
+                    {
+                        border-left: none;
+                    }
+                }
+            }
+
+
 			td
 			{
+                &.label
+                {
+                    width: 40px;
+                    border-right: none;
+                    vertical-align: middle;
+                }
+
 				&.time-block
 				{
 					text-align: left;
-					background-image: none;
 					font-size: 0.7em;
 					height: 30px;
+                    border-left: none;
 				}
 			}
 		}
@@ -62,10 +85,12 @@
 	{
 		font-weight: bold;
 		position: relative;
-		text-align: center;
-		vertical-align: middle;
-		font-size: 1.3em;
+
 		@include background-gradient($date-bg-color, 'recessed');
+
+        vertical-align: top;
+        text-align: right;
+        font-size: 0.7em;
 
 		&.today
 		{
@@ -135,12 +160,14 @@
 			{
 				background: url(../images/larr.png) center center no-repeat;
 				cursor: pointer;
+                width: 15%;
 			}
 	
 			&:last-child
 			{
 				background: url(../images/rarr.png) center center no-repeat;
 				cursor: pointer;
+                width: 15%;
 			}
 	
 			span

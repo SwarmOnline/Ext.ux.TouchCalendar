@@ -1,43 +1,58 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 /**
  * Includes default message box styles.
  *
- * @class Ext.MessageBox
- * @xtype messagebox
+ * @member Ext.MessageBox
  */
 @mixin sencha-msgbox {
-  div.x-sheet.x-msgbox {
-    width: 15em;
-    -webkit-box-shadow: rgba(#000, .4) 0 .1em .5em;
+  .x-msgbox {
+    min-width: 15em;
+    max-width: 20em;
+    max-height: 90%;
+    margin: .5em;
+    @include box-shadow(rgba(#000, .4) 0 .1em .5em);
     @if $include-border-radius { @include border-radius($panel-border-radius); }
     border: .15em solid $base-color;
-    .x-toolbar-title {
+
+    // to hide content that is too large (vertically)
+    .x-docking-vertical {
+      overflow: hidden;
+    }
+
+    //icons
+    .x-icon {
+      margin: 0 0.8em 0 0.5em;
+      background: #fff;
+      -webkit-mask-size: 100%;
+    }
+
+    .x-msgbox-info {
+      -webkit-mask-image: theme_image('default', "pictos/info.png");
+    }
+
+    .x-msgbox-warning {
+      -webkit-mask-image: theme_image('default', "pictos/warning_black.png");
+    }
+
+    .x-msgbox-question {
+      -webkit-mask-image: theme_image('default', "pictos/help.png");
+    }
+
+    .x-msgbox-error {
+      -webkit-mask-image: theme_image('default', "pictos/minus_black2.png");
+    }
+
+    .x-title {
       font-size: .9em;
       line-height: 1.4em;
     }
+
+    .x-body {
+      background: transparent !important;
+    }
+
     .x-toolbar {
       background: transparent none;
-      -webkit-box-shadow: none;
+      @include box-shadow(none);
 
       &.x-docked-top {
         border-bottom: 0;
@@ -48,17 +63,34 @@
         border-top: 0;
       }
     }
+
+    .x-field {
+      min-height: 2em;
+      background: #fff;
+      @if $include-border-radius { @include border-radius(.2em); }
+    }
+
+    .x-form-field {
+      min-height:1.5em;
+      padding-right: 0 !important;
+      -webkit-appearance: none;
+    }
+
+    .x-field-input {
+      padding-right: 2.2em;
+    }
   }
-  .x-msgbox-body {
-    padding: 6px 0;
-    position: relative;
-    text-align: center;
-  }
+
   .x-msgbox-text {
-    font-size: .9em;
+    text-align: center;
+    padding: 6px 0;
+    line-height: 1.4em;
   }
+
   .x-msgbox-buttons {
-    // @include box-direction(reverse);
+    padding: 0.4em 0;
+    height: auto;
+
     .x-button {
       min-width: 4.5em;
     }
@@ -66,11 +98,6 @@
     .x-button-normal span {
       opacity: .7;
     }
-  }
-  .x-msgbox-input {
-    margin-top: .4em;
-    -webkit-appearance: none;
-    @if $include-border-radius { @include border-radius(.2em); }
   }
 
   // TODO: Refactor along with Sheet

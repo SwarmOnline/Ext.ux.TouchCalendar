@@ -1,24 +1,3 @@
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
-/*!
- * 
- */
 @import '../global';
 
 $picker-row-height: 2.5em !default;
@@ -36,7 +15,7 @@ $picker-bar-gradient: $base-gradient !default;
     padding: 0;
   }
 
-  .x-sheet.x-picker > .x-sheet-body {
+  .x-sheet.x-picker .x-sheet-inner {
     position: relative;
     background-color: #fff;
     @if $include-border-radius { @include border-radius($picker-sheet-radius); }
@@ -44,33 +23,57 @@ $picker-bar-gradient: $base-gradient !default;
     overflow: hidden;
     margin: $sheet-padding;
 
+
     @if $include-picker-highlights {
-      &:before, &:after {
-        z-index: 1;
-        @include insertion(100%, 30%, 0, 0);
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bbbbbb), color-stop(30%,#ffffff), color-stop(70%,#ffffff), color-stop(100%,#bbbbbb));
+      background: -webkit-linear-gradient(top,  #bbbbbb 0%,#ffffff 30%,#ffffff 70%,#bbbbbb 100%);
+    //  &:before, &:after {
+    //    z-index: 1;
+    //    @include insertion(100%, 30%, 0, 0);
+    //  }
+    //
+    //  &:before {
+    //    top: auto;
+    //    @if $include-border-radius { @include border-bottom-radius($picker-sheet-radius); }
+    //    bottom: 0;
+    //    @include background-image(linear-gradient(color-stops(#fff, #bbb)));
+    //  }
+    //  &:after {
+    //    @if $include-border-radius { @include border-top-radius($picker-sheet-radius); }
+    //    @include background-image(linear-gradient(color-stops(#bbb, #fff)));
+    //  }
+    }
+
+    .x-picker-slot {
+      .x-body {
+        border-left: 1px solid #999999;
+        border-right: 1px solid #ACACAC;
       }
 
-      &:before {
-        top: auto;
-        @if $include-border-radius { @include border-bottom-radius($picker-sheet-radius); }
-        bottom: 0;
-        @include background-image(linear-gradient(color-stops(#fff, #bbb)));
+      &.x-first {
+        .x-body {
+          border-left: 0;
+        }
       }
-      &:after {
-        @if $include-border-radius { @include border-top-radius($picker-sheet-radius); }
-        @include background-image(linear-gradient(color-stops(#bbb, #fff)));
+
+      &.x-last {
+        .x-body {
+          border-left: 0;
+          border-right: 0;
+        }
       }
     }
   }
 
-  .x-picker-slot {
+  .x-picker-slot .x-scroll-view {
     z-index: 2;
     position: relative;
+
     @if $include-highlights {
-      -webkit-box-shadow: rgba(#000,.4) -1px 0 1px;
+      @include box-shadow(rgba(#000,.4) -1px 0 1px);
     }
     &:first-child {
-      -webkit-box-shadow: none;
+      @include box-shadow(none);
     }
   }
 
@@ -94,33 +97,52 @@ $picker-bar-gradient: $base-gradient !default;
     height: $picker-row-height;
     @include background-gradient(hsla(hue($active-color), 90, 50, .3), $picker-bar-gradient);
     @if $include-highlights {
-      -webkit-box-shadow: rgba(#000,0.2) 0 .2em .2em;
+      @include box-shadow(rgba(#000,0.2) 0 .2em .2em);
+    }
+  }
+
+  .x-use-titles {
+    .x-picker-bar {
+      margin-top: 1.5em;
     }
   }
 
   .x-picker-slot-title {
+    height: 1.5em;
+    position:relative;
+    z-index: 2;
     @include background-gradient($picker-title-bg-color, $picker-title-bg-gradient);
     border-top: 1px solid $picker-title-bg-color;
     border-bottom: 1px solid darken($picker-title-bg-color, 20%);
-    font-weight: bold;
-    font-size: 0.8em;
-    color: $picker-title-color;
+    @include box-shadow(rgba(0, 0, 0, 0.3) 0px .1em .3em);
     padding: 0.2em 1.02em;
-    @if $include-picker-highlights {
-      -webkit-box-shadow: 0px .1em .3em rgba(0, 0, 0, 0.3);
-      @include bevel-text('light');
+
+    > div {
+      font-weight: bold;
+      font-size: 0.8em;
+      color: $picker-title-color;
+      @if $include-picker-highlights {
+        @include bevel-text('light');
+      }
     }
   }
 
-  .x-picker-item {
-    vertical-align: middle;
-    height: $picker-row-height;
-    line-height: $picker-row-height;
-    font-weight: bold;
-    padding: 0 10px 0 10px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+  .x-picker-slot {
+    .x-dataview-inner {
+      width: 100% !important;
+    }
+
+    .x-dataview-item {
+      vertical-align: middle;
+      height: $picker-row-height;
+      line-height: $picker-row-height;
+      font-weight: bold;
+      padding: 0 10px;
+    }
+
+    .x-picker-item {
+      @include ellipsis;
+    }
   }
 
   .x-picker-right {
