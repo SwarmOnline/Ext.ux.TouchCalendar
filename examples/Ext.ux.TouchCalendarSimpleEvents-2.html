@@ -7,11 +7,12 @@
         </script>
 
         <link rel="stylesheet" type="text/css" href="../resources/css/Ext.ux.TouchCalendarView.css" media="all"/>
+        <link rel="stylesheet" type="text/css" href="../resources/css/skin1.css" media="all"/>
         <script src="../Ext.ux.TouchCalendar.js" type="text/javascript"></script>
 		<script src="../Ext.ux.TouchCalendarView.js" type="text/javascript"></script>
 		
 		<script src="../Ext.ux.TouchCalendarSimpleEvents/Ext.ux.TouchCalendarSimpleEvents.js" type="text/javascript"></script>
-		<link rel="stylesheet" type="text/css" href="../Ext.ux.SimpleCalendarSimpleEvents/resources/css/Ext.ux.TouchCalendarSimpleEvents.css" media="all"/>
+		<link rel="stylesheet" type="text/css" href="../Ext.ux.TouchCalendarSimpleEvents/resources/css/Ext.ux.TouchCalendarSimpleEvents.css" media="all"/>
 		
 		<script src="EventStore.js" type="text/javascript"></script>
 				
@@ -32,18 +33,18 @@
                                     xtype: 'button',
                                     text: 'Month View',
                                     handler: function(){
-                                        calendar.setMode('month');
+                                        calendar.setViewMode('month');
                                     }
                                 }, {
                                     xtype: 'button',
                                     text: 'Week View',
                                     handler: function(){
-                                        calendar.setMode('week');
+                                        calendar.setViewMode('week');
                                     }
                                 }]
                             }
                         ],
-                        mode: 'month',
+                        viewMode: 'month',
                         
                         enableSwipeNavigate: true,
                         enableSimpleEvents: true,

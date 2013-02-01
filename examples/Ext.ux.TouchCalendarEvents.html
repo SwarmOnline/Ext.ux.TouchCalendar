@@ -29,9 +29,9 @@
                 name: 'Ext.ux.TouchCalendarEvents',
                 launch: function(){
 
-                    calendarView = Ext.create('Ext.ux.TouchCalendarView', {
-                        //minDate: (new Date()).add(Date.DAY, -40),
-                        //maxDate: (new Date()).add(Date.DAY, 55),
+                    var calendarView = Ext.create('Ext.ux.TouchCalendarView', {
+                        minDate: Ext.Date.add(new Date(), Ext.Date.DAY, -46),
+                        maxDate: Ext.Date.add(new Date(), Ext.Date.DAY, 60),
                         viewMode: 'day',
                         weekStart: 0,
                         value: new Date(),
@@ -39,12 +39,8 @@
                         
                         plugins: [Ext.create('Ext.ux.TouchCalendarEvents', {
                             eventHeight: 'auto',
-                            eventBarTpl: '<div>{event}</div><div>Weight: {weight}kg</div><div>Waste Weight: {wasteWeight}kg</div>'
-                        })],
-
-                        timeSlotDateTpls: {
-                            day: '<span class="hour">{date:date("g")}</span><span class="am-pm">{date:date("A")}</span>'
-                        }
+                            eventBarTpl: '<div>{event}</div><div>{title}</div>'
+                        })]
                     });
                     
                     var calendarPanel = new Ext.Panel({
@@ -79,7 +75,7 @@
                         console.log('eventtap');
                         Ext.Msg.alert(
                             event.get('event'),
-                            'Weight: ' + event.get('weight') + '<br/>' + 'Waste Weight: ' + event.get('wasteWeight')
+                            event.get('title')
                         );
                         //console.log(event);
                     });
@@ -104,9 +100,10 @@
                         console.log('periodchange');
                         console.log(arguments);
                     });
-
-                    calendarView.setViewMode('day');
-
+                    calendarView.on('selectionchange', function(view, newDate, oldDate){
+                        console.log('selectionchange');
+                        console.log(arguments);
+                    });
 
                 }
                 

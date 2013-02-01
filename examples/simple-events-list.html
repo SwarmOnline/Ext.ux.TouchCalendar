@@ -21,15 +21,15 @@
                 
                 
                     var calendar = new Ext.ux.TouchCalendarView({
-                        mode: 'month',
+                        viewMode: 'month',
                         weekStart: 0,
                         value: new Date(),
                         eventStore: eventStore,
                         
-                        plugins: [new Ext.ux.TouchCalendarSimpleEvents()]
+                        plugins: [Ext.create('Ext.ux.TouchCalendarSimpleEvents')]
                     });
                     
-                    var calendarPanel = new Ext.Panel({
+                    var calendarPanel = Ext.create('Ext.Panel', {
                     	fullscreen: true,
                         layout: 'fit',
                         items: [calendar, {
