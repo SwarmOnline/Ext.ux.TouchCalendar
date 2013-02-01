@@ -202,7 +202,7 @@ Ext.define('Ext.ux.TouchCalendar',{
 		this.viewConfig.viewMode = mode;
 
 		if(this.view){
-			this.getItems().each(function(view, index){
+			Ext.each(this.getInnerItems(), function(view, index){
 				view.currentDate = this.getViewDate(Ext.Date.clone(this.view.currentDate), index-1);
 
 				view.setViewMode(mode, true);

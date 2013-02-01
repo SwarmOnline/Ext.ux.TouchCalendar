@@ -18,7 +18,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
     config: {
         /**
-         * @cfg {String} mode The mode the Calendar will be displayed in. Possible values 'month', 'week' or 'day'.
+         * @cfg {String} viewMode The mode the Calendar will be displayed in. Possible values 'month', 'week' or 'day'.
          */
         viewMode: 'month',
 
@@ -85,9 +85,9 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	     *
 	     * Defaults to:
 	     * {
-	     *    day: '{date:date("H:i")}',
-	     *    month: '{date:date("j")}',
-	     *    week: '{date:date("j")}'
+	     *    day   : '<span class="hour">{date:date("g")}</span><span class="am-pm">{date:date("A")}</span>',
+	     *    month : '{date:date("j")}',
+	     *    week  : '{date:date("j")}'
 	     * }
 	     */
 	    timeSlotDateTpls: {},
@@ -144,9 +144,9 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
 	// default TimeSlot date templates that are merged with the supplied config
 	timeSlotDateTplsDefaults: {
-		day: '{date:date("H:i")}',
-		month: '{date:date("j")}',
-		week: '{date:date("j")}'
+		day     : '<span class="hour">{date:date("g")}</span><span class="am-pm">{date:date("A")}</span>',
+		month   : '{date:date("j")}',
+		week    : '{date:date("j")}'
 	},
 
     /**
@@ -412,9 +412,11 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	
 	/**
 	 * Applies the view mode change requested to the Calendar. Possible values are 'month', 'week' or 'day'.
-	 * @param {String} mode Either 'month', 'week' or 'day'
+	 * @param {String} viewMode Either 'month', 'week' or 'day'
 	 */
 	applyViewMode: function(viewMode){
+
+		viewMode = viewMode.toUpperCase();
 
         var viewModeFns = Ext.ux.TouchCalendarView[viewMode.toUpperCase()];
 
@@ -453,10 +455,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * Builds a collection of dates that need to be rendered in the current configuration
 	 * @method
 	 * @private
-	 * @param {Number} day
-	 * @param {Number} month
-	 * @param {Number} year
-	 * @return {Ext.util.MixedCollection} Mixed Collection of Objects with configuration for each date cell
+	 * @return {void}
 	 */
 	populateStore: function(){
 		
@@ -543,8 +542,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	isOutsideMinMax: function(date){
 		var outside = false;
 		
-		if(this.viewMode === 'MONTH'){
-			outside = ((this.minDate && date.getLastDateOfMonth() < this.minDate) || (this.maxDate && date.getFirstDateOfMonth() > this.maxDate));
+		if(this.getViewMode() === 'MONTH'){
+			outside = ((this.minDate && Ext.Date.getLastDateOfMonth(date) < this.minDate) || (this.maxDate && Ext.Date.getFirstDateOfMonth(date) > this.maxDate));
 		} else {
 			outside = ((this.minDate && this.getWeekendDate(date) < this.minDate) || (this.maxDate && this.getStartDate(date) > this.maxDate));
 		}
@@ -577,17 +576,22 @@ Ext.define('Ext.ux.TouchCalendarView', {
      * @return {void}
      */
     onTimeSlotTap: function(e){
-        var target = Ext.fly(e.getTarget());
+	    if(!e.getTarget('.' + this.getUnselectableCls())){ // don't do selection if the cell has 'unselectable' class
+		    var target = Ext.fly(e.getTarget());
 
-        this.selectCell(target);
+	        this.selectCell(target);
 
-        var newDate = this.getCellDate(target);
+	        var newDate = this.getCellDate(target);
 
-        var previousValue = this.getValue();
+	        var previousValue = this.getValue() || this.currentDate;
 
-        this.setValue(newDate);
+		    // don't fire the event if the values are the same
+		    if(newDate.getTime() !== previousValue.getTime()){
+	            this.setValue(newDate);
 
-        this.fireEvent('selectionchange', this, newDate, previousValue);
+	            this.fireEvent('selectionchange', this, newDate, previousValue);
+		    }
+	    }
     },
 
 	/**
@@ -650,7 +654,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	/**
 	 * Returns the TouchCalendarViewModel model instance containing the passed in date
 	 * @method
-	 * @privatee
+	 * @private
 	 * @param {Date} date
 	 */
 	getDateRecord: function(date){
@@ -665,9 +669,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * Returns the same day
 	 * @method
 	 * @private
-	 * @param {Number} day
-	 * @param {Number} month - 0 based month representation (0 = Jan, 11 = Dec)
-	 * @param {Number} year
+	 * @param {Date} date
 	 * @return {Date}
 	 */
 	getDayStartDate: function(date){
