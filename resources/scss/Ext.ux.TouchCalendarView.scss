@@ -85,10 +85,12 @@
 	{
 		font-weight: bold;
 		position: relative;
-		text-align: center;
-		vertical-align: middle;
-		font-size: 1.3em;
+
 		@include background-gradient($date-bg-color, 'recessed');
+
+        vertical-align: top;
+        text-align: right;
+        font-size: 0.7em;
 
 		&.today
 		{

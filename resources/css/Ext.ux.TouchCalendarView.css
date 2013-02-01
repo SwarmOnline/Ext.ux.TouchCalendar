@@ -7062,16 +7062,16 @@ audio {
 .touch-calendar-view td {
   font-weight: bold;
   position: relative;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 1.3em;
   background-image: none;
   background-color: #cfced3;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #b5b3bb), color-stop(10%, #c2c1c7), color-stop(65%, #cfced3), color-stop(100%, #d0cfd4));
   background-image: -webkit-linear-gradient(top, #b5b3bb, #c2c1c7 10%, #cfced3 65%, #d0cfd4);
   background-image: linear-gradient(top, #b5b3bb, #c2c1c7 10%, #cfced3 65%, #d0cfd4);
+  vertical-align: top;
+  text-align: right;
+  font-size: 0.7em;
 }
-/* line 94, ../scss/Ext.ux.TouchCalendarView.scss */
+/* line 96, ../scss/Ext.ux.TouchCalendarView.scss */
 .touch-calendar-view td.today {
   color: #FFFFFF;
   text-shadow: #333 1px 1px 2px;
@@ -7084,7 +7084,7 @@ audio {
   background-image: -webkit-linear-gradient(top, #313d4f, #3a4a5f 10%, #44566f 65%, #455771);
   background-image: linear-gradient(top, #313d4f, #3a4a5f 10%, #44566f 65%, #455771);
 }
-/* line 105, ../scss/Ext.ux.TouchCalendarView.scss */
+/* line 107, ../scss/Ext.ux.TouchCalendarView.scss */
 .touch-calendar-view td.unselectable {
   color: #89909A;
   background-image: none;
@@ -7093,7 +7093,7 @@ audio {
   background-image: -webkit-linear-gradient(top, #bb8289, #c49399 10%, #cda3a8 65%, #cea5aa);
   background-image: linear-gradient(top, #bb8289, #c49399 10%, #cda3a8 65%, #cea5aa);
 }
-/* line 111, ../scss/Ext.ux.TouchCalendarView.scss */
+/* line 113, ../scss/Ext.ux.TouchCalendarView.scss */
 .touch-calendar-view td.selected {
   color: #FFFFFF;
   text-shadow: #333 1px 1px 0px;
@@ -7105,7 +7105,7 @@ audio {
   background-image: -webkit-linear-gradient(top, #8bbff2, #5da6ed 50%, #4699eb 51%, #2f8de8);
   background-image: linear-gradient(top, #8bbff2, #5da6ed 50%, #4699eb 51%, #2f8de8);
 }
-/* line 121, ../scss/Ext.ux.TouchCalendarView.scss */
+/* line 123, ../scss/Ext.ux.TouchCalendarView.scss */
 .touch-calendar-view td.today.selected {
   color: #FFFFFF;
   text-shadow: #333 1px 1px 2px;
@@ -7117,15 +7117,15 @@ audio {
   background-image: -webkit-linear-gradient(top, #0a335b, #0c4072 10%, #0f4d89 65%, #0f4e8b);
   background-image: linear-gradient(top, #0a335b, #0c4072 10%, #0f4d89 65%, #0f4e8b);
 }
-/* line 131, ../scss/Ext.ux.TouchCalendarView.scss */
+/* line 133, ../scss/Ext.ux.TouchCalendarView.scss */
 .touch-calendar-view td.prev-month, .touch-calendar-view td.next-month {
   color: #89909A;
 }
-/* line 136, ../scss/Ext.ux.TouchCalendarView.scss */
+/* line 138, ../scss/Ext.ux.TouchCalendarView.scss */
 .touch-calendar-view td.prev-month.selected, .touch-calendar-view td.next-month.selected {
   color: #FFFFFF;
 }
-/* line 142, ../scss/Ext.ux.TouchCalendarView.scss */
+/* line 144, ../scss/Ext.ux.TouchCalendarView.scss */
 .touch-calendar-view thead {
   background-image: none;
   background-color: #cfced3;
@@ -7133,7 +7133,7 @@ audio {
   background-image: -webkit-linear-gradient(top, #f6f6f7, #dcdbdf 3%, #c2c1c7);
   background-image: linear-gradient(top, #f6f6f7, #dcdbdf 3%, #c2c1c7);
 }
-/* line 146, ../scss/Ext.ux.TouchCalendarView.scss */
+/* line 148, ../scss/Ext.ux.TouchCalendarView.scss */
 .touch-calendar-view thead th {
   font-size: 9px;
   vertical-align: bottom;
@@ -7145,19 +7145,19 @@ audio {
   font-weight: bold;
   border-bottom: 1px solid #a3a7af;
 }
-/* line 158, ../scss/Ext.ux.TouchCalendarView.scss */
+/* line 160, ../scss/Ext.ux.TouchCalendarView.scss */
 .touch-calendar-view thead th:first-child {
   background: url(../images/larr.png) center center no-repeat;
   cursor: pointer;
   width: 15%;
 }
-/* line 165, ../scss/Ext.ux.TouchCalendarView.scss */
+/* line 167, ../scss/Ext.ux.TouchCalendarView.scss */
 .touch-calendar-view thead th:last-child {
   background: url(../images/rarr.png) center center no-repeat;
   cursor: pointer;
   width: 15%;
 }
-/* line 172, ../scss/Ext.ux.TouchCalendarView.scss */
+/* line 174, ../scss/Ext.ux.TouchCalendarView.scss */
 .touch-calendar-view thead th span {
   font-size: 20px;
   font-weight: bold;
