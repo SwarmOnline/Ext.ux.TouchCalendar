@@ -465,7 +465,8 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 				this.getPlugin().getEventBarCls(),
 				'e-' + record.get('EventID'),
 				(doesWrap ? ' wrap-end' : ''),
-				(hasWrapped ? ' wrap-start' : '')
+				(hasWrapped ? ' wrap-start' : ''),
+				eventRecord.get(this.getPlugin().getCssClassField())
 			];
 
 
@@ -528,8 +529,6 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 
 			eventBar.setHeight(eventHeight);
 			eventBar.setWidth(eventWidth);
-
-			eventBar.addCls(eventRecord.get(this.getPlugin().getCssClassField()));
 		}
 
 	},
@@ -653,7 +652,14 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 			var eventRecord = this.getPlugin().getEventRecord(record.get('EventID')),
 				dayEl = this.getCalendar().getDateCell(record.get('Date')),
 				doesWrap = this.eventBarDoesWrap(record),
-				hasWrapped = this.eventBarHasWrapped(record);
+				hasWrapped = this.eventBarHasWrapped(record),
+				cssClasses  = [
+					this.getPlugin().getEventBarCls(),
+					'e-' + record.get('EventID'),
+					(doesWrap ? ' wrap-end' : ''),
+					(hasWrapped ? ' wrap-start' : ''),
+					eventRecord.get(this.getPlugin().getCssClassField())
+				];
 
 			// create the event bar
 			var eventBar = Ext.DomHelper.append(this.getPlugin().getEventWrapperEl(), {
@@ -663,7 +669,7 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 				},
 				html: this.getPlugin().getEventBarTpl().apply(eventRecord.data),
 				eventID: record.get('EventID'),
-				cls: this.getPlugin().getEventBarCls() + ' ' + record.get('EventID') + (doesWrap ? ' wrap-end' : '') + (hasWrapped ? ' wrap-start' : '')
+				cls: cssClasses.join(' ')
 			}, true);
 
 			if (this.allowEventDragAndDrop) {
