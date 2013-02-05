@@ -42,8 +42,6 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 
 			eventBar.setHeight(eventHeight);
 			eventBar.setWidth(eventWidth);
-
-			eventBar.addCls(eventRecord.get(this.getPlugin().getCssClassField()));
 		}
 
 	},

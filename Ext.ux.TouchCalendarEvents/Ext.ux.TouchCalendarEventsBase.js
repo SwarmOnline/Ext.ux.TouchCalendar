@@ -195,7 +195,8 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 				this.getPlugin().getEventBarCls(),
 				'e-' + record.get('EventID'),
 				(doesWrap ? ' wrap-end' : ''),
-				(hasWrapped ? ' wrap-start' : '')
+				(hasWrapped ? ' wrap-start' : ''),
+				eventRecord.get(this.getPlugin().getCssClassField())
 			];
 
 

@@ -28,7 +28,7 @@
                         eventStore: eventStore,
                         
                         plugins: [Ext.create('Ext.ux.TouchCalendarEvents', {
-                            eventBarTpl: '{event} - {location}'
+                            eventBarTpl: '{title} - {location}'
                         })]
                     });
                     
@@ -58,7 +58,7 @@
                             docked: 'bottom',
                             xtype: 'list',
                             height: 110,
-                            itemTpl: '{event} {location}',
+                            itemTpl: '{title} {location}',
                             store: Ext.create('Ext.data.Store', {
                                 model: 'Event',
                                 data: []
