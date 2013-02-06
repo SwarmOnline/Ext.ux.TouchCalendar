@@ -11,9 +11,6 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 
 		return (startDate <= currentDateTime) && (endDate >= currentDateTime);
 	},
-	weekFilterFn: function(record, currentDateTime){
-		return this.monthFilterFn.call(this, record, currentDateTime);
-	},
 
 	/**
 	 * After the Event store has been processed, this method recursively creates and positions the Event Bars

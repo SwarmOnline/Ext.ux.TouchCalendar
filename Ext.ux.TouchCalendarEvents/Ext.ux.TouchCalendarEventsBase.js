@@ -60,14 +60,17 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 				currentDateTime = currentDate.getTime(),
 				takenDatePositions = []; // stores 'row positions' that are taken on current date
 
-			// Filter the Events Store for events that are happening on the currentDate
-			eventStore.filterBy(Ext.bind(this.eventFilterFn, this, [currentDateTime], true), this);
-
 			// sort the Events Store so we have a consistent ordering to ensure no overlaps
 			eventStore.sort(this.getPlugin().getStartEventField(), this.getEventSortDirection());
 
 			// Loop through currentDate's Events
 			eventStore.each(function(event){
+
+				// If the Event doesn't match the filter for events that are happening on the currentDate then we skip the Event Record
+				// we do this rather than a real filterBy call is so that if the store is part of an association we don't lose the original filter
+				if(!this.eventFilterFn.call(this, event, event.getId(), currentDateTime)){
+					return;
+				}
 
 				eventsPerTimeSlotCount = eventsPerTimeSlotCount + 1;
 
@@ -136,9 +139,6 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 				}
 
 			}, this);
-
-			// remove the filter
-			eventStore.clearFilter();
 
 			// keep track of the number of Events per time
 			if(eventsPerTimeSlotCount > 0){
