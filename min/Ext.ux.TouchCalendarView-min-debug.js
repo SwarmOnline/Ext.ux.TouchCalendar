@@ -16,6 +16,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	
 	extend: 'Ext.Container',
 
+	alias: 'widget.touchcalendarview',
+
     config: {
         /**
          * @cfg {String} viewMode The mode the Calendar will be displayed in. Possible values 'month', 'week' or 'day'.
