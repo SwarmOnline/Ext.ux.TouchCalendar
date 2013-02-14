@@ -13,8 +13,8 @@
  *
  */
 Ext.define('Ext.ux.TouchCalendarView', {
-	
-	extend: 'Ext.Container',
+
+        extend: 'Ext.Container',
 
 	alias: 'widget.touchcalendarview',
 
@@ -302,9 +302,9 @@ Ext.define('Ext.ux.TouchCalendarView', {
    	},
 
 	constructor: function(config){
-		
+
 		this.initModel();
-		
+
 		var store = Ext.create('Ext.data.Store', {
 	        model: 'TouchCalendarViewModel'
 	    });
@@ -317,7 +317,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
 		Ext.apply(this, config || {
 		});
-		
+
         /**
          * @event selectionchange Fires when the Calendar's selected date is changed
          * @param {Ext.ux.TouchCalendarView} this
@@ -332,7 +332,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
          * @param {Date} maxDate New view's maximum date
          * @param {string} direction Direction that the view moved ('forward' or 'back')
          */
-		
+
 		this.callParent(arguments);
 
 		this.minDate = this.minDate ? Ext.Date.clearTime(this.minDate, true) : null;
@@ -340,7 +340,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
         this.refresh();
     },
-    
+
 	/**
 	 * Override of onRender method. Attaches event handlers to the element to handler
 	 * day taps and period switch taps
@@ -377,7 +377,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @private
 	 */
 	initModel: function(){
-		if(!Ext.ModelManager.isRegistered('TouchCalendarViewModel')) // TODO: Throws an error in opening Ext.ux.TouchCalendar.html example?? 
+		if(!Ext.ModelManager.isRegistered('TouchCalendarViewModel')) // TODO: Throws an error in opening Ext.ux.TouchCalendar.html example??
 		{
 			Ext.define('TouchCalendarViewModel', {
 				extend: 'Ext.data.Model',
@@ -411,7 +411,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
 	    this.fireEvent('periodchange', this, minMaxDate.min.get('date'), minMaxDate.max.get('date'), 'none');
     },
-	
+
 	/**
 	 * Applies the view mode change requested to the Calendar. Possible values are 'month', 'week' or 'day'.
 	 * @param {String} viewMode Either 'month', 'week' or 'day'
@@ -434,7 +434,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
 		// Create the template
 		this.setTpl(new Ext.XTemplate((viewModeFns.tpl || this.getBaseTpl()).join(''), this.commonTemplateFunctions));
-		
+
 		this.setScrollable({
 			direction: viewMode.toUpperCase() === 'DAY' ? 'vertical' : false,
 			directionLock: true
@@ -452,7 +452,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
         return data;
     },
-	
+
 	/**
 	 * Builds a collection of dates that need to be rendered in the current configuration
 	 * @method
@@ -460,24 +460,24 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @return {void}
 	 */
 	populateStore: function(){
-		
+
 		this.currentDate = this.currentDate || this.value || new Date();
-		
+
 		var unselectable = true, // variable used to indicate whether a day is allowed to be selected
 			baseDate = this.currentDate, // date to use as base
 			iterDate = this.getStartDate(baseDate), // date current mode will start at
 			totalDays = this.getTotalDays(baseDate), // total days to be rendered in current mode
             record;
-				
+
 		this.getStore().suspendEvents();
 		this.getStore().data.clear();
-		
+
 		// create dates based on startDate and number of days to render
 		for(var i = 0; i < totalDays; i++){
-			
+
 			// increment the date by one day (except on first run)
 			iterDate = this.getNextIterationDate(iterDate, (i===0?0:1));
-			
+
 			unselectable = (this.minDate && iterDate < this.minDate) || (this.maxDate && iterDate > this.maxDate);
 
             record = Ext.create('TouchCalendarViewModel', {
@@ -489,13 +489,13 @@ Ext.define('Ext.ux.TouchCalendarView', {
                 weekend: this.isWeekend(iterDate),
                 date: iterDate
             });
-			
+
 			this.getStore().add(record);
 		}
-		
+
 		this.getStore().resumeEvents();
 	},
-	
+
 	/**
 	 * Refreshes the calendar moving it forward (delta = 1) or backward (delta = -1)
 	 * @method
@@ -515,12 +515,12 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		this.currentDate = newDate;
 
 		this.refresh();
-		
+
 		var minMaxDate = this.getPeriodMinMaxDate();
-		
+
 		this.fireEvent('periodchange', this, minMaxDate.min.get('date'), minMaxDate.max.get('date'), (delta > 0 ? 'forward' : 'back'));
 	},
-	
+
 	/**
 	 * Returns the current view's minimum and maximum date collection objects
 	 * @method
@@ -533,7 +533,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 			max: this.getStore().data.last()
 		};
 	},
-	
+
 	/**
 	 * Returns true or false depending on whether the view that is currently on display is outside or inside the min/max dates set
 	 * @method
@@ -543,16 +543,16 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 */
 	isOutsideMinMax: function(date){
 		var outside = false;
-		
+
 		if(this.getViewMode() === 'MONTH'){
 			outside = ((this.minDate && Ext.Date.getLastDateOfMonth(date) < this.minDate) || (this.maxDate && Ext.Date.getFirstDateOfMonth(date) > this.maxDate));
 		} else {
 			outside = ((this.minDate && this.getWeekendDate(date) < this.minDate) || (this.maxDate && this.getStartDate(date) > this.maxDate));
 		}
-		
+
 		return outside;
 	},
-	
+
 	/**
 	 * Handler for a tap on the table header
 	 * @method
@@ -652,7 +652,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
 		cell.up('tr').addCls(selCls);
 	},
-	
+
 	/**
 	 * Returns the TouchCalendarViewModel model instance containing the passed in date
 	 * @method
@@ -662,11 +662,11 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	getDateRecord: function(date){
 		return this.getStore().findBy(function(record){
 			var recordDate = Ext.Date.clearTime(record.get('date'), true).getTime();
-                
+
             return recordDate === Ext.Date.clearTime(date, true).getTime();
 		}, this);
 	},
-	
+
 	/**
 	 * Returns the same day
 	 * @method
@@ -677,7 +677,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	getDayStartDate: function(date){
 		return date;
 	},
-	
+
 	/**
 	 * Returns true if the two dates are the same date (ignores time)
 	 * @method
@@ -692,7 +692,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		}
 		return Ext.Date.clearTime(date1, true).getTime() === Ext.Date.clearTime(date2, true).getTime();
 	},
-	
+
 	/**
 	 * Returns true if the specified date is a Saturday/Sunday
 	 * @method
@@ -703,7 +703,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	isWeekend: function(date){
 		return date.getDay() === 0 || date.getDay() === 6;
 	},
-	
+
 	/**
 	 * Returns the last day of the week based on the specified date.
 	 * @method
@@ -714,7 +714,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	getWeekendDate: function(date){
 		var dayOffset = date.getDay() - this.getWeekStart();
 		dayOffset = dayOffset < 0 ? 6 : dayOffset;
-		
+
 		return new Date(date.getFullYear(), date.getMonth(), date.getDate()+0+dayOffset);
 	},
 
@@ -728,7 +728,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 		var date = dateCell.dom.getAttribute('datetime');
 		return this.stringToDate(date);
 	},
-	
+
 	/**
 	 * Returns the cell representing the specified date
 	 * @method
@@ -738,7 +738,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	getDateCell: function(date){
 		return this.element.select('td[datetime="' + this.getDateAttribute(date) + '"]', this.element.dom).first();
 	},
-	
+
 	/**
 	 * Returns a string format of the specified date
 	 * Used when assigning the datetime attribute to a table cell
@@ -747,7 +747,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	 * @param {Date} date
 	 * @return {String}
 	 */
-	getDateAttribute: function(date){		
+	getDateAttribute: function(date){
 		return Ext.Date.format(date, this.dateAttributeFormat);
 	},
 
@@ -778,23 +778,23 @@ Ext.define('Ext.ux.TouchCalendarView', {
 
 		return value;
 	},
-	
+
 	statics: {
-		
+
 		MONTH: {
-				
+
 				dateAttributeFormat: 'd-m-Y',
-						
+
 				/**
 				 * Called during the View's Store population. This calculates the next date for the current period.
-				 * The MONTH mode's version just adds 1 (or 0 on the first iteration) to the specified date. 
+				 * The MONTH mode's version just adds 1 (or 0 on the first iteration) to the specified date.
 				 * @param {Date} d Current Iteration date
 				 * @param {Number} index
 				 */
 				getNextIterationDate: function(d, index){
 					return new Date(d.getFullYear(), d.getMonth(), d.getDate() + (index===0?0:1));
 				},
-				
+
 				/**
 				 * Returns the total number of days to be shown in this view.
 				 * @method
@@ -803,10 +803,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				 */
 				getTotalDays: function(date){
 					var firstDate = Ext.Date.getFirstDateOfMonth(date);
-					
+
 					return this.isWeekend(firstDate) ? 42 : 35;
 				},
-				
+
 				/**
 				 * Returns the first day that should be visible for a month view (may not be in the same month)
 				 * Gets the first day of the week that the 1st of the month falls on.
@@ -818,7 +818,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				getStartDate: function(date){
 					return Ext.bind(Ext.ux.TouchCalendarView.WEEK.getStartDate, this)(new Date(date.getFullYear(), date.getMonth(), 1));
 				},
-				
+
 				/**
 				 * Returns a new date based on the date passed and the delta value for MONTH view.
 				 * @method
@@ -830,29 +830,29 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				getDeltaDate: function(date, delta){
 					var newMonth = date.getMonth() + delta,
 						newDate = new Date(date.getFullYear(), newMonth, 1);
-					
+
 					newDate.setDate(Ext.Date.getDaysInMonth(newDate) < date.getDate() ? Ext.Date.getDaysInMonth(newDate) : date.getDate());
-					
+
 					return newDate;
 				},
-				
+
 				periodRowDayCount: 7
 			},
-			
+
 			WEEK: {
-				
+
 				dateAttributeFormat: 'd-m-Y',
-					
+
 				/**
 				 * Called during the View's Store population. This calculates the next date for the current period.
-				 * The WEEK mode's version just adds 1 (or 0 on the first iteration) to the specified date. 
+				 * The WEEK mode's version just adds 1 (or 0 on the first iteration) to the specified date.
 				 * @param {Date} d Current Iteration date
 				 * @param {Number} index
 				 */
 				getNextIterationDate: function(d, index){
 					return new Date(d.getFullYear(), d.getMonth(), d.getDate() + (index===0?0:1));
 				},
-				
+
 				/**
 				 * Returns the total number of days to be shown in this view.
 				 * As it is the WEEK view it is always 7
@@ -863,7 +863,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				getTotalDays: function(date){
 					return 7;
 				},
-				
+
 				/**
 				 * Returns the first day of the week based on the specified date.
 				 * @method
@@ -874,10 +874,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				getStartDate: function(date){
 					var dayOffset = date.getDay() - this.getWeekStart();
 					dayOffset = dayOffset < 0 ? 6 : dayOffset;
-					
+
 					return new Date(date.getFullYear(), date.getMonth(), date.getDate()-0-dayOffset);
 				},
-				
+
 				/**
 				 * Returns a new date based on the date passed and the delta value for WEEK view.
 				 * @method
@@ -889,17 +889,17 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				getDeltaDate: function(date, delta){
 					return new Date(date.getFullYear(), date.getMonth(), date.getDate() + (delta * 7));
 				},
-				
+
 				periodRowDayCount: 7
 			},
-			
+
 			DAY: {
 					/**
 					 * Date format that the 'datetime' attribute, given to each time slot, has. Day mode needs the time in aswell so
 					 * events etc know what time slot it is
 					 */
 					dateAttributeFormat: 'd-m-Y H:i',
-						
+
 					/**
 					 * Template for the DAY view
 					 */
@@ -923,14 +923,14 @@ Ext.define('Ext.ux.TouchCalendarView', {
 											'<tpl for=".">',
 												'<tr class="{[this.getTimeSlotRowCls(values.date)]}">',
 
-													'<td class="label" datetime="{[this.me.getDateAttribute(values.date)]}">',
+													'<td class="label">',
 
 														'<tpl if="!this.me.getHideHalfHourTimeSlotLabels() || !this.isHalfHour(values.date)">',
 															'{date:this.formatDate()}',
 														'</tpl>',
 
 													'</td>',
-													'<td class="time-block" colspan="2">',
+													'<td class="time-block" colspan="2" datetime="{[this.me.getDateAttribute(values.date)]}">',
 
 
 
@@ -942,7 +942,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 								'</tr>',
 							'</tbody>',
 						'</table>'],
-						
+
 					/**
 					 * Called during the View's Store population. This calculates the next date for the current period.
 					 * The DAY mode's version just adds another time period on.
@@ -951,10 +951,10 @@ Ext.define('Ext.ux.TouchCalendarView', {
 					 */
 					getNextIterationDate: function(currentIterationDate, index){
 						var d = currentIterationDate.getTime() + ((index===0?0:1) * (this.getDayTimeSlotSize() * 60 * 1000));
-						
+
 						return new Date(d);
 					},
-	
+
 					/**
 					 * Returns the total number of time slots to be shown in this view.
 					 * This is derived from the dayTimeSlotSize property
@@ -965,7 +965,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 					getTotalDays: function(date){
 						return 1440 / this.getDayTimeSlotSize();
 					},
-					
+
 					/**
 					 * Returns the same date as passed in because there is only one date visible
 					 * @method
@@ -976,7 +976,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 					getStartDate: function(date){
 						return Ext.Date.clearTime(date, true);
 					},
-					
+
 					/**
 					 * Returns a new date based on the date passed and the delta value for DAY view.
 					 * @method
