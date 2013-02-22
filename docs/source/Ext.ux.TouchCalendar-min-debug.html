@@ -78,16 +78,16 @@ Ext.define('Ext.ux.TouchCalendar',{
 		}
 	},
 
-	defaultViewConfig: {
-		viewMode: 'MONTH',
+<span id='Ext-ux-TouchCalendar-property-defaultViewConfig'>	defaultViewConfig: {
+</span>		viewMode: 'MONTH',
 		weekStart: 1,
 		bubbleEvents: ['selectionchange']
 	},
 
-	indicator: false,
-
-	initialize: function(){
-
+<span id='Ext-ux-TouchCalendar-property-indicator'>	indicator: false,
+</span>
+<span id='Ext-ux-TouchCalendar-method-initialize'>	initialize: function(){
+</span>
 		this.viewConfig = Ext.applyIf(this.viewConfig || {}, this.defaultViewConfig);
 
 		this.viewConfig.currentDate = this.viewConfig.currentDate || this.viewConfig.value || new Date();
@@ -151,8 +151,8 @@ Ext.define('Ext.ux.TouchCalendar',{
 		return this._viewConfig;
 	},
 
-	getViewDate: function(date, i){
-		var scale = (this.getViewMode() === 'WEEK' ? 'DAY' : this.getViewMode().toUpperCase()),
+<span id='Ext-ux-TouchCalendar-method-getViewDate'>	getViewDate: function(date, i){
+</span>		var scale = (this.getViewMode() === 'WEEK' ? 'DAY' : this.getViewMode().toUpperCase()),
 		  number = (this.getViewMode() === 'WEEK' ? (8 * i) : i);
 
 		return Ext.Date.add(date, Ext.Date[scale], number)
@@ -208,8 +208,8 @@ Ext.define('Ext.ux.TouchCalendar',{
 		}
 	},
 
-	applyViewMode: function(mode){
-		return mode.toUpperCase();
+<span id='Ext-ux-TouchCalendar-method-applyViewMode'>	applyViewMode: function(mode){
+</span>		return mode.toUpperCase();
 	},
 
 <span id='Ext-ux-TouchCalendar-method-updateViewMode'>	/**
@@ -311,7 +311,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
          */
         viewMode: 'month',
 
-<span id='Ext-ux-TouchCalendarView-property-weekStart'>        /**
+<span id='Ext-ux-TouchCalendarView-cfg-weekStart'>        /**
 </span>         * cfg {Number} weekStart Starting day of the week. (0 = Sunday, 1 = Monday ... etc)
          */
         weekStart: 1,
@@ -387,12 +387,12 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	     */
 	    hideHalfHourTimeSlotLabels: true,
 
-        value: null,
-
-        store: null,
-
-        baseTpl: [
-                    '&lt;table class=&quot;{[this.me.getViewMode().toLowerCase()]}&quot;&gt;',
+<span id='Ext-ux-TouchCalendarView-cfg-value'>        value: null,
+</span>
+<span id='Ext-ux-TouchCalendarView-cfg-store'>        store: null,
+</span>
+<span id='Ext-ux-TouchCalendarView-cfg-baseTpl'>        baseTpl: [
+</span>                    '&lt;table class=&quot;{[this.me.getViewMode().toLowerCase()]}&quot;&gt;',
                         '&lt;thead&gt;',
                             '&lt;tr&gt;',
                                 '&lt;tpl for=&quot;this.getDaysArray(values)&quot;&gt;',
@@ -425,14 +425,14 @@ Ext.define('Ext.ux.TouchCalendarView', {
                         '&lt;/tbody&gt;',
                     '&lt;/table&gt;'],
 
-        cls: 'touch-calendar-view',
-
-        itemSelector: 'td.time-block'
-
+<span id='Ext-ux-TouchCalendarView-cfg-cls'>        cls: 'touch-calendar-view',
+</span>
+<span id='Ext-ux-TouchCalendarView-cfg-itemSelector'>        itemSelector: 'td.time-block'
+</span>
     },
 
-	// default TimeSlot date templates that are merged with the supplied config
-	timeSlotDateTplsDefaults: {
+<span id='Ext-ux-TouchCalendarView-property-timeSlotDateTplsDefaults'>	// default TimeSlot date templates that are merged with the supplied config
+</span>	timeSlotDateTplsDefaults: {
 		day     : '&lt;span class=&quot;hour&quot;&gt;{date:date(&quot;g&quot;)}&lt;/span&gt;&lt;span class=&quot;am-pm&quot;&gt;{date:date(&quot;A&quot;)}&lt;/span&gt;',
 		month   : '{date:date(&quot;j&quot;)}',
 		week    : '{date:date(&quot;j&quot;)}'
@@ -588,8 +588,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
    		}
    	},
 
-	constructor: function(config){
-		
+<span id='Ext-ux-TouchCalendarView-method-constructor'>	constructor: function(config){
+</span>		
 		this.initModel();
 		
 		var store = Ext.create('Ext.data.Store', {
@@ -730,8 +730,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
         return viewMode;
 	},
 
-    collectData: function(records){
-        var data = [];
+<span id='Ext-ux-TouchCalendarView-method-collectData'>    collectData: function(records){
+</span>        var data = [];
 
         Ext.each(records, function(record, index){
             data.push(record.data);
@@ -1068,8 +1068,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	
 	statics: {
 		
-		MONTH: {
-				
+<span id='Ext-ux-TouchCalendarView-property-MONTH'>		MONTH: {
+</span>				
 				dateAttributeFormat: 'd-m-Y',
 						
 <span id='Ext-ux-TouchCalendarView-method-getNextIterationDate'>				/**
@@ -1126,8 +1126,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				periodRowDayCount: 7
 			},
 			
-			WEEK: {
-				
+<span id='Ext-ux-TouchCalendarView-property-WEEK'>			WEEK: {
+</span>				
 				dateAttributeFormat: 'd-m-Y',
 					
 <span id='Ext-ux-TouchCalendarView-method-getNextIterationDate'>				/**
@@ -1180,8 +1180,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				periodRowDayCount: 7
 			},
 			
-			DAY: {
-<span id='Ext-ux-TouchCalendarView-property-dateAttributeFormat'>					/**
+<span id='Ext-ux-TouchCalendarView-property-DAY'>			DAY: {
+</span><span id='Ext-ux-TouchCalendarView-property-dateAttributeFormat'>					/**
 </span>					 * Date format that the 'datetime' attribute, given to each time slot, has. Day mode needs the time in aswell so
 					 * events etc know what time slot it is
 					 */
@@ -1289,10 +1289,10 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
     extend: 'Ext.Base',
 
 	config: {
-		calendar: null,
-		plugin: null,
-
-<span id='Ext-ux-TouchCalendarEventsBase-property-eventsPerTimeSlot'>		/**
+<span id='Ext-ux-TouchCalendarEventsBase-cfg-calendar'>		calendar: null,
+</span><span id='Ext-ux-TouchCalendarEventsBase-cfg-plugin'>		plugin: null,
+</span>
+<span id='Ext-ux-TouchCalendarEventsBase-cfg-eventsPerTimeSlot'>		/**
 </span>		 * @accessor {Object} eventsPerTimeSlot Tracks the number of events that occur in specified time slots so it can be used to calculate widths
 		 * when rendering. The counts are only stored if 1 or more events exist. The numeric value of the time slot's date (i.e. date.getTime()) is used
 		 * as the key with the count as the value.
@@ -1300,7 +1300,7 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 		 */
 		eventsPerTimeSlot: {},
 
-<span id='Ext-ux-TouchCalendarEventsBase-property-eventSortDirection'>		/**
+<span id='Ext-ux-TouchCalendarEventsBase-cfg-eventSortDirection'>		/**
 </span>		 * @accessor {String} eventSortDirection Used to define the sort direction the Event Store is sorted in while generating the Event models.
 		 * This is required to be configurable because Month/Week modes work from bottom to top, whereas Day view works from left to right so we want the ordering to be different.
 		 * Default to 'DESC' for the Month and Week views.
@@ -1308,8 +1308,8 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 		eventSortDirection: 'DESC'
 	},
 
-	constructor: function(config){
-		this.initConfig(config);
+<span id='Ext-ux-TouchCalendarEventsBase-method-constructor'>	constructor: function(config){
+</span>		this.initConfig(config);
 
 		this.callParent(arguments);
 	},
@@ -1471,8 +1471,8 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 	},
 
 
-	createEventBar: function(record, eventRecord){
-		var doesWrap    = this.eventBarDoesWrap(record),
+<span id='Ext-ux-TouchCalendarEventsBase-method-createEventBar'>	createEventBar: function(record, eventRecord){
+</span>		var doesWrap    = this.eventBarDoesWrap(record),
 			hasWrapped  = this.eventBarHasWrapped(record),
 			cssClasses  = [
 				this.getPlugin().getEventBarCls(),
@@ -1494,8 +1494,8 @@ Ext.define('Ext.ux.TouchCalendarEventsBase', {
 		return eventBar;
 	},
 
-	getRandomColour: function(){
-		return '#'+(Math.random()*0xFFFFFF&lt;&lt;0).toString(16);
+<span id='Ext-ux-TouchCalendarEventsBase-method-getRandomColour'>	getRandomColour: function(){
+</span>		return '#'+(Math.random()*0xFFFFFF&lt;&lt;0).toString(16);
 	}
 
 <span id='Ext-ux-TouchCalendarDayEvents'>});/**
@@ -1506,21 +1506,21 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
     extend: 'Ext.ux.TouchCalendarEventsBase',
 
 	config: {
-<span id='Ext-ux-TouchCalendarDayEvents-property-eventSortDirection'>		/**
+<span id='Ext-ux-TouchCalendarDayEvents-cfg-eventSortDirection'>		/**
 </span>		 * Sort the generated events early to late so they appear Left to Right, early to late.
 		 */
 		eventSortDirection: 'ASC'
 	},
 
-	eventFilterFn: function(record, id, currentDateTime){
-		var startDate   = this.getRoundedTime(record.get(this.getPlugin().getStartEventField())).getTime(),
+<span id='Ext-ux-TouchCalendarDayEvents-method-eventFilterFn'>	eventFilterFn: function(record, id, currentDateTime){
+</span>		var startDate   = this.getRoundedTime(record.get(this.getPlugin().getStartEventField())).getTime(),
 			endDate     = this.getRoundedTime(record.get(this.getPlugin().getEndEventField())).getTime();
 
 		return (startDate &lt;= currentDateTime) &amp;&amp; (endDate &gt;= currentDateTime);
 	},
 
-	renderEventBars: function(store){
-		var me = this,
+<span id='Ext-ux-TouchCalendarDayEvents-method-renderEventBars'>	renderEventBars: function(store){
+</span>		var me = this,
 			l = store.getCount(),
 			i = 0,
 			rec;
@@ -1546,8 +1546,8 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 
 	},
 
-	getEventBarWidth: function(event, offset){
-		var eventsInTimeSlot    = this.getEventsPerTimeSlot()[event.get('Date').getTime()],
+<span id='Ext-ux-TouchCalendarDayEvents-method-getEventBarWidth'>	getEventBarWidth: function(event, offset){
+</span>		var eventsInTimeSlot    = this.getEventsPerTimeSlot()[event.get('Date').getTime()],
 			calendarWidth       = this.getCalendar().element.getWidth();
 
 		eventsInTimeSlot    = eventsInTimeSlot || 1;
@@ -1556,8 +1556,8 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 		return Math.floor((calendarWidth - offset) / eventsInTimeSlot);
 	},
 
-	getEventBarHeight: function(event){
-		var eventHeight = this.getPlugin().getEventHeight();
+<span id='Ext-ux-TouchCalendarDayEvents-method-getEventBarHeight'>	getEventBarHeight: function(event){
+</span>		var eventHeight = this.getPlugin().getEventHeight();
 
 		if(Ext.isNumeric(eventHeight)){
 			return eventHeight;
@@ -1568,8 +1568,8 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 		}
 	},
 
-	getEventBarHeightDuration: function(event){
-		var startDate           = event.data.Record.get(this.getPlugin().getStartEventField()),
+<span id='Ext-ux-TouchCalendarDayEvents-method-getEventBarHeightDuration'>	getEventBarHeightDuration: function(event){
+</span>		var startDate           = event.data.Record.get(this.getPlugin().getStartEventField()),
 			endDate             = event.data.Record.get(this.getPlugin().getEndEventField()),
 			roundedStartDate    = this.getRoundedTime(startDate),
 			minutesLength       = (endDate.getTime() - startDate.getTime()) / 1000 / 60,
@@ -1587,8 +1587,8 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 		return heightPixels;
 	},
 
-	getVerticalDayPosition: function(event){
-		var startDate           = event.data.Record.get(this.getPlugin().getStartEventField()),
+<span id='Ext-ux-TouchCalendarDayEvents-method-getVerticalDayPosition'>	getVerticalDayPosition: function(event){
+</span>		var startDate           = event.data.Record.get(this.getPlugin().getStartEventField()),
 			roundedStartDate    = this.getRoundedTime(startDate),
 			timeSlotCount       = (roundedStartDate.getHours() * 2) + (roundedStartDate.getMinutes() === 30 ? 1 : 0),
 			minutesDiff         = (startDate.getTime() - roundedStartDate.getTime()) / 1000 / 60,
@@ -1607,8 +1607,8 @@ Ext.define('Ext.ux.TouchCalendarDayEvents', {
 		return verticalPosition;
 	},
 
-	getHorizontalDayPosition: function(event, eventBarWidth){
-		var barPos      = event.get('BarPosition'),
+<span id='Ext-ux-TouchCalendarDayEvents-method-getHorizontalDayPosition'>	getHorizontalDayPosition: function(event, eventBarWidth){
+</span>		var barPos      = event.get('BarPosition'),
 			leftMargin  = 50,
 			spacing = this.getPlugin().getEventBarSpacing();
 
@@ -1642,8 +1642,8 @@ Ext.define('Ext.ux.TouchCalendarMonthEvents', {
 
     extend: 'Ext.ux.TouchCalendarEventsBase',
 
-	eventFilterFn: function(record, id, currentDateTime){
-		var startDate = Ext.Date.clearTime(record.get(this.getPlugin().getStartEventField()), true).getTime(),
+<span id='Ext-ux-TouchCalendarMonthEvents-method-eventFilterFn'>	eventFilterFn: function(record, id, currentDateTime){
+</span>		var startDate = Ext.Date.clearTime(record.get(this.getPlugin().getStartEventField()), true).getTime(),
 			endDate = Ext.Date.clearTime(record.get(this.getPlugin().getEndEventField()), true).getTime();
 
 		return (startDate &lt;= currentDateTime) &amp;&amp; (endDate &gt;= currentDateTime);
@@ -1781,8 +1781,8 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 	extend: 'Ext.mixin.Observable',
 	config: {
 
-		viewModeProcessor: null,
-
+<span id='Ext-ux-TouchCalendarEvents-cfg-viewModeProcessor'>		viewModeProcessor: null,
+</span>
 <span id='Ext-ux-TouchCalendarEvents-cfg-eventBarTpl'>		/**
 </span>		 * @cfg {String} eventBarTpl Template that will be used to fill the Event Bar
 		 */
@@ -1863,7 +1863,7 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 		 */
 		eventBarSpacing: 1,
 
-<span id='Ext-ux-TouchCalendarEvents-property-eventWrapperEl'>		/**
+<span id='Ext-ux-TouchCalendarEvents-cfg-eventWrapperEl'>		/**
 </span>		 * {Ext.Element} eventWrapperEl The Ext.Element that contains all of the Event Bar elements
 		 * @accessor
 		 */
@@ -1871,8 +1871,8 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 
 	},
     
-    init: function(calendar){
-	    var me = this;
+<span id='Ext-ux-TouchCalendarEvents-method-init'>    init: function(calendar){
+</span>	    var me = this;
 
         this.calendar = calendar; // cache the parent calendar
         this.calendar.eventsPlugin = this; // cache the plugin instance on the calendar itself  
@@ -2247,8 +2247,8 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 	    }
     },
   
-	getEventsWrapperContainer: function(){
-		return this.calendar.element.select('thead th', this.calendar.element.dom).first() || this.calendar.element.select('tr td', this.calendar.element.dom).first();
+<span id='Ext-ux-TouchCalendarEvents-method-getEventsWrapperContainer'>	getEventsWrapperContainer: function(){
+</span>		return this.calendar.element.select('thead th', this.calendar.element.dom).first() || this.calendar.element.select('tr td', this.calendar.element.dom).first();
 	},
 
 <span id='Ext-ux-TouchCalendarEvents-method-getEventRecord'>	/**
@@ -2323,8 +2323,8 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
     }
     },
 
-	applyEventBarTpl: function(tpl){
-		if(Ext.isString(tpl) || Ext.isArray(tpl)){
+<span id='Ext-ux-TouchCalendarEvents-method-applyEventBarTpl'>	applyEventBarTpl: function(tpl){
+</span>		if(Ext.isString(tpl) || Ext.isArray(tpl)){
 			tpl = Ext.create('Ext.XTemplate', tpl);
 		}
 
@@ -2341,8 +2341,8 @@ Ext.define('Ext.ux.TouchCalendarEvents', {
 Ext.define(&quot;Ext.ux.CalendarEventBarModel&quot;, {
   extend: &quot;Ext.data.Model&quot;,
 	config: {
-	  fields: [{
-	    name: 'EventID',
+<span id='Ext-ux-CalendarEventBarModel-cfg-fields'>	  fields: [{
+</span>	    name: 'EventID',
 	    type: 'string'
 	  }, {
 	    name: 'Date',
@@ -2357,8 +2357,8 @@ Ext.define(&quot;Ext.ux.CalendarEventBarModel&quot;, {
 	    name: 'Colour',
 	    type: 'string'
 	  }, 'Record'],
-	  hasMany: [{
-	      model: 'Ext.ux.CalendarEventBarModel',
+<span id='Ext-ux-CalendarEventBarModel-cfg-hasMany'>	  hasMany: [{
+</span>	      model: 'Ext.ux.CalendarEventBarModel',
 	      name: 'linked'
 	  }]
 	}
@@ -2517,8 +2517,8 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	    return (startDate &lt;= currentDate) &amp;&amp; (endDate &gt;= currentDate);
 	},
 	
-	init: function(calendar){
-		
+<span id='Ext-ux-TouchCalendarSimpleEvents-method-init'>	init: function(calendar){
+</span>		
 		this.calendar = calendar; // cache the parent calendar
 		this.calendar.simpleEventsPlugin = this; // cache the plugin instance on the calendar itself
 		
@@ -2620,7 +2620,7 @@ Ext.define('Ext.ux.TouchCalendarSimpleEvents', {
 	removeEvents: function(){
 		if(this.calendar.element){
 			this.calendar.element.select('span.' + this.wrapperCls, this.calendar.element.dom).each(function(el){
-				Ext.destroy(el.dom);
+				Ext.destroy(el);
 			});
 		}
 	}	

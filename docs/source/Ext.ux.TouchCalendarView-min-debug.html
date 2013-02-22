@@ -41,7 +41,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
          */
         viewMode: 'month',
 
-<span id='Ext-ux-TouchCalendarView-property-weekStart'>        /**
+<span id='Ext-ux-TouchCalendarView-cfg-weekStart'>        /**
 </span>         * cfg {Number} weekStart Starting day of the week. (0 = Sunday, 1 = Monday ... etc)
          */
         weekStart: 1,
@@ -117,12 +117,12 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	     */
 	    hideHalfHourTimeSlotLabels: true,
 
-        value: null,
-
-        store: null,
-
-        baseTpl: [
-                    '&lt;table class=&quot;{[this.me.getViewMode().toLowerCase()]}&quot;&gt;',
+<span id='Ext-ux-TouchCalendarView-cfg-value'>        value: null,
+</span>
+<span id='Ext-ux-TouchCalendarView-cfg-store'>        store: null,
+</span>
+<span id='Ext-ux-TouchCalendarView-cfg-baseTpl'>        baseTpl: [
+</span>                    '&lt;table class=&quot;{[this.me.getViewMode().toLowerCase()]}&quot;&gt;',
                         '&lt;thead&gt;',
                             '&lt;tr&gt;',
                                 '&lt;tpl for=&quot;this.getDaysArray(values)&quot;&gt;',
@@ -155,14 +155,14 @@ Ext.define('Ext.ux.TouchCalendarView', {
                         '&lt;/tbody&gt;',
                     '&lt;/table&gt;'],
 
-        cls: 'touch-calendar-view',
-
-        itemSelector: 'td.time-block'
-
+<span id='Ext-ux-TouchCalendarView-cfg-cls'>        cls: 'touch-calendar-view',
+</span>
+<span id='Ext-ux-TouchCalendarView-cfg-itemSelector'>        itemSelector: 'td.time-block'
+</span>
     },
 
-	// default TimeSlot date templates that are merged with the supplied config
-	timeSlotDateTplsDefaults: {
+<span id='Ext-ux-TouchCalendarView-property-timeSlotDateTplsDefaults'>	// default TimeSlot date templates that are merged with the supplied config
+</span>	timeSlotDateTplsDefaults: {
 		day     : '&lt;span class=&quot;hour&quot;&gt;{date:date(&quot;g&quot;)}&lt;/span&gt;&lt;span class=&quot;am-pm&quot;&gt;{date:date(&quot;A&quot;)}&lt;/span&gt;',
 		month   : '{date:date(&quot;j&quot;)}',
 		week    : '{date:date(&quot;j&quot;)}'
@@ -318,8 +318,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
    		}
    	},
 
-	constructor: function(config){
-		
+<span id='Ext-ux-TouchCalendarView-method-constructor'>	constructor: function(config){
+</span>		
 		this.initModel();
 		
 		var store = Ext.create('Ext.data.Store', {
@@ -460,8 +460,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
         return viewMode;
 	},
 
-    collectData: function(records){
-        var data = [];
+<span id='Ext-ux-TouchCalendarView-method-collectData'>    collectData: function(records){
+</span>        var data = [];
 
         Ext.each(records, function(record, index){
             data.push(record.data);
@@ -798,8 +798,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	
 	statics: {
 		
-		MONTH: {
-				
+<span id='Ext-ux-TouchCalendarView-property-MONTH'>		MONTH: {
+</span>				
 				dateAttributeFormat: 'd-m-Y',
 						
 <span id='Ext-ux-TouchCalendarView-method-getNextIterationDate'>				/**
@@ -856,8 +856,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				periodRowDayCount: 7
 			},
 			
-			WEEK: {
-				
+<span id='Ext-ux-TouchCalendarView-property-WEEK'>			WEEK: {
+</span>				
 				dateAttributeFormat: 'd-m-Y',
 					
 <span id='Ext-ux-TouchCalendarView-method-getNextIterationDate'>				/**
@@ -910,8 +910,8 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				periodRowDayCount: 7
 			},
 			
-			DAY: {
-<span id='Ext-ux-TouchCalendarView-property-dateAttributeFormat'>					/**
+<span id='Ext-ux-TouchCalendarView-property-DAY'>			DAY: {
+</span><span id='Ext-ux-TouchCalendarView-property-dateAttributeFormat'>					/**
 </span>					 * Date format that the 'datetime' attribute, given to each time slot, has. Day mode needs the time in aswell so
 					 * events etc know what time slot it is
 					 */
