@@ -7,26 +7,32 @@ applications.
 
 ## Demos
 
-[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendar.html)
+[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
 
-[Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendarView.html)
+[Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarView.html)
 
-[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendarSimpleEvents.html)
+[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarSimpleEvents.html)
 
-[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendarEvents.html)
+[Ext.ux.TouchCalendarSimpleEvents Demo 2](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarSimpleEvents-2.html)
 
-[Calendar with Linked List Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/simple-events-list.html)
+[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
+
+[Ext.ux.TouchCalendarEvents Demo 2](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents-2.html)
+
+[Calendar with Linked List Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/simple-events-list.html)
+
+[Calendar with Linked List Demo 2](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/events-list.html)
 
 ## Ext.ux.TouchCalendarView
 
 The main extension is contained in the root folder of the repository and can be included in your project (along with its CSS file located within 
 the resources/css folder) and will give you a basic calendar view (either showing a month, week or day) that can be configured with various options.
 
-![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendarView-month-ss.png)
-![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendarView-week-ss.png)
-![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendarView-day-ss.png)
+![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-month-ss.png)
+![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-week-ss.png)
+![Ext.ux.TouchCalendarView Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarView-day-ss.png)
 
-[Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendar.html)
+[Ext.ux.TouchCalendarView Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
 
 ## Ext.ux.TouchCalendar
 
@@ -34,9 +40,9 @@ This extension wraps the Ext.ux.TouchCalendarView in a Ext.Carousel component an
 gestures to switch the displayed period. It works by creating 3 Ext.ux.TouchCalendarViews and dynamically creating/removing
 views as the user moves back/forward through time. 
 
-![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendar-month-ss.png)
+![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendar-month-ss.png)
 
-[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendar.html)
+[Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
 
 
 ## Ext.ux.TouchCalendarSimpleEvents
@@ -44,17 +50,17 @@ views as the user moves back/forward through time.
 This plugin can be added to an Ext.ux.TouchCalendar instance to allow a store to be bound to the calendar so events can be shown in a similar style to the iPhone
 does with a dot added to each day to represent the presence of an event.
 
-![Ext.ux.TouchCalendarSimpleEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendarSimpleEvents-month-ss.png)
+![Ext.ux.TouchCalendarSimpleEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarSimpleEvents-month-ss.png)
 
-[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendarSimpleEvents.html)
+[Ext.ux.TouchCalendarSimpleEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarSimpleEvents.html)
 
 ## Ext.ux.TouchCalendarEvents
 
 This plugin also allows a store to be bound to the Ext.ux.TouchCalendar and will display the store's events as bars spanning its relevant days. 
 
-![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/screenshots/Ext.ux.TouchCalendarEvents-month-ss.png)
+![Ext.ux.TouchCalendarEvents Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendarEvents-month-ss.png)
 
-[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar ST2/examples/Ext.ux.TouchCalendarEvents.html)
+[Ext.ux.TouchCalendarEvents Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendarEvents.html)
 
 ## Usage
 
