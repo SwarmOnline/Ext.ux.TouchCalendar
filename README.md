@@ -273,9 +273,7 @@ The overrides you will require look something like the code below:
 
 There are a few known issues that will be ironed out after the first release, namely:
 
-* At this point in the upgrade there are a few issues with the Ext.ux.TouchCalendar (the carousel extension allowing swipe navigation) part of the calendar. The TouchCalendarView should be fully functional.
 * When using the Ext.ux.TouchCalendar the setValue logic isn't complete for dealing with selections across the 3 views.
-* The Ext.ux.TouchCalendarEvents/Ext.ux.TouchCalendarSimpleEvents plugins aren't compatible with the Day mode.
 
 ## Acknowledgements
 
