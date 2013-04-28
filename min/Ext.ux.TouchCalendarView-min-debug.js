@@ -752,6 +752,23 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	},
 
 	/**
+	 * Returns an array of Dates that are selected in the current TouchCalendarView.
+	 * @method
+	 * @public
+	 * @returns {Date[]}
+	 */
+	getSelected: function(){
+		var selectedCells = this.element.select('td.' + this.getSelectedItemCls(), this.element.dom),
+			dates = [];
+
+		selectedCells.each(function(cell){
+			dates.push(this.getCellDate(cell));
+		}, this);
+
+		return dates;
+	},
+
+	/**
 	 * Converts a string date (used to add to table cells) to a Date object
 	 * @method
 	 * @private

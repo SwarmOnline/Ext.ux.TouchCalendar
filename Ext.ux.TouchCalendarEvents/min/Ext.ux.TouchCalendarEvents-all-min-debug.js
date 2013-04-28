@@ -20,7 +20,7 @@
  * 
  * ![Ext.ux.TouchCalendar Screenshot](http://www.swarmonline.com/Ext.ux.TouchCalendar/screenshots/Ext.ux.TouchCalendar-month-ss.png)
  * 
- * [Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/wp-content/uploads/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
+ * [Ext.ux.TouchCalendar Demo](http://www.swarmonline.com/Ext.ux.TouchCalendar/examples/Ext.ux.TouchCalendar.html)
  * 
  */
 Ext.define('Ext.ux.TouchCalendar',{
@@ -220,9 +220,9 @@ Ext.define('Ext.ux.TouchCalendar',{
 	* @returns {Date} The selected date
 	*/
 	getValue: function(){
-		var selectedDates = this.view.getSelectionModel().selected;
+		var selectedDates = this.view.getSelected();
 
-		return (selectedDates.getCount() > 0) ? selectedDates.first().get('date') : null;
+		return (selectedDates.length > 0) ? selectedDates : null;
 	},
 
 	/**
