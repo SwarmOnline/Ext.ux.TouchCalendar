@@ -110,6 +110,13 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	     * }
 	     */
 	    timeSlotDateTpls: {},
+	    
+<span id='Ext-ux-TouchCalendarView-cfg-eventStore'>	    /**
+</span>	     * @cfg {Ext.data.Store} eventStore This config is used when the CalendarView is combined with
+	     * the TouchCalendarEvents or TouchCalendarSimpleEvents plugins and is used as the source of
+	     * events to render onto the calendar. The Model used in this store should have at the least a Start Date and End Date field
+	     * that can be customised from the default values using the 'startEventField' and 'endEventField' config options of the Event plugin.
+	     */
 
 <span id='Ext-ux-TouchCalendarView-cfg-hideHalfHourTimeSlotLabels'>	    /**
 </span>	     * @cfg {Boolean} hideHalfHourTimeSlotLabels Determines if the half-hour time slot labels are hidden in the Day View.
