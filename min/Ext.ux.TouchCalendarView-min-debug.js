@@ -93,7 +93,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	     * }
 	     */
 	    timeSlotDateTpls: {},
-	    
+
 	    /**
 	     * @cfg {Ext.data.Store} eventStore This config is used when the CalendarView is combined with
 	     * the TouchCalendarEvents or TouchCalendarSimpleEvents plugins and is used as the source of
@@ -947,14 +947,14 @@ Ext.define('Ext.ux.TouchCalendarView', {
 											'<tpl for=".">',
 												'<tr class="{[this.getTimeSlotRowCls(values.date)]}">',
 
-													'<td class="label" datetime="{[this.me.getDateAttribute(values.date)]}">',
+													'<td class="label">',
 
 														'<tpl if="!this.me.getHideHalfHourTimeSlotLabels() || !this.isHalfHour(values.date)">',
 															'{date:this.formatDate()}',
 														'</tpl>',
 
 													'</td>',
-													'<td class="time-block" colspan="2">',
+													'<td class="time-block" colspan="2" datetime="{[this.me.getDateAttribute(values.date)]}">',
 
 
 

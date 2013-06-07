@@ -380,7 +380,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	     * }
 	     */
 	    timeSlotDateTpls: {},
-	    
+
 <span id='Ext-ux-TouchCalendarView-cfg-eventStore'>	    /**
 </span>	     * @cfg {Ext.data.Store} eventStore This config is used when the CalendarView is combined with
 	     * the TouchCalendarEvents or TouchCalendarSimpleEvents plugins and is used as the source of
@@ -1234,14 +1234,14 @@ Ext.define('Ext.ux.TouchCalendarView', {
 											'&lt;tpl for=&quot;.&quot;&gt;',
 												'&lt;tr class=&quot;{[this.getTimeSlotRowCls(values.date)]}&quot;&gt;',
 
-													'&lt;td class=&quot;label&quot; datetime=&quot;{[this.me.getDateAttribute(values.date)]}&quot;&gt;',
+													'&lt;td class=&quot;label&quot;&gt;',
 
 														'&lt;tpl if=&quot;!this.me.getHideHalfHourTimeSlotLabels() || !this.isHalfHour(values.date)&quot;&gt;',
 															'{date:this.formatDate()}',
 														'&lt;/tpl&gt;',
 
 													'&lt;/td&gt;',
-													'&lt;td class=&quot;time-block&quot; colspan=&quot;2&quot;&gt;',
+													'&lt;td class=&quot;time-block&quot; colspan=&quot;2&quot; datetime=&quot;{[this.me.getDateAttribute(values.date)]}&quot;&gt;',
 
 
 
