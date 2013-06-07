@@ -1,4 +1,4 @@
-table.ux-calendar
+.touch-calendar-view
 {
 	$bg-color: #7991b3;
 	$date-bg-color: #cfced3;
@@ -17,6 +17,7 @@ table.ux-calendar
 		-webkit-border-radius: 4px;
 		z-index: 100;
 		letter-spacing: 0.2em;
+        text-shadow: none;
 	
 		&.event-bar-selected
 		{
