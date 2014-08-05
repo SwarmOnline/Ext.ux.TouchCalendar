@@ -285,4 +285,4 @@ I'd like to put out a thank you to the following people for their help:
 
 ## Licence
 
-This software has been released under [GNU LGPL v3](http://opensource.org/licenses/LGPL-3.0)
+This software has been released under [GNU LGPL v3](https://www.gnu.org/licenses/lgpl.html)
