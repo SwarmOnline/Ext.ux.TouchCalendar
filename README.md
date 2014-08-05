@@ -282,3 +282,7 @@ I'd like to put out a thank you to the following people for their help:
 - @megous for his [sencha-touch-ux-datepicker](https://github.com/megous/sencha-touch-ux-datepicker) extension which this extension originally grew from.
 
 - [Cian Clarke](https://github.com/cianclarke) for his contributions to the Sencha Touch 2 upgrade - great work!
+
+## Licence
+
+This software has been released under [GNU LGPL v3](http://opensource.org/licenses/LGPL-3.0)
