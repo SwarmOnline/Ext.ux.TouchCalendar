@@ -1,0 +1,48 @@
+Sencha Touch - JavaScript Library
+Copyright (c) 2010-2014, Sencha, Inc.
+All rights reserved.
+licensing@sencha.com
+
+http://www.sencha.com/products/touch/license.php
+
+
+Commercial License
+------------------------------------------------------------------------------------------
+This version of Sencha Touch is licensed commercially.
+This is the appropriate option if you are creating proprietary applications and you are
+not prepared to distribute and share the source code of your application under the
+GPL v3 license. Please visit http://www.sencha.com/store/touch/license.php for more details.
+
+
+OEM / Reseller License
+------------------------------------------------------------------------------------------
+For more details, please visit: http://www.sencha.com/products/touch/license.php
+
+
+Open Source Licensing
+------------------------------------------------------------------------------------------
+Open Source Licensing is available for an alternate download of Sencha Touch.
+For more details, please visit http://www.sencha.com/store/touch/license.php for more details.
+
+
+Third Party Content
+------------------------------------------------------------------------------------------
+The following third party software is distributed with Sencha Touch and is
+provided under other licenses and/or has source available from other locations.
+
+Library: JSON parser
+License: Public Domain
+Location: http://www.JSON.org/js.html
+
+Library: flexible-js-formatting - date parsing and formatting
+License: MIT
+Location: http://code.google.com/p/flexible-js-formatting/
+
+Library: Jasmine Š unit testing
+License: MIT
+Location: https://github.com/pivotal/jasmine
+
+
+--
+
+THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
