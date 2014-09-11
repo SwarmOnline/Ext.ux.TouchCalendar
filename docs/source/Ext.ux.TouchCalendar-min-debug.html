@@ -380,7 +380,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	     * }
 	     */
 	    timeSlotDateTpls: {},
-
+	    
 <span id='Ext-ux-TouchCalendarView-cfg-eventStore'>	    /**
 </span>	     * @cfg {Ext.data.Store} eventStore This config is used when the CalendarView is combined with
 	     * the TouchCalendarEvents or TouchCalendarSimpleEvents plugins and is used as the source of
@@ -1092,7 +1092,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	
 	statics: {
 		
-<span id='Ext-ux-TouchCalendarView-property-MONTH'>		MONTH: {
+<span id='Ext-ux-TouchCalendarView-static-property-MONTH'>		MONTH: {
 </span>				
 				dateAttributeFormat: 'd-m-Y',
 						
@@ -1150,7 +1150,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				periodRowDayCount: 7
 			},
 			
-<span id='Ext-ux-TouchCalendarView-property-WEEK'>			WEEK: {
+<span id='Ext-ux-TouchCalendarView-static-property-WEEK'>			WEEK: {
 </span>				
 				dateAttributeFormat: 'd-m-Y',
 					
@@ -1204,7 +1204,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 				periodRowDayCount: 7
 			},
 			
-<span id='Ext-ux-TouchCalendarView-property-DAY'>			DAY: {
+<span id='Ext-ux-TouchCalendarView-static-property-DAY'>			DAY: {
 </span><span id='Ext-ux-TouchCalendarView-property-dateAttributeFormat'>					/**
 </span>					 * Date format that the 'datetime' attribute, given to each time slot, has. Day mode needs the time in aswell so
 					 * events etc know what time slot it is
@@ -1218,12 +1218,12 @@ Ext.define('Ext.ux.TouchCalendarView', {
 						'&lt;table class=&quot;{[this.me.getViewMode().toLowerCase()]}&quot;&gt;',
                             '&lt;thead&gt;',
                                 '&lt;tr&gt;',
-                                    '&lt;th class=&quot;{[this.me.getPrevPeriodCls()]} style=&quot;display: block;&quot;&gt;',
+                                    '&lt;th class=&quot;{[this.me.getPrevPeriodCls()]}&quot; style=&quot;display: block;&quot;&gt;',
                                     '&lt;/th&gt;',
                                     '&lt;th&gt;',
                                         '&lt;span&gt;{[Ext.Date.format(values[0].date, &quot;D jS M Y&quot;)]}&lt;/span&gt;',
                                     '&lt;/th&gt;',
-                                    '&lt;th class=&quot;{[this.me.getNextPeriodCls()]} style=&quot;display: block;&quot;&quot;&gt;',
+                                    '&lt;th class=&quot;{[this.me.getNextPeriodCls()]}&quot; style=&quot;display: block;&quot;&gt;',
                                     '&lt;/th&gt;',
                                 '&lt;/tr&gt;',
                             '&lt;/thead&gt;',

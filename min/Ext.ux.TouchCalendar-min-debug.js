@@ -363,7 +363,7 @@ Ext.define('Ext.ux.TouchCalendarView', {
 	     * }
 	     */
 	    timeSlotDateTpls: {},
-
+	    
 	    /**
 	     * @cfg {Ext.data.Store} eventStore This config is used when the CalendarView is combined with
 	     * the TouchCalendarEvents or TouchCalendarSimpleEvents plugins and is used as the source of
@@ -1201,12 +1201,12 @@ Ext.define('Ext.ux.TouchCalendarView', {
 						'<table class="{[this.me.getViewMode().toLowerCase()]}">',
                             '<thead>',
                                 '<tr>',
-                                    '<th class="{[this.me.getPrevPeriodCls()]} style="display: block;">',
+                                    '<th class="{[this.me.getPrevPeriodCls()]}" style="display: block;">',
                                     '</th>',
                                     '<th>',
                                         '<span>{[Ext.Date.format(values[0].date, "D jS M Y")]}</span>',
                                     '</th>',
-                                    '<th class="{[this.me.getNextPeriodCls()]} style="display: block;"">',
+                                    '<th class="{[this.me.getNextPeriodCls()]}" style="display: block;">',
                                     '</th>',
                                 '</tr>',
                             '</thead>',
