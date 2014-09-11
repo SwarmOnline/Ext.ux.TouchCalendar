@@ -9,7 +9,10 @@ images_dir = File.join(sass_path, "..", "images")
  
 # Load the sencha-touch framework
 load File.join(sass_path, '..', '..', 'lib', 'sencha', 'resources', 'themes')
- 
+
+fonts_path   = File.join(sass_path, '..', '..', 'lib', 'sencha', 'resources', 'themes', 'fonts')
+
+
 # Specify the output style/environment
 #output_style = :compressed
 #environment = :production
