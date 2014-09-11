@@ -31,18 +31,21 @@
                             xtype: 'button',
                             text: 'Month View',
                             handler: function(){
+                                var calendarView = panel.down('touchcalendarview');
                                 calendarView.setViewMode('month');
                             }
                         }, {
                             xtype: 'button',
                             text: 'Week View',
                             handler: function(){
+                                var calendarView = panel.down('touchcalendarview');
                                 calendarView.setViewMode('week');
                             }
                         }, {
                             xtype: 'button',
                             text: 'Day View',
                             handler: function(){
+                                var calendarView = panel.down('touchcalendarview');
                                 calendarView.setViewMode('day');
                             }
                         }]
