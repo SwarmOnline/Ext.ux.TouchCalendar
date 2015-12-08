@@ -7,6 +7,7 @@ Ext.define('Ext.ux.TouchCalendarWeekEvents', {
 
 renderEventBars: function(store){
 		var me = this;
+		//should get pulled
 
 		store.each(function(record){
 			var eventRecord = this.getPlugin().getEventRecord(record.get('EventID')),
