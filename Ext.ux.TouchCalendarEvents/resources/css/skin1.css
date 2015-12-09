@@ -106,5 +106,7 @@
 .touch-calendar-view thead th span {
   font-weight: normal;
   top: 10px;
+  left: 25%;
   color: #666;
+  width: 50%;
 }
